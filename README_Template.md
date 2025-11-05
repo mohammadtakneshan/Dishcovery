@@ -156,21 +156,6 @@ cd frontend
 npm run deploy
 ```
 
-### Backend Options
-
-1. **Vercel Functions** (Recommended for prototyping)
-2. **AWS Lambda + API Gateway** (Production)
-3. **Google Cloud Run** (Containerized)
-4. **Railway/Render** (Simple deployment)
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 ## 📝 Development Workflow
 
 ```bash
@@ -188,32 +173,9 @@ git commit -m "feat: add new recipe filter"
 git push origin feature/your-feature
 ```
 
-## 🐛 Known Issues
-
-- Backend deployment on Vercel requires serverless function configuration
-- Mobile camera integration for ingredient scanning (planned)
-- Offline mode (planned)
-
 ## 📄 License
 
 MIT License - see LICENSE file for details
-
-## 👥 Team
-
-- Development Team - Your awesome team members
-- AI Integration - Gemini, OpenAI, Anthropic APIs
-
-## 🙏 Acknowledgments
-
-- Built with love using modern web technologies
-- Inspired by the joy of cooking and sharing recipes
-- Powered by cutting-edge AI models
-
-## 📞 Support
-
-For issues and questions:
-- Open an issue on GitHub
-- Contact: your-email@example.com
 
 ---
 

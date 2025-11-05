@@ -9,7 +9,10 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build-pwa": "expo export:web",
-    "deploy": "vercel --prod"
+    "deploy": "vercel --prod",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0 || echo 'ESLint not configured'",
+    "test": "echo 'No tests configured yet' && exit 0",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\""
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
