@@ -1,0 +1,48 @@
+{
+  "app": {
+    "name": "Dishcovery",
+    "tagline": "AIで美味しいレシピを発見"
+  },
+  "home": {
+    "title": "Dishcoveryへようこそ",
+    "subtitle": "材料を素晴らしい料理に変えましょう",
+    "getStarted": "始める"
+  },
+  "ingredients": {
+    "title": "材料",
+    "placeholder": "材料を追加...",
+    "add": "追加",
+    "clear": "すべてクリア",
+    "empty": "まだ材料がありません"
+  },
+  "preferences": {
+    "title": "設定",
+    "dietary": "食事制限",
+    "cuisine": "料理の好み",
+    "difficulty": "難易度"
+  },
+  "recipe": {
+    "title": "あなたのレシピ",
+    "prepTime": "準備時間",
+    "cookTime": "調理時間",
+    "servings": "人分",
+    "difficulty": "難易度",
+    "ingredients": "材料",
+    "instructions": "作り方",
+    "nutrition": "栄養情報",
+    "tips": "ヒントとバリエーション"
+  },
+  "actions": {
+    "generate": "レシピを生成",
+    "save": "レシピを保存",
+    "share": "共有",
+    "back": "戻る"
+  },
+  "settings": {
+    "title": "設定",
+    "language": "言語",
+    "theme": "テーマ",
+    "darkMode": "ダークモード",
+    "lightMode": "ライトモード"
+  }
+}

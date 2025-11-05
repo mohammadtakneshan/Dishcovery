@@ -1,0 +1,48 @@
+{
+  "app": {
+    "name": "Dishcovery",
+    "tagline": "Discover delicious recipes with AI"
+  },
+  "home": {
+    "title": "Welcome to Dishcovery",
+    "subtitle": "Turn your ingredients into amazing dishes",
+    "getStarted": "Get Started"
+  },
+  "ingredients": {
+    "title": "Your Ingredients",
+    "placeholder": "Add an ingredient...",
+    "add": "Add",
+    "clear": "Clear All",
+    "empty": "No ingredients yet"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "dietary": "Dietary Restrictions",
+    "cuisine": "Cuisine Preference",
+    "difficulty": "Difficulty Level"
+  },
+  "recipe": {
+    "title": "Your Recipe",
+    "prepTime": "Prep Time",
+    "cookTime": "Cook Time",
+    "servings": "Servings",
+    "difficulty": "Difficulty",
+    "ingredients": "Ingredients",
+    "instructions": "Instructions",
+    "nutrition": "Nutrition",
+    "tips": "Tips & Variations"
+  },
+  "actions": {
+    "generate": "Generate Recipe",
+    "save": "Save Recipe",
+    "share": "Share",
+    "back": "Back"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  }
+}

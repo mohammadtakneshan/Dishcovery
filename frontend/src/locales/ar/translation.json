@@ -1,0 +1,48 @@
+{
+  "app": {
+    "name": "Dishcovery",
+    "tagline": "اكتشف وصفات لذيذة بالذكاء الاصطناعي"
+  },
+  "home": {
+    "title": "مرحباً بك في Dishcovery",
+    "subtitle": "حوّل مكوناتك إلى أطباق مذهلة",
+    "getStarted": "ابدأ الآن"
+  },
+  "ingredients": {
+    "title": "مكوناتك",
+    "placeholder": "أضف مكوناً...",
+    "add": "إضافة",
+    "clear": "مسح الكل",
+    "empty": "لا توجد مكونات بعد"
+  },
+  "preferences": {
+    "title": "التفضيلات",
+    "dietary": "القيود الغذائية",
+    "cuisine": "تفضيل المطبخ",
+    "difficulty": "مستوى الصعوبة"
+  },
+  "recipe": {
+    "title": "وصفتك",
+    "prepTime": "وقت التحضير",
+    "cookTime": "وقت الطهي",
+    "servings": "الحصص",
+    "difficulty": "الصعوبة",
+    "ingredients": "المكونات",
+    "instructions": "التعليمات",
+    "nutrition": "القيمة الغذائية",
+    "tips": "نصائح وتنويعات"
+  },
+  "actions": {
+    "generate": "توليد الوصفة",
+    "save": "حفظ الوصفة",
+    "share": "مشاركة",
+    "back": "رجوع"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "language": "اللغة",
+    "theme": "المظهر",
+    "darkMode": "الوضع الداكن",
+    "lightMode": "الوضع الفاتح"
+  }
+}

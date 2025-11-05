@@ -1,0 +1,48 @@
+{
+  "app": {
+    "name": "Dishcovery",
+    "tagline": "Fedezz fel finom recepteket AI-val"
+  },
+  "home": {
+    "title": "Üdvözöl a Dishcovery",
+    "subtitle": "Varázsolj csodálatos ételeket a hozzávalóidból",
+    "getStarted": "Kezdjük"
+  },
+  "ingredients": {
+    "title": "Hozzávalók",
+    "placeholder": "Adj hozzá egy hozzávalót...",
+    "add": "Hozzáad",
+    "clear": "Összes törlése",
+    "empty": "Még nincs hozzávaló"
+  },
+  "preferences": {
+    "title": "Beállítások",
+    "dietary": "Étkezési megkötések",
+    "cuisine": "Konyha preferencia",
+    "difficulty": "Nehézségi szint"
+  },
+  "recipe": {
+    "title": "A recepted",
+    "prepTime": "Előkészítési idő",
+    "cookTime": "Főzési idő",
+    "servings": "Adagok",
+    "difficulty": "Nehézség",
+    "ingredients": "Hozzávalók",
+    "instructions": "Utasítások",
+    "nutrition": "Táplálkozási érték",
+    "tips": "Tippek és variációk"
+  },
+  "actions": {
+    "generate": "Recept generálása",
+    "save": "Recept mentése",
+    "share": "Megosztás",
+    "back": "Vissza"
+  },
+  "settings": {
+    "title": "Beállítások",
+    "language": "Nyelv",
+    "theme": "Téma",
+    "darkMode": "Sötét mód",
+    "lightMode": "Világos mód"
+  }
+}

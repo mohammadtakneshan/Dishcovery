@@ -1,0 +1,36 @@
+from flask import Flask, jsonify
+from flask_cors import CORS
+from config import Config
+from api import api_bp
+
+def create_app(config_class=Config):
+    """Application factory pattern"""
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+    
+    # Enable CORS
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": Config.ALLOWED_ORIGINS
+        }
+    })
+    
+    # Register blueprints
+    app.register_blueprint(api_bp)
+    
+    @app.route('/')
+    def index():
+        return jsonify({
+            'message': 'Welcome to Dishcovery API',
+            'version': '1.0.0',
+            'endpoints': {
+                'health': '/api/health',
+                'generate_recipe': '/api/generate-recipe'
+            }
+        })
+    
+    return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(host='0.0.0.0', port=5001, debug=True)

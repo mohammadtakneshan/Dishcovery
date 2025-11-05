@@ -1,0 +1,40 @@
+import React, { useState, useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
+import './src/config/i18n';
+
+// Screens (to be created)
+// import HomeScreen from './src/screens/HomeScreen';
+// import IngredientsScreen from './src/screens/IngredientsScreen';
+// import RecipeScreen from './src/screens/RecipeScreen';
+// import SettingsScreen from './src/screens/SettingsScreen';
+
+const Stack = createStackNavigator();
+
+export default function App() {
+  const { t } = useTranslation();
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  return (
+    <NavigationContainer>
+      <StatusBar style={isDarkMode ? 'light' : 'dark'} />
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: isDarkMode ? '#000000' : '#ffffff',
+          },
+          headerTintColor: isDarkMode ? '#ffffff' : '#000000',
+          headerTitleStyle: {
+            fontFamily: 'SF Pro Display',
+            fontWeight: '600',
+          },
+        }}
+      >
+        {/* Screens will be added here */}
+        {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}

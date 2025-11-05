@@ -1,0 +1,35 @@
+{
+  "name": "dishcovery-frontend",
+  "version": "1.0.0",
+  "description": "Dishcovery - AI-Powered Recipe Discovery PWA",
+  "main": "expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build-pwa": "expo export:web",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "~6.1.2",
+    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/stack": "^6.3.20",
+    "axios": "^1.6.2",
+    "babel-preset-expo": "^54.0.6",
+    "expo": "~54.0.0",
+    "expo-status-bar": "~3.0.8",
+    "i18next": "^23.7.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-i18next": "^13.5.0",
+    "react-native": "0.81.5",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-web": "^0.21.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.5"
+  },
+  "private": true
+}

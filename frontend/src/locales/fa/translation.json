@@ -1,0 +1,48 @@
+{
+  "app": {
+    "name": "Dishcovery",
+    "tagline": "دستورهای خوشمزه را با هوش مصنوعی کشف کنید"
+  },
+  "home": {
+    "title": "به Dishcovery خوش آمدید",
+    "subtitle": "مواد اولیه خود را به غذاهای شگفت‌انگیز تبدیل کنید",
+    "getStarted": "شروع کنید"
+  },
+  "ingredients": {
+    "title": "مواد اولیه شما",
+    "placeholder": "یک ماده اولیه اضافه کنید...",
+    "add": "اضافه کردن",
+    "clear": "پاک کردن همه",
+    "empty": "هنوز مواد اولیه ای وجود ندارد"
+  },
+  "preferences": {
+    "title": "تنظیمات",
+    "dietary": "محدودیت های غذایی",
+    "cuisine": "ترجیح غذا",
+    "difficulty": "سطح دشواری"
+  },
+  "recipe": {
+    "title": "دستور پخت شما",
+    "prepTime": "زمان آماده سازی",
+    "cookTime": "زمان پخت",
+    "servings": "تعداد سرو",
+    "difficulty": "دشواری",
+    "ingredients": "مواد لازم",
+    "instructions": "دستورالعمل",
+    "nutrition": "ارزش غذایی",
+    "tips": "نکات و تغییرات"
+  },
+  "actions": {
+    "generate": "تولید دستور پخت",
+    "save": "ذخیره دستور",
+    "share": "اشتراک گذاری",
+    "back": "بازگشت"
+  },
+  "settings": {
+    "title": "تنظیمات",
+    "language": "زبان",
+    "theme": "تم",
+    "darkMode": "حالت تاریک",
+    "lightMode": "حالت روشن"
+  }
+}

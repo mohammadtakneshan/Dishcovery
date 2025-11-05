@@ -1,0 +1,48 @@
+{
+  "app": {
+    "name": "Dishcovery",
+    "tagline": "Khám phá công thức nấu ăn ngon với AI"
+  },
+  "home": {
+    "title": "Chào mừng đến với Dishcovery",
+    "subtitle": "Biến nguyên liệu thành món ăn tuyệt vời",
+    "getStarted": "Bắt đầu"
+  },
+  "ingredients": {
+    "title": "Nguyên liệu của bạn",
+    "placeholder": "Thêm nguyên liệu...",
+    "add": "Thêm",
+    "clear": "Xóa tất cả",
+    "empty": "Chưa có nguyên liệu"
+  },
+  "preferences": {
+    "title": "Tùy chọn",
+    "dietary": "Hạn chế chế độ ăn",
+    "cuisine": "Ẩm thực ưa thích",
+    "difficulty": "Mức độ khó"
+  },
+  "recipe": {
+    "title": "Công thức của bạn",
+    "prepTime": "Thời gian chuẩn bị",
+    "cookTime": "Thời gian nấu",
+    "servings": "Khẩu phần",
+    "difficulty": "Độ khó",
+    "ingredients": "Nguyên liệu",
+    "instructions": "Hướng dẫn",
+    "nutrition": "Dinh dưỡng",
+    "tips": "Mẹo và biến tấu"
+  },
+  "actions": {
+    "generate": "Tạo công thức",
+    "save": "Lưu công thức",
+    "share": "Chia sẻ",
+    "back": "Quay lại"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "theme": "Giao diện",
+    "darkMode": "Chế độ tối",
+    "lightMode": "Chế độ sáng"
+  }
+}
