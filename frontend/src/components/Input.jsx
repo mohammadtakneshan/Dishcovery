@@ -42,31 +42,31 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-    fontFamily: 'SF Pro Text',
-  },
-  labelDark: {
-    color: '#ffffff',
-  },
   input: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
     borderRadius: 12,
-    fontSize: 16,
-    fontFamily: 'SF Pro Text',
     borderWidth: 1,
+    fontFamily: 'SF Pro Text',
+    fontSize: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  inputDark: {
+    backgroundColor: '#1c1c1e',
+    borderColor: '#38383a',
+    color: '#ffffff',
   },
   inputLight: {
     backgroundColor: '#ffffff',
     borderColor: '#d1d1d6',
     color: '#000000',
   },
-  inputDark: {
-    backgroundColor: '#1c1c1e',
-    borderColor: '#38383a',
+  label: {
+    fontFamily: 'SF Pro Text',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  labelDark: {
     color: '#ffffff',
   },
   multiline: {

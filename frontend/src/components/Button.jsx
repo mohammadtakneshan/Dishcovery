@@ -1,28 +1,27 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-const Button = ({ 
-  title, 
-  onPress, 
-  variant = 'primary', 
+const Button = ({
+  title,
+  onPress,
+  variant = "primary",
   disabled = false,
-  icon = null 
+  icon = null,
 }) => {
-  const { t } = useTranslation();
-
   const getButtonStyle = () => {
     if (disabled) return styles.buttonDisabled;
-    return variant === 'primary' ? styles.buttonPrimary : styles.buttonSecondary;
+    return variant === "primary"
+      ? styles.buttonPrimary
+      : styles.buttonSecondary;
   };
 
   const getTextStyle = () => {
     if (disabled) return styles.textDisabled;
-    return variant === 'primary' ? styles.textPrimary : styles.textSecondary;
+    return variant === "primary" ? styles.textPrimary : styles.textSecondary;
   };
 
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={[styles.button, getButtonStyle()]}
       onPress={onPress}
       disabled={disabled}
@@ -36,45 +35,45 @@ const Button = ({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    alignItems: "center",
     borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
+    elevation: 3,
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
-  },
-  buttonPrimary: {
-    backgroundColor: '#0ea5e9',
-  },
-  buttonSecondary: {
-    backgroundColor: '#f2f2f7',
-    borderWidth: 1,
-    borderColor: '#d1d1d6',
   },
   buttonDisabled: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: "#e0e0e0",
   },
-  text: {
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'SF Pro Display',
+  buttonPrimary: {
+    backgroundColor: "#0ea5e9",
   },
-  textPrimary: {
-    color: '#ffffff',
-  },
-  textSecondary: {
-    color: '#000000',
-  },
-  textDisabled: {
-    color: '#999999',
+  buttonSecondary: {
+    backgroundColor: "#f2f2f7",
+    borderColor: "#d1d1d6",
+    borderWidth: 1,
   },
   icon: {
     marginRight: 8,
+  },
+  text: {
+    fontFamily: "SF Pro Display",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  textDisabled: {
+    color: "#999999",
+  },
+  textPrimary: {
+    color: "#ffffff",
+  },
+  textSecondary: {
+    color: "#000000",
   },
 });
 

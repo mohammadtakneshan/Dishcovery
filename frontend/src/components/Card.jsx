@@ -33,26 +33,26 @@ const Card = ({
 const styles = StyleSheet.create({
   card: {
     borderRadius: 12,
-    padding: 16,
+    elevation: 3,
     marginBottom: 16,
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 3,
-  },
-  cardLight: {
-    backgroundColor: '#ffffff',
   },
   cardDark: {
     backgroundColor: '#1c1c1e',
   },
+  cardLight: {
+    backgroundColor: '#ffffff',
+  },
   title: {
+    color: '#000000',
+    fontFamily: 'SF Pro Display',
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 12,
-    fontFamily: 'SF Pro Display',
-    color: '#000000',
   },
   titleDark: {
     color: '#ffffff',
