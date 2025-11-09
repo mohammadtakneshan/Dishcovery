@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Platform,
 } from "react-native";
+import theme from "../theme";
 
 /**
  * Minimal image picker component.
@@ -45,7 +46,9 @@ export default function ImageUpload({ onImageSelected }) {
           <Image source={{ uri: preview }} style={styles.preview} />
         ) : (
           <View style={styles.placeholder}>
-            <Text>Select an image to preview</Text>
+            <Text style={styles.placeholderText}>
+              Select an image to preview
+            </Text>
           </View>
         )}
       </View>
@@ -68,7 +71,7 @@ export default function ImageUpload({ onImageSelected }) {
         <Image source={{ uri: preview }} style={styles.preview} />
       ) : (
         <View style={styles.placeholder}>
-          <Text>Select an image to preview</Text>
+          <Text style={styles.placeholderText}>Select an image to preview</Text>
         </View>
       )}
     </View>
@@ -78,10 +81,10 @@ export default function ImageUpload({ onImageSelected }) {
 const webStyles = {
   label: {
     display: "inline-block",
-    padding: "8px 14px",
-    backgroundColor: "#2b6cb0",
-    color: "#fff",
-    borderRadius: 6,
+    padding: "10px 16px",
+    backgroundColor: theme.colors.accent,
+    color: theme.colors.surface,
+    borderRadius: theme.radii.sm,
     cursor: "pointer",
     textDecoration: "none",
   },
@@ -92,31 +95,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     maxWidth: 640,
-    marginVertical: 12,
+    marginVertical: theme.spacing.md,
   },
   button: {
-    backgroundColor: "#2b6cb0",
+    backgroundColor: theme.colors.accent,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: 6,
+    borderRadius: theme.radii.sm,
   },
-  buttonText: { color: "#fff", fontWeight: "600" },
+  buttonText: { color: theme.colors.surface, fontWeight: "700" },
   preview: {
-    width: 320,
-    height: 240,
+    width: 360,
+    height: 260,
     resizeMode: "cover",
-    borderRadius: 8,
-    marginTop: 8,
+    borderRadius: theme.radii.md,
+    marginTop: theme.spacing.sm,
+    borderWidth: 2,
+    borderColor: theme.colors.muted,
   },
   placeholder: {
-    width: 320,
-    height: 240,
+    width: 360,
+    height: 260,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#f0e6e0",
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 8,
-    marginTop: 8,
+    borderRadius: theme.radii.md,
+    marginTop: theme.spacing.sm,
+    backgroundColor: "#fffefc",
   },
+  placeholderText: { color: theme.colors.muted },
 });
