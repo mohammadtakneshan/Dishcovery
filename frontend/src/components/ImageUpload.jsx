@@ -55,15 +55,53 @@ export default function ImageUpload({ onImageSelected }) {
     );
   }
 
-  const pickPlaceholder = () => {
-    alert(
-      "Image picker not set up for native yet. Use web or request native picker setup."
-    );
+  // Native - Expo image picker (loaded at runtime)
+  let ImagePicker = null;
+  try {
+    ImagePicker = require("expo-image-picker");
+  } catch (e) {
+    ImagePicker = null;
+  }
+
+  const pickImage = async () => {
+    if (!ImagePicker) {
+      alert(
+        "Image picker not available. Make sure expo-image-picker is installed."
+      );
+      return;
+    }
+    try {
+      const permissionResult =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permissionResult.granted) {
+        alert("Permission to access media library is required.");
+        return;
+      }
+
+      const res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.8,
+        base64: false,
+      });
+
+      if (res.cancelled) return;
+
+      const asset = res.assets ? res.assets[0] : res;
+      const uri = asset.uri;
+      const name = asset.fileName || uri.split("/").pop() || "photo.jpg";
+      const type = asset.type || "image/jpeg";
+
+      setPreview(uri);
+      onImageSelected && onImageSelected({ uri, name, type });
+    } catch (err) {
+      console.error("Image pick error", err);
+      alert("Could not pick image");
+    }
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={pickPlaceholder} style={styles.button}>
+      <TouchableOpacity onPress={pickImage} style={styles.button}>
         <Text style={styles.buttonText}>Pick photo (native)</Text>
       </TouchableOpacity>
 
