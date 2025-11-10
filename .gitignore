@@ -1,101 +1,60 @@
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-backend/.env
-frontend/.env
-
 # Dependencies
 node_modules/
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
-env/
-venv/
-ENV/
-pip-log.txt
-pip-delete-this-directory.txt
 
-# Build outputs
-build/
-dist/
-*.egg-info/
-.eggs/
-web-build/
-.expo/
-.expo-shared/
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
 
-# IDEs
+# IDEs and editors
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-*.sublime-workspace
-*.sublime-project
-
-# OS files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
 
-# Vercel
-.vercel
+# Build outputs
+dist/
+build/
+*.egg-info/
+.expo/
+.expo-shared/
+web-build/
+
+# Test coverage
+.coverage
+coverage/
+.pytest_cache/
+htmlcov/
 
 # Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
+logs/
 
-# Testing
-coverage/
-.pytest_cache/
-.nyc_output/
-*.lcov
+# OS
+Thumbs.db
+.DS_Store
 
-# Mobile & React Native
-ios/Pods/
-ios/.xcode.env.local
-android/.gradle/
-android/app/build/
-android/captures/
-*.apk
-*.aab
-*.ipa
-*.jks
-*.keystore
+# Vercel
+.vercel
 
-# Expo
-.expo/
-.expo-shared/
-dist/
-web-build/
-
-# Metro
-.metro-health-check*
+# Python virtual environments
+venv/
+env/
+ENV/
+.venv/
 
 # Temporary files
 *.tmp
 *.temp
 .cache/
-.parcel-cache/
-
-# Debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Lock files (optional - uncomment if you want to ignore)
-# package-lock.json
-# yarn.lock

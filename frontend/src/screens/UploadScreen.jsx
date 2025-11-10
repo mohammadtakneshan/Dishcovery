@@ -76,37 +76,11 @@ export default function UploadScreen({ onRecipe }) {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.background,
-    alignItems: "center",
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: theme.spacing.md,
-  },
-  title: {
-    ...theme.typography.heading,
-    color: theme.colors.brandDark,
-  },
-  subtitle: {
-    ...theme.typography.subheading,
-    color: theme.colors.muted,
-    marginTop: 6,
-    fontWeight: "600",
-  },
-  card: {
-    width: "100%",
-    maxWidth: 760,
-    ...theme.card,
-    alignItems: "center",
-  },
   button: {
-    marginTop: theme.spacing.md,
     ...theme.button,
-    backgroundColor: theme.colors.brand,
     alignItems: "center",
+    backgroundColor: theme.colors.brand,
+    marginTop: theme.spacing.md,
   },
   buttonDisabled: {
     opacity: 0.65,
@@ -115,13 +89,39 @@ const styles = StyleSheet.create({
     color: theme.colors.surface,
     fontWeight: "700",
   },
+  card: {
+    ...theme.card,
+    alignItems: "center",
+    maxWidth: 760,
+    width: "100%",
+  },
   error: {
     color: theme.colors.danger,
     marginTop: theme.spacing.sm,
   },
+  header: {
+    alignItems: "center",
+    marginBottom: theme.spacing.md,
+  },
   hint: {
-    marginTop: theme.spacing.lg,
     color: theme.colors.muted,
     fontSize: 13,
+    marginTop: theme.spacing.lg,
+  },
+  root: {
+    alignItems: "center",
+    backgroundColor: theme.colors.background,
+    flex: 1,
+    padding: theme.spacing.md,
+  },
+  subtitle: {
+    ...theme.typography.subheading,
+    color: theme.colors.muted,
+    fontWeight: "600",
+    marginTop: 6,
+  },
+  title: {
+    ...theme.typography.heading,
+    color: theme.colors.brandDark,
   },
 });

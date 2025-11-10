@@ -36,7 +36,7 @@ export default function ImageUpload({ onImageSelected }) {
           type="file"
           accept="image/*"
           onChange={handleFile}
-          style={{ display: "none" }}
+          style={webStyles.hiddenInput}
         />
         <label htmlFor="dishcovery-file-input" style={webStyles.label}>
           <Text style={styles.buttonText}>Choose photo</Text>
@@ -89,10 +89,9 @@ export default function ImageUpload({ onImageSelected }) {
       const asset = res.assets ? res.assets[0] : res;
       const uri = asset.uri;
       const name = asset.fileName || uri.split("/").pop() || "photo.jpg";
-      const type = asset.type || "image/jpeg";
 
       setPreview(uri);
-      onImageSelected && onImageSelected({ uri, name, type });
+      onImageSelected && onImageSelected({ uri, name });
     } catch (err) {
       console.error("Image pick error", err);
       alert("Could not pick image");
@@ -117,6 +116,9 @@ export default function ImageUpload({ onImageSelected }) {
 }
 
 const webStyles = {
+  hiddenInput: {
+    display: "none",
+  },
   label: {
     display: "inline-block",
     padding: "10px 16px",
@@ -129,39 +131,39 @@ const webStyles = {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    width: "100%",
-    maxWidth: 640,
-    marginVertical: theme.spacing.md,
-  },
   button: {
     backgroundColor: theme.colors.accent,
+    borderRadius: theme.radii.sm,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: theme.radii.sm,
   },
   buttonText: { color: theme.colors.surface, fontWeight: "700" },
-  preview: {
-    width: 360,
-    height: 260,
-    resizeMode: "cover",
-    borderRadius: theme.radii.md,
-    marginTop: theme.spacing.sm,
-    borderWidth: 2,
-    borderColor: theme.colors.muted,
+  container: {
+    alignItems: "center",
+    marginVertical: theme.spacing.md,
+    maxWidth: 640,
+    width: "100%",
   },
   placeholder: {
-    width: 360,
-    height: 260,
-    borderWidth: 1,
-    borderColor: "#f0e6e0",
-    borderStyle: "dashed",
     alignItems: "center",
-    justifyContent: "center",
-    borderRadius: theme.radii.md,
-    marginTop: theme.spacing.sm,
     backgroundColor: "#fffefc",
+    borderColor: "#f0e6e0",
+    borderRadius: theme.radii.md,
+    borderStyle: "dashed",
+    borderWidth: 1,
+    height: 260,
+    justifyContent: "center",
+    marginTop: theme.spacing.sm,
+    width: 360,
   },
   placeholderText: { color: theme.colors.muted },
+  preview: {
+    borderColor: theme.colors.muted,
+    borderRadius: theme.radii.md,
+    borderWidth: 2,
+    height: 260,
+    marginTop: theme.spacing.sm,
+    resizeMode: "cover",
+    width: 360,
+  },
 });
