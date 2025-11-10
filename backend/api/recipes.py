@@ -51,7 +51,8 @@ def generate_recipe():
             img = Image.open(io.BytesIO(image_data))
             img.verify()
         except Exception as img_error:
-            return jsonify({'error': f'Invalid or corrupted image file: {str(img_error)}'}), 400
+            logger.error(f"Image validation error: {str(img_error)}")
+            return jsonify({'error': 'Invalid or corrupted image file'}), 400
         
         # Build prompt for Gemini Vision
         prompt = f"""Analyze this food image and generate a detailed recipe to recreate this dish.
@@ -153,12 +154,13 @@ Important: Return ONLY valid JSON, no markdown formatting or extra text."""
                     response['debug'] = error_msg
                 return jsonify(response), 500
             else:
-                return jsonify({'error': f'AI processing failed: {error_msg}'}), 500
+                logger.error(f"AI processing failed: {error_msg}")
+                return jsonify({'error': 'AI processing failed. Please try again later.'}), 500
         
     except Exception as e:
         logger.error(f"Server Error: {str(e)}")
         logger.debug(traceback.format_exc())
-        return jsonify({'error': f'Server error: {str(e)}'}), 500
+        return jsonify({'error': 'Server error. Please try again later.'}), 500
 
 @api_bp.route('/health', methods=['GET'])
 def health_check():
