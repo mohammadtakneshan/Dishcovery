@@ -12,6 +12,7 @@ export async function generateRecipeFromImage({ uri, name, file } = {}) {
       formData.append("file", blob, name || "photo.jpg");
     } catch (err) {
       console.error("Error processing image from URI:", err);
+      console.error("Error processing image from URI:", err);
       throw new Error("Failed to process image. Please try another photo.");
     }
   } else {
