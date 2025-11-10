@@ -2,10 +2,16 @@
   "version": 2,
   "buildCommand": "cd frontend && npm install && npm run build-pwa",
   "outputDirectory": "frontend/dist",
+  "installCommand": "cd backend && pip install -r requirements.txt",
   "builds": [
     {
       "src": "backend/app.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "50mb" }
+    },
+    {
+      "src": "frontend/dist/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -17,5 +23,8 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "env": {
+    "FLASK_ENV": "production"
+  }
 }
