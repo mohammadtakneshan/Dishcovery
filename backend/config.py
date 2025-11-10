@@ -19,3 +19,7 @@ class Config:
     # API Settings
     MAX_INGREDIENTS = int(os.getenv('MAX_INGREDIENTS', 10))
     DEFAULT_LANGUAGE = os.getenv('DEFAULT_LANGUAGE', 'en')
+    
+    # File Upload Settings
+    MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))  # 16MB default
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
