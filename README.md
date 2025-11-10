@@ -327,4 +327,4 @@ MIT License - see [LICENSE](./LICENSE) for details
 
 **Made with ❤️ by the Dishcovery Team**
 
-*Last Updated: November 9, 2025*
+*Last Updated: 2024-11-09*

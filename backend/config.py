@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from typing import ClassVar
 
 load_dotenv()
 
@@ -22,4 +23,4 @@ class Config:
     
     # File Upload Settings
     MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))  # 16MB default
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    ALLOWED_EXTENSIONS: ClassVar[frozenset[str]] = frozenset({'png', 'jpg', 'jpeg', 'gif', 'webp'})

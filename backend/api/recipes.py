@@ -7,6 +7,11 @@ import json
 import re
 from PIL import Image
 import io
+import logging
+import traceback
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 # Configure Gemini AI
 genai.configure(api_key=Config.GEMINI_API_KEY)
@@ -79,7 +84,7 @@ Important: Return ONLY valid JSON, no markdown formatting or extra text."""
             # Re-open image for Gemini (verify consumed the stream)
             img = Image.open(io.BytesIO(image_data))
             model = genai.GenerativeModel('gemini-2.5-flash')
-            print(f"[DEBUG] Using model: gemini-2.5-flash")
+            logger.info("Using model: gemini-2.5-flash")
             response = model.generate_content([prompt, img])
             
             if not response or not response.text:
@@ -99,14 +104,20 @@ Important: Return ONLY valid JSON, no markdown formatting or extra text."""
                 recipe_json = json.loads(recipe_text)
             except json.JSONDecodeError:
                 # If JSON parsing fails, return raw text with warning
+                fallback_recipe = {
+                    'title': 'Generated Recipe',
+                    'prep_time': 'N/A',
+                    'cook_time': 'N/A',
+                    'servings': 'N/A',
+                    'ingredients': [],
+                    'steps': [recipe_text],
+                    'nutrition': {},
+                    'tips': ''
+                }
                 return jsonify({
                     'success': True,
                     'warning': 'Could not parse structured recipe, returning raw text',
-                    'recipe': {
-                        'title': 'Generated Recipe',
-                        'ingredients': [],
-                        'steps': [recipe_text]
-                    },
+                    'recipe': fallback_recipe,
                     'raw_response': recipe_text,
                     'source': 'gemini-vision'
                 })
@@ -131,18 +142,22 @@ Important: Return ONLY valid JSON, no markdown formatting or extra text."""
             
         except Exception as ai_error:
             error_msg = str(ai_error)
-            print(f"[DEBUG] AI Error: {error_msg}")  # Debug logging
+            logger.error(f"AI Error: {error_msg}")
+            logger.debug(traceback.format_exc())
+            
             if 'rate limit' in error_msg.lower():
                 return jsonify({'error': 'AI service rate limit reached. Please try again in a few moments.'}), 429
             elif 'api key' in error_msg.lower() or 'auth' in error_msg.lower():
-                return jsonify({'error': 'AI service authentication failed. Please contact support.', 'debug': error_msg}), 500
+                response = {'error': 'AI service authentication failed. Please contact support.'}
+                if Config.FLASK_ENV.lower() in ['development', 'debug']:
+                    response['debug'] = error_msg
+                return jsonify(response), 500
             else:
                 return jsonify({'error': f'AI processing failed: {error_msg}'}), 500
         
     except Exception as e:
-        print(f"[DEBUG] Server Error: {str(e)}")  # Debug logging
-        import traceback
-        traceback.print_exc()
+        logger.error(f"Server Error: {str(e)}")
+        logger.debug(traceback.format_exc())
         return jsonify({'error': f'Server error: {str(e)}'}), 500
 
 @api_bp.route('/health', methods=['GET'])
