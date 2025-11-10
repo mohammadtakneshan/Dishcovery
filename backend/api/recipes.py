@@ -2,7 +2,6 @@ from flask import request, jsonify
 from . import api_bp
 import google.generativeai as genai
 from config import Config
-import os
 import json
 import re
 from PIL import Image
