@@ -12,6 +12,9 @@ web-build/
 .env.local
 .env.*.local
 
+# Production env should be committed or set in Vercel
+# .env.production
+
 # Build
 build/
 

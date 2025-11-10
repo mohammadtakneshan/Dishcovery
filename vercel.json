@@ -2,11 +2,20 @@
   "version": 2,
   "buildCommand": "cd frontend && npm install && npm run build-pwa",
   "outputDirectory": "frontend/dist",
-  "installCommand": "echo 'Skip root install'",
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "backend/app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/app.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
