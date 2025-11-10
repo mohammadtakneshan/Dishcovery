@@ -2,7 +2,6 @@
   "version": 2,
   "buildCommand": "cd frontend && npm install && npm run build-pwa",
   "outputDirectory": "frontend/dist",
-  "installCommand": "pip install -r backend/requirements.txt",
   "builds": [
     {
       "src": "backend/app.py",
