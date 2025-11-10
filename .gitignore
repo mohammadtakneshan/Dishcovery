@@ -12,6 +12,9 @@ __pycache__/
 .env.*.local
 *.env
 
+# Production env is committed
+!.env.production
+
 # IDEs and editors
 .vscode/
 .idea/
@@ -58,3 +61,8 @@ ENV/
 *.tmp
 *.temp
 .cache/
+
+# Scripts (temporary deployment helpers)
+deploy-setup.bat
+deploy-setup.sh
+start-tunnel.bat

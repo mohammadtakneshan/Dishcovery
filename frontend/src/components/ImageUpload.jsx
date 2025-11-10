@@ -79,9 +79,9 @@ export default function ImageUpload({ onImageSelected }) {
       }
 
       const res = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ['images'],
         quality: 0.8,
-        base64: false,
+        allowsEditing: false,
       });
 
       if (res.cancelled) return;
