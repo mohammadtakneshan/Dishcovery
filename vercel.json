@@ -26,5 +26,8 @@
       "src": "/(.*)",
       "dest": "/frontend/index.html"
     }
-  ]
+  ],
+  "env": {
+    "FLASK_ENV": "production"
+  }
 }

@@ -26,6 +26,9 @@ frontend/.env
 *.cert
 .env.vercel
 
+# Production env is committed
+!.env.production
+
 # IDEs and editors
 .vscode/
 .idea/
