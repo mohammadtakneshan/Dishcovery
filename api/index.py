@@ -8,5 +8,6 @@ sys.path.insert(0, backend_path)
 # Import the Flask app from backend
 from app import app
 
+# Explicitly export app for Vercel
 # Vercel looks for 'app' variable to serve
-# This exposes the Flask WSGI app to Vercel's Python runtime
+__all__ = ['app']
