@@ -42,14 +42,6 @@ export default function UploadScreen({ onRecipe }) {
       setLoading(true);
       setError(null);
 
-      if (!imagePayload) {
-        setError({
-          code: "image_required",
-          message: "Please select an image first.",
-        });
-        return;
-      }
-
       if (Object.keys(validationState.errors).length > 0) {
         setError({
           code: "settings_incomplete",
