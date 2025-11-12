@@ -37,7 +37,7 @@ function normaliseError(error) {
     return { message: error };
   }
 
-  if (error && typeof error === 'object') {
+  if (typeof error === 'object') {
     return {
       message: error.message || 'Unexpected error encountered.',
       code: error.code,
