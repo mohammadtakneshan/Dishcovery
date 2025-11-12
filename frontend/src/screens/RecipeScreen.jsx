@@ -8,8 +8,12 @@ import {
 } from "react-native";
 import theme from "../theme";
 
-export default function RecipeScreen({ recipe, onBack }) {
-  if (!recipe) {
+export default function RecipeScreen({ data, recipe, onBack }) {
+  const recipeData = recipe || data?.recipe;
+  const meta = data?.meta;
+  const warning = data?.warning;
+
+  if (!recipeData) {
     return (
       <View style={styles.center}>
         <Text style={styles.muted}>No recipe to show.</Text>
@@ -20,7 +24,7 @@ export default function RecipeScreen({ recipe, onBack }) {
     );
   }
 
-  const { 
+  const {
     title, 
     prep_time, 
     cook_time, 
@@ -29,12 +33,33 @@ export default function RecipeScreen({ recipe, onBack }) {
     steps = [],
     nutrition = {},
     tips = ""
-  } = recipe;
+  } = recipeData;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>{title || "Generated Recipe"}</Text>
+
+        {meta ? (
+          <View style={styles.metaSummary}>
+            <Text style={styles.metaSummaryText}>
+              Provider: {meta.provider_label || capitalise(meta.provider)}
+            </Text>
+            {meta.model ? (
+              <Text style={styles.metaSummaryText}>Model: {meta.model}</Text>
+            ) : null}
+            {meta.language ? (
+              <Text style={styles.metaSummaryText}>Language: {meta.language}</Text>
+            ) : null}
+          </View>
+        ) : null}
+
+        {warning ? (
+          <View style={styles.warningBox}>
+            <Text style={styles.warningTitle}>Heads up</Text>
+            <Text style={styles.warningText}>{warning}</Text>
+          </View>
+        ) : null}
 
         {/* Recipe metadata */}
         <View style={styles.metaRow}>
@@ -131,6 +156,11 @@ export default function RecipeScreen({ recipe, onBack }) {
   );
 }
 
+function capitalise(value) {
+  if (!value || typeof value !== "string") return value;
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 const styles = StyleSheet.create({
   backBtn: {
     alignSelf: "center",
@@ -172,6 +202,19 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     marginRight: 4,
+  },
+  metaSummary: {
+    backgroundColor: "#f7f7f7",
+    borderRadius: theme.radii.sm,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+    marginBottom: theme.spacing.md,
+    padding: 12,
+  },
+  metaSummaryText: {
+    color: theme.colors.muted,
+    fontSize: 13,
   },
   metaRow: {
     borderBottomColor: "#f0e6e0",
@@ -243,5 +286,24 @@ const styles = StyleSheet.create({
     color: theme.colors.brandDark,
     fontSize: 24,
     marginBottom: theme.spacing.sm,
+  },
+  warningBox: {
+    backgroundColor: "#fff3cd",
+    borderColor: "#ffeeba",
+    borderRadius: theme.radii.sm,
+    borderWidth: 1,
+    marginBottom: theme.spacing.md,
+    padding: 12,
+  },
+  warningText: {
+    color: theme.colors.text,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  warningTitle: {
+    color: theme.colors.brand,
+    fontSize: 14,
+    fontWeight: "700",
+    marginBottom: 4,
   },
 });

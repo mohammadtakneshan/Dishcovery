@@ -1,0 +1,5 @@
+# Prevent TypeScript from trying to parse these files
+.vercelignore linguist-language=Text
+.gitignore linguist-language=Text
+.dockerignore linguist-language=Text
+*.md linguist-documentation

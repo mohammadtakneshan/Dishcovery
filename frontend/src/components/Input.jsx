@@ -1,42 +1,44 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 
-const Input = ({ 
-  label, 
-  value, 
-  onChangeText, 
+const Input = ({
+  label,
+  value,
+  onChangeText,
   placeholder,
   multiline = false,
   numberOfLines = 1,
   keyboardType = 'default',
   autoCapitalize = 'sentences',
-  isDarkMode = false
-}) => {
-  return (
-    <View style={styles.container}>
-      {label && (
-        <Text style={[styles.label, isDarkMode && styles.labelDark]}>
-          {label}
-        </Text>
-      )}
-      <TextInput
-        style={[
-          styles.input,
-          isDarkMode ? styles.inputDark : styles.inputLight,
-          multiline && styles.multiline
-        ]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={isDarkMode ? '#8e8e93' : '#999999'}
-        multiline={multiline}
-        numberOfLines={numberOfLines}
-        keyboardType={keyboardType}
-        autoCapitalize={autoCapitalize}
-      />
-    </View>
-  );
-};
+  isDarkMode = false,
+  style,
+  ...rest
+}) => (
+  <View style={styles.container}>
+    {label ? (
+      <Text style={[styles.label, isDarkMode && styles.labelDark]}>
+        {label}
+      </Text>
+    ) : null}
+    <TextInput
+      style={[
+        styles.input,
+        isDarkMode ? styles.inputDark : styles.inputLight,
+        multiline && styles.multiline,
+        style,
+      ]}
+      value={value}
+      onChangeText={onChangeText}
+      placeholder={placeholder}
+      placeholderTextColor={isDarkMode ? '#8e8e93' : '#999999'}
+      multiline={multiline}
+      numberOfLines={numberOfLines}
+      keyboardType={keyboardType}
+      autoCapitalize={autoCapitalize}
+      {...rest}
+    />
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
