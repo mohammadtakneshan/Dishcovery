@@ -1,82 +1,151 @@
-// Use environment variable for API base URL
-// Falls back to localhost for development if not set
-const API_BASE = process.env.EXPO_PUBLIC_API_URL || "http://localhost:5001";
+const DEFAULT_API_BASE = sanitizeBaseUrl(
+  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001',
+);
 
-export async function generateRecipeFromImage({ uri, name, file } = {}) {
-  console.log('=== Generate Recipe Called ===');
-  console.log('Input:', { uri: uri ? 'present' : 'missing', name, file: file ? 'present' : 'missing' });
-  
+export class ApiError extends Error {
+  constructor(message, { code, hint, status, cause } = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+    this.hint = hint;
+    this.status = status;
+    this.cause = cause;
+  }
+}
+
+export async function generateRecipeFromImage({ uri, name, file } = {}, options = {}) {
   const formData = new FormData();
 
   if (file instanceof File) {
-    console.log('Using File object:', file.name, file.size, 'bytes');
-    formData.append("file", file, file.name);
-  } else if (uri && typeof uri === "string") {
-    console.log('Using URI:', uri);
-    
-    // React Native approach - append URI directly with proper structure
-    const fileName = name || "photo.jpg";
-    const fileType = fileName.endsWith('.png') ? 'image/png' : 'image/jpeg';
-    
-    formData.append("file", {
-      uri: uri,
+    formData.append('file', file, file.name);
+  } else if (uri && typeof uri === 'string') {
+    const fileName = name || inferFileNameFromUri(uri);
+    const fileType = inferMimeType(fileName);
+
+    formData.append('file', {
+      uri,
       type: fileType,
       name: fileName,
     });
-    
-    console.log('Appended file:', fileName, fileType);
   } else {
-    throw new Error("No image provided. Please select a photo.");
+    throw new ApiError('No image provided. Please select a photo.', {
+      code: 'image_missing',
+      status: 400,
+    });
+  }
+
+  const baseUrl = sanitizeBaseUrl(options.baseUrl) || DEFAULT_API_BASE;
+  if (!baseUrl) {
+    throw new ApiError('API base URL is not configured.', {
+      code: 'api_base_missing',
+    });
+  }
+
+  appendIfValue(formData, 'provider', options.provider);
+  appendIfValue(formData, 'api_key', options.apiKey);
+  appendIfValue(formData, 'model', options.model);
+
+  formData.append('client', 'frontend');
+
+  let response;
+  try {
+    const headers = {};
+    
+    // Add Vercel Protection Bypass if available
+    const bypassToken = process.env.EXPO_PUBLIC_VERCEL_BYPASS;
+    if (bypassToken) {
+      headers['x-vercel-protection-bypass'] = bypassToken;
+    }
+    
+    response = await fetch(`${baseUrl}/api/generate-recipe`, {
+      method: 'POST',
+      body: formData,
+      headers: headers,
+    });
+  } catch (networkError) {
+    throw new ApiError('Network error. Please check your connection and try again.', {
+      code: 'network_error',
+      cause: networkError,
+    });
+  }
+
+  const payload = await parseResponse(response);
+
+  if (!response.ok) {
+    const errorInfo = payload?.error || {};
+    throw new ApiError(
+      errorInfo.message || 'Server rejected the request.',
+      {
+        code: errorInfo.code || `http_${response.status}`,
+        hint: errorInfo.hint,
+        status: response.status,
+      },
+    );
+  }
+
+  if (!payload?.success) {
+    const errorInfo = payload?.error || {};
+    throw new ApiError(
+      errorInfo.message || 'Recipe generation failed.',
+      {
+        code: errorInfo.code || 'generation_failed',
+        hint: errorInfo.hint,
+        status: response.status,
+      },
+    );
+  }
+
+  return payload;
+}
+
+function appendIfValue(formData, key, value) {
+  if (value !== undefined && value !== null && String(value).trim() !== '') {
+    formData.append(key, value);
+  }
+}
+
+async function parseResponse(response) {
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    return response.json();
+  }
+
+  const text = await response.text();
+  if (!text) {
+    return null;
   }
 
   try {
-    const apiUrl = `${API_BASE}/api/generate-recipe`;
-    console.log('Calling API:', apiUrl);
-    
-    const resp = await fetch(apiUrl, {
-      method: "POST",
-      body: formData,
-    });
-
-    console.log('Response status:', resp.status);
-
-    if (!resp.ok) {
-      let errorMessage = `Server error (${resp.status})`;
-      
-      try {
-        const errorData = await resp.json();
-        console.log('Error data:', errorData);
-        errorMessage = errorData.error || errorMessage;
-      } catch {
-        const text = await resp.text().catch(() => "");
-        if (text) errorMessage = text;
-      }
-
-      // Handle specific error codes
-      if (resp.status === 400) {
-        throw new Error(errorMessage);
-      } else if (resp.status === 429) {
-        throw new Error("Too many requests. Please wait a moment and try again.");
-      } else if (resp.status >= 500) {
-        throw new Error("Server is experiencing issues. Please try again later.");
-      }
-      
-      throw new Error(errorMessage);
-    }
-
-    const data = await resp.json();
-    console.log('Recipe generated successfully');
-    
-    if (!data.success) {
-      throw new Error(data.error || "Failed to generate recipe");
-    }
-
-    return data.recipe;
+    return JSON.parse(text);
   } catch (error) {
-    console.error('API call failed:', error);
-    if (error.message) {
-      throw error;
-    }
-    throw new Error("Network error. Please check your connection and try again.");
+    return { success: false, error: { message: text } };
   }
+}
+
+function sanitizeBaseUrl(value) {
+  if (!value || typeof value !== 'string') {
+    return '';
+  }
+  return value.replace(/\/$/, '');
+}
+
+function inferFileNameFromUri(uri) {
+  try {
+    const url = new URL(uri);
+    const parts = url.pathname.split('/').filter(Boolean);
+    if (parts.length > 0) {
+      return parts[parts.length - 1];
+    }
+  } catch (error) {
+    // ignore parsing errors and fall through
+  }
+  return 'photo.jpg';
+}
+
+function inferMimeType(fileName) {
+  if (fileName.endsWith('.png')) return 'image/png';
+  if (fileName.endsWith('.webp')) return 'image/webp';
+  if (fileName.endsWith('.gif')) return 'image/gif';
+  if (fileName.endsWith('.jpeg')) return 'image/jpeg';
+  return 'image/jpeg';
 }

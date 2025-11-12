@@ -1,0 +1,20 @@
+{
+  "name": "dishcovery-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:web": "concurrently \"npm run dev:frontend:web\" \"npm run dev:backend\"",
+    "dev:tunnel": "concurrently \"npm run dev:frontend:tunnel\" \"npm run dev:backend\"",
+    "dev:frontend": "npm run start --prefix frontend",
+    "dev:frontend:web": "npm run web --prefix frontend",
+    "dev:frontend:tunnel": "npm run tunnel --prefix frontend",
+    "dev:backend": "cross-env FLASK_ENV=development python backend/app.py",
+    "lint": "npm run lint --prefix frontend",
+    "format": "npm run format --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3"
+  }
+}

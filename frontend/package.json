@@ -4,11 +4,13 @@
   "description": "Dishcovery - AI-Powered Recipe Discovery PWA",
   "main": "expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
+  "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+  "tunnel": "expo start --tunnel",
     "build-pwa": "expo export --platform web",
+    "vercel-build": "expo export --platform web",
     "deploy": "vercel --prod",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings 0 || echo 'ESLint not configured'",
     "test": "echo 'No tests configured yet' && exit 0",
@@ -30,7 +32,8 @@
     "react-native": "0.81.5",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
-    "react-native-web": "^0.21.0"
+  "react-native-web": "^0.21.0",
+  "@react-native-async-storage/async-storage": "2.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.5",

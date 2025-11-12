@@ -2,27 +2,42 @@ import React, { useState } from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import UploadScreen from "./src/screens/UploadScreen";
 import RecipeScreen from "./src/screens/RecipeScreen";
+import { SettingsProvider } from "./src/context/SettingsContext";
 
-export default function App() {
-  const [recipe, setRecipe] = useState(null);
+function RootApp() {
+  const [recipeResult, setRecipeResult] = useState(null);
 
-  const handleRecipe = (r) => {
-    setRecipe(r);
+  const handleRecipe = (result) => {
+    setRecipeResult(result);
   };
 
   const handleBack = () => {
-    setRecipe(null);
+    setRecipeResult(null);
   };
+
+  const recipePayload = recipeResult?.recipe ?? recipeResult;
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
-      {recipe ? (
-        <RecipeScreen recipe={recipe} onBack={handleBack} />
+      {recipeResult ? (
+        <RecipeScreen
+          data={recipeResult}
+          recipe={recipePayload}
+          onBack={handleBack}
+        />
       ) : (
         <UploadScreen onRecipe={handleRecipe} />
       )}
     </SafeAreaView>
+  );
+}
+
+export default function App() {
+  return (
+    <SettingsProvider>
+      <RootApp />
+    </SettingsProvider>
   );
 }
 

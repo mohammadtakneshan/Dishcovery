@@ -6,14 +6,25 @@ __pycache__/
 *.pyd
 .Python
 
-# Environment variables
+# Environment variables - CRITICAL SECURITY
 .env
-.env.local
-.env.*.local
+.env.*
 *.env
-
-# Production env is committed
+!.env.example
 !.env.production
+backend/.env
+frontend/.env
+
+# API Keys and Secrets - NEVER COMMIT
+**/secrets/
+**/secrets.json
+**/*secret*
+**/*key*
+**/*token*
+*.pem
+*.key
+*.cert
+.env.vercel
 
 # IDEs and editors
 .vscode/
@@ -30,6 +41,7 @@ build/
 .expo/
 .expo-shared/
 web-build/
+frontend/dist/
 
 # Test coverage
 .coverage
@@ -50,6 +62,7 @@ Thumbs.db
 
 # Vercel
 .vercel
+.env.vercel
 
 # Python virtual environments
 venv/
@@ -60,9 +73,20 @@ ENV/
 # Temporary files
 *.tmp
 *.temp
+*.bak
+*.backup
 .cache/
 
 # Scripts (temporary deployment helpers)
 deploy-setup.bat
 deploy-setup.sh
 start-tunnel.bat
+
+# Database (if added later)
+*.db
+*.sqlite
+*.sqlite3
+
+# Sensitive documentation (cleanup artifacts)
+TODO_PRIVATE.md
+NOTES_PRIVATE.md

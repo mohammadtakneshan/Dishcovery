@@ -1,11 +1,14 @@
-import pytest
 import io
+import pytest
 from PIL import Image
+
 from app import create_app
+from config import Config
 
 @pytest.fixture
 def client():
     """Create a test client for the Flask app."""
+    Config.GEMINI_API_KEY = Config.GEMINI_API_KEY or 'test-key'
     app = create_app()
     app.config['TESTING'] = True
     with app.test_client() as client:
@@ -24,8 +27,8 @@ def test_generate_recipe_no_file(client):
     response = client.post('/api/generate-recipe')
     assert response.status_code == 400
     data = response.get_json()
-    assert 'error' in data
-    assert 'No image file provided' in data['error']
+    assert data['success'] is False
+    assert data['error']['code'] == 'missing_file'
 
 def test_generate_recipe_empty_filename(client):
     """Test generate-recipe endpoint with empty filename."""
@@ -33,7 +36,8 @@ def test_generate_recipe_empty_filename(client):
                           data={'file': (io.BytesIO(b''), '')})
     assert response.status_code == 400
     data = response.get_json()
-    assert 'error' in data
+    # Empty filename is treated as missing file
+    assert data['error']['code'] == 'missing_file'
 
 def test_generate_recipe_invalid_extension(client):
     """Test generate-recipe endpoint with invalid file extension."""
@@ -41,8 +45,7 @@ def test_generate_recipe_invalid_extension(client):
                           data={'file': (io.BytesIO(b'test'), 'test.txt')})
     assert response.status_code == 400
     data = response.get_json()
-    assert 'error' in data
-    assert 'Invalid file type' in data['error']
+    assert data['error']['code'] == 'unsupported_file_type'
 
 def test_generate_recipe_valid_image_structure(client):
     """Test generate-recipe endpoint with valid image returns proper structure."""
@@ -57,9 +60,13 @@ def test_generate_recipe_valid_image_structure(client):
     data = response.get_json()
     
     if response.status_code == 200:
-        assert 'success' in data
+        assert data['success'] is True
         assert 'recipe' in data
-        assert 'source' in data
+        assert 'meta' in data
+        assert data['meta']['provider'] == Config.DEFAULT_PROVIDER
+    else:
+        assert data['success'] is False
+        assert 'error' in data
 
 def test_generate_recipe_with_options(client):
     """Test generate-recipe endpoint with language and dietary options."""
@@ -83,5 +90,4 @@ def test_generate_recipe_corrupted_image(client):
                           content_type='multipart/form-data')
     assert response.status_code == 400
     data = response.get_json()
-    assert 'error' in data
-    assert 'Invalid or corrupted image' in data['error']
+    assert data['error']['code'] == 'invalid_image'

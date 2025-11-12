@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -6,14 +6,27 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import ImageUpload from "../components/ImageUpload";
-import { generateRecipeFromImage } from "../api/index";
+import { ErrorBanner, ImageUpload, SettingsPanel } from "../components";
+import { ApiError, generateRecipeFromImage } from "../api/index";
 import theme from "../theme";
+import { useSettings } from "../context/SettingsContext";
+import { SettingsValidationError } from "../context/SettingsContext";
 
 export default function UploadScreen({ onRecipe }) {
   const [imagePayload, setImagePayload] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+
+  const { settings, isReady, validate } = useSettings();
+
+  useEffect(() => {
+    if (!isReady) {
+      setShowSettings(true);
+    }
+  }, [isReady]);
+
+  const validationState = useMemo(() => validate(settings), [settings, validate]);
 
   const handleImageSelected = (payload) => {
     setImagePayload(payload);
@@ -29,13 +42,59 @@ export default function UploadScreen({ onRecipe }) {
       setLoading(true);
       setError(null);
 
+      if (!imagePayload) {
+        setError({
+          code: "image_required",
+          message: "Please select an image first.",
+        });
+        return;
+      }
+
+      if (Object.keys(validationState.errors).length > 0) {
+        setError({
+          code: "settings_incomplete",
+          message: "Complete the provider settings before generating recipes.",
+          hint:
+            validationState.errors.apiKey ||
+            validationState.errors.apiBaseUrl ||
+            validationState.errors.provider,
+        });
+        setShowSettings(true);
+        return;
+      }
+
       const resp = await generateRecipeFromImage(
-        imagePayload.file ? imagePayload : imagePayload
+        imagePayload.file ? imagePayload : imagePayload,
+        {
+          provider: settings.provider,
+          apiKey: settings.apiKey,
+          baseUrl: settings.apiBaseUrl,
+          model: settings.model,
+        },
       );
       onRecipe && onRecipe(resp);
     } catch (err) {
-      console.error(err);
-      setError(err.message || "Failed to generate recipe.");
+      if (err instanceof SettingsValidationError) {
+        setError({
+          code: "settings_invalid",
+          message: "Provider settings are invalid. Update and try again.",
+          hint:
+            err.errors.apiKey || err.errors.apiBaseUrl || err.errors.provider,
+        });
+        setShowSettings(true);
+      } else if (err instanceof ApiError) {
+        setError({
+          code: err.code,
+          message: err.message,
+          hint: err.hint,
+        });
+      } else {
+        setError(
+          typeof err === "object"
+            ? err
+            : { code: "unexpected_error", message: err?.message ?? String(err) }
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -51,8 +110,29 @@ export default function UploadScreen({ onRecipe }) {
       </View>
 
       <View style={styles.card}>
+        <View style={styles.settingsRow}>
+          <TouchableOpacity
+            onPress={() => setShowSettings((prev) => !prev)}
+            style={styles.settingsToggle}
+            accessibilityRole="button"
+          >
+            <Text style={styles.settingsToggleText}>
+              {showSettings ? "Hide" : "Show"} connection settings
+            </Text>
+          </TouchableOpacity>
+          {!isReady ? (
+            <Text style={styles.settingsWarning}>
+              Configure your API key to enable recipe generation.
+            </Text>
+          ) : null}
+        </View>
+
+        {showSettings ? (
+          <SettingsPanel onClose={() => setShowSettings(false)} />
+        ) : null}
+
         <ImageUpload onImageSelected={handleImageSelected} />
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        <ErrorBanner error={error} onDismiss={() => setError(null)} />
 
         <TouchableOpacity
           onPress={handleGenerate}
@@ -95,10 +175,6 @@ const styles = StyleSheet.create({
     maxWidth: 760,
     width: "100%",
   },
-  error: {
-    color: theme.colors.danger,
-    marginTop: theme.spacing.sm,
-  },
   header: {
     alignItems: "center",
     marginBottom: theme.spacing.md,
@@ -107,6 +183,26 @@ const styles = StyleSheet.create({
     color: theme.colors.muted,
     fontSize: 13,
     marginTop: theme.spacing.lg,
+  },
+  settingsRow: {
+    alignItems: "center",
+    marginBottom: theme.spacing.md,
+    width: "100%",
+  },
+  settingsToggle: {
+    alignSelf: "flex-start",
+    marginBottom: theme.spacing.xs,
+  },
+  settingsToggleText: {
+    color: theme.colors.brand,
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  settingsWarning: {
+    color: theme.colors.danger,
+    fontSize: 12,
+    textAlign: "left",
+    width: "100%",
   },
   root: {
     alignItems: "center",
