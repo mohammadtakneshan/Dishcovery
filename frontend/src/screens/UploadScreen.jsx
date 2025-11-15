@@ -11,8 +11,10 @@ import { ApiError, generateRecipeFromImage } from "../api/index";
 import theme from "../theme";
 import { useSettings } from "../context/SettingsContext";
 import { SettingsValidationError } from "../context/SettingsContext";
+import { useTranslation } from 'react-i18next';
 
 export default function UploadScreen({ onRecipe }) {
+  const { t } = useTranslation();
   const [imagePayload, setImagePayload] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -35,7 +37,7 @@ export default function UploadScreen({ onRecipe }) {
 
   const handleGenerate = async () => {
     if (!imagePayload) {
-      setError("Please select an image first.");
+      setError(t('errors.noImage'));
       return;
     }
     try {
@@ -45,7 +47,7 @@ export default function UploadScreen({ onRecipe }) {
       if (Object.keys(validationState.errors).length > 0) {
         setError({
           code: "settings_incomplete",
-          message: "Complete the provider settings before generating recipes.",
+          message: t('errors.settingsIncomplete'),
           hint:
             validationState.errors.apiKey ||
             validationState.errors.apiBaseUrl ||
@@ -69,7 +71,7 @@ export default function UploadScreen({ onRecipe }) {
       if (err instanceof SettingsValidationError) {
         setError({
           code: "settings_invalid",
-          message: "Provider settings are invalid. Update and try again.",
+          message: t('errors.settingsInvalid'),
           hint:
             err.errors.apiKey || err.errors.apiBaseUrl || err.errors.provider,
         });
@@ -95,9 +97,9 @@ export default function UploadScreen({ onRecipe }) {
   return (
     <View style={styles.root}>
       <View style={styles.header}>
-        <Text style={styles.title}>Dishcovery</Text>
+        <Text style={styles.title}>{t('app.name')}</Text>
         <Text style={styles.subtitle}>
-          Upload a food photo to get a recipe!
+          {t('home.subtitle')}
         </Text>
       </View>
 
@@ -109,12 +111,12 @@ export default function UploadScreen({ onRecipe }) {
             accessibilityRole="button"
           >
             <Text style={styles.settingsToggleText}>
-              {showSettings ? "Hide" : "Show"} connection settings
+              {showSettings ? t('settings.hide') : t('settings.show')} {t('settings.connectionSettings')}
             </Text>
           </TouchableOpacity>
           {!isReady ? (
             <Text style={styles.settingsWarning}>
-              Configure your API key to enable recipe generation.
+              {t('settings.configureApiKey')}
             </Text>
           ) : null}
         </View>
@@ -130,18 +132,18 @@ export default function UploadScreen({ onRecipe }) {
           onPress={handleGenerate}
           style={[styles.button, loading && styles.buttonDisabled]}
           disabled={loading}
-          accessibilityLabel="Generate Recipe"
+          accessibilityLabel={t('actions.generate')}
         >
           {loading ? (
             <ActivityIndicator color={theme.colors.surface} />
           ) : (
-            <Text style={styles.buttonText}>Generate Recipe</Text>
+            <Text style={styles.buttonText}>{t('actions.generate')}</Text>
           )}
         </TouchableOpacity>
       </View>
 
       <Text style={styles.hint}>
-        Tip: Use clear photos of a single dish for best results.
+        {t('upload.hint')}
       </Text>
     </View>
   );

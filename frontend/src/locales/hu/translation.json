@@ -30,7 +30,25 @@
     "ingredients": "Hozzávalók",
     "instructions": "Utasítások",
     "nutrition": "Táplálkozási érték",
-    "tips": "Tippek és variációk"
+    "tips": "Tippek és variációk",
+    "noRecipe": "Nincs megjelenítendő recept.",
+    "generatedRecipe": "Generált recept",
+    "provider": "Szolgáltató",
+    "model": "Modell",
+    "language": "Nyelv",
+    "headsUp": "Figyelem",
+    "prep": "Előkészítés",
+    "cook": "Főzés",
+    "servingsLabel": "Adagok",
+    "noIngredients": "Nem tértek vissza hozzávalók.",
+    "noSteps": "Nem tértek vissza lépések.",
+    "nutritionPerServing": "Táplálkozási érték (adagonként)",
+    "calories": "Kaloriák",
+    "protein": "Fehérje",
+    "fat": "Zsír",
+    "carbs": "Szénhidrát",
+    "tipsServing": "Tippek és tálalás",
+    "backToUpload": "Vissza a feltöltéshez"
   },
   "actions": {
     "generate": "Recept generálása",
@@ -43,6 +61,19 @@
     "language": "Nyelv",
     "theme": "Téma",
     "darkMode": "Sötét mód",
-    "lightMode": "Világos mód"
+    "lightMode": "Világos mód",
+    "show": "Megjelenítés",
+    "hide": "Elrejtés",
+    "connectionSettings": "kapcsolati beállítások",
+    "configureApiKey": "Állítsd be az API kulcsodat a recept generálás engedélyezéséhez."
+  },
+  "upload": {
+    "hint": "Tipp: Használj tiszta képeket egyetlen ételről a legjobb eredményekhez."
+  },
+  "errors": {
+    "noImage": "Kérlek, először válassz egy képet.",
+    "settingsIncomplete": "Töltsd ki a szolgáltató beállításait a recept generálás előtt.",
+    "settingsInvalid": "A szolgáltató beállításai érvénytelenek. Frissítsd és próbáld újra.",
+    "unexpected": "Váratlan hiba történt. Kérlek, próbáld újra."
   }
 }

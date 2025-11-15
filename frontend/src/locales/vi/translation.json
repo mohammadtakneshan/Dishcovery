@@ -30,7 +30,25 @@
     "ingredients": "Nguyên liệu",
     "instructions": "Hướng dẫn",
     "nutrition": "Dinh dưỡng",
-    "tips": "Mẹo và biến tấu"
+    "tips": "Mẹo và biến tấu",
+    "noRecipe": "Không có công thức để hiển thị.",
+    "generatedRecipe": "Công thức đã tạo",
+    "provider": "Nhà cung cấp",
+    "model": "Mô hình",
+    "language": "Ngôn ngữ",
+    "headsUp": "Lưu ý",
+    "prep": "Chuẩn bị",
+    "cook": "Nấu",
+    "servingsLabel": "Khẩu phần",
+    "noIngredients": "Không có nguyên liệu trả về.",
+    "noSteps": "Không có bước trả về.",
+    "nutritionPerServing": "Dinh dưỡng (mỗi khẩu phần)",
+    "calories": "Calories",
+    "protein": "Protein",
+    "fat": "Chất béo",
+    "carbs": "Carbs",
+    "tipsServing": "Mẹo và bày biến",
+    "backToUpload": "Quay lại tải lên"
   },
   "actions": {
     "generate": "Tạo công thức",
@@ -43,6 +61,19 @@
     "language": "Ngôn ngữ",
     "theme": "Giao diện",
     "darkMode": "Chế độ tối",
-    "lightMode": "Chế độ sáng"
+    "lightMode": "Chế độ sáng",
+    "show": "Hiển thị",
+    "hide": "Ẩn",
+    "connectionSettings": "cài đặt kết nối",
+    "configureApiKey": "Cấu hình khóa API của bạn để kích hoạt tạo công thức."
+  },
+  "upload": {
+    "hint": "Mẹo: Sử dụng ảnh rõ ràng của một món ăn để có kết quả tốt nhất."
+  },
+  "errors": {
+    "noImage": "Vui lòng chọn một hình ảnh trước.",
+    "settingsIncomplete": "Hoàn thành cài đặt nhà cung cấp trước khi tạo công thức.",
+    "settingsInvalid": "Cài đặt nhà cung cấp không hợp lệ. Cập nhật và thử lại.",
+    "unexpected": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại."
   }
 }

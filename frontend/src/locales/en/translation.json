@@ -30,7 +30,25 @@
     "ingredients": "Ingredients",
     "instructions": "Instructions",
     "nutrition": "Nutrition",
-    "tips": "Tips & Variations"
+    "tips": "Tips & Variations",
+    "noRecipe": "No recipe to show.",
+    "generatedRecipe": "Generated Recipe",
+    "provider": "Provider",
+    "model": "Model",
+    "language": "Language",
+    "headsUp": "Heads up",
+    "prep": "Prep",
+    "cook": "Cook",
+    "servingsLabel": "Servings",
+    "noIngredients": "No ingredients returned.",
+    "noSteps": "No steps returned.",
+    "nutritionPerServing": "Nutrition (per serving)",
+    "calories": "Calories",
+    "protein": "Protein",
+    "fat": "Fat",
+    "carbs": "Carbs",
+    "tipsServing": "Tips & Serving",
+    "backToUpload": "Back to Upload"
   },
   "actions": {
     "generate": "Generate Recipe",
@@ -43,6 +61,19 @@
     "language": "Language",
     "theme": "Theme",
     "darkMode": "Dark Mode",
-    "lightMode": "Light Mode"
+    "lightMode": "Light Mode",
+    "show": "Show",
+    "hide": "Hide",
+    "connectionSettings": "connection settings",
+    "configureApiKey": "Configure your API key to enable recipe generation."
+  },
+  "upload": {
+    "hint": "Tip: Use clear photos of a single dish for best results."
+  },
+  "errors": {
+    "noImage": "Please select an image first.",
+    "settingsIncomplete": "Complete the provider settings before generating recipes.",
+    "settingsInvalid": "Provider settings are invalid. Update and try again.",
+    "unexpected": "An unexpected error occurred. Please try again."
   }
 }

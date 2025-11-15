@@ -3,6 +3,7 @@ import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import UploadScreen from "./src/screens/UploadScreen";
 import RecipeScreen from "./src/screens/RecipeScreen";
 import { SettingsProvider } from "./src/context/SettingsContext";
+import './src/config/i18n';
 
 function RootApp() {
   const [recipeResult, setRecipeResult] = useState(null);

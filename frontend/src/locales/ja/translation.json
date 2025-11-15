@@ -30,7 +30,25 @@
     "ingredients": "材料",
     "instructions": "作り方",
     "nutrition": "栄養情報",
-    "tips": "ヒントとバリエーション"
+    "tips": "ヒントとバリエーション",
+    "noRecipe": "表示するレシピがありません。",
+    "generatedRecipe": "生成されたレシピ",
+    "provider": "プロバイダー",
+    "model": "モデル",
+    "language": "言語",
+    "headsUp": "注意",
+    "prep": "準備",
+    "cook": "調理",
+    "servingsLabel": "人分",
+    "noIngredients": "材料が返されませんでした。",
+    "noSteps": "手順が返されませんでした。",
+    "nutritionPerServing": "栄養情報 (一人分)",
+    "calories": "カロリー",
+    "protein": "タンパク質",
+    "fat": "脂質",
+    "carbs": "炭水化物",
+    "tipsServing": "ヒントと盛り付け",
+    "backToUpload": "アップロードに戻る"
   },
   "actions": {
     "generate": "レシピを生成",
@@ -43,6 +61,19 @@
     "language": "言語",
     "theme": "テーマ",
     "darkMode": "ダークモード",
-    "lightMode": "ライトモード"
+    "lightMode": "ライトモード",
+    "show": "表示",
+    "hide": "非表示",
+    "connectionSettings": "接続設定",
+    "configureApiKey": "レシピ生成を有効にするには、APIキーを設定してください。"
+  },
+  "upload": {
+    "hint": "ヒント: 最良の結果を得るには、1つの料理の鮮明な写真を使用してください。"
+  },
+  "errors": {
+    "noImage": "最初に画像を選択してください。",
+    "settingsIncomplete": "レシピを生成する前に、プロバイダー設定を完了してください。",
+    "settingsInvalid": "プロバイダー設定が無効です。更新して再試行してください。",
+    "unexpected": "予期しないエラーが発生しました。もう一度お試しください。"
   }
 }
