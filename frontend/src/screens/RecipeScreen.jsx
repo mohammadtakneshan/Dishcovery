@@ -1,4 +1,3 @@
-import React, { use } from "react";
 import {
   View,
   Text,
