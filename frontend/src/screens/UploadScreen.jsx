@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import { ErrorBanner, ImageUpload, SettingsPanel } from "../components";
+import { ErrorBanner, ImageUpload, SettingsPanel, LanguageDropdown } from "../components";
 import { ApiError, generateRecipeFromImage } from "../api/index";
 import theme from "../theme";
 import { useSettings } from "../context/SettingsContext";
@@ -104,21 +104,24 @@ export default function UploadScreen({ onRecipe }) {
       </View>
 
       <View style={styles.card}>
-        <View style={styles.settingsRow}>
-          <TouchableOpacity
-            onPress={() => setShowSettings((prev) => !prev)}
-            style={styles.settingsToggle}
-            accessibilityRole="button"
-          >
-            <Text style={styles.settingsToggleText}>
-              {showSettings ? t('settings.hide') : t('settings.show')} {t('settings.connectionSettings')}
-            </Text>
-          </TouchableOpacity>
-          {!isReady ? (
-            <Text style={styles.settingsWarning}>
-              {t('settings.configureApiKey')}
-            </Text>
-          ) : null}
+        <View style={styles.cardHeader}>
+          <View style={styles.settingsColumn}>
+            <TouchableOpacity
+              onPress={() => setShowSettings((prev) => !prev)}
+              style={styles.settingsToggle}
+              accessibilityRole="button"
+            >
+              <Text style={styles.settingsToggleText}>
+                {showSettings ? t('settings.hide') : t('settings.show')} {t('settings.connectionSettings')}
+              </Text>
+            </TouchableOpacity>
+            {!isReady ? (
+              <Text style={styles.settingsWarning}>
+                {t('settings.configureApiKey')}
+              </Text>
+            ) : null}
+          </View>
+          <LanguageDropdown />
         </View>
 
         {showSettings ? (
@@ -178,13 +181,18 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: theme.spacing.lg,
   },
-  settingsRow: {
-    alignItems: "center",
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: theme.spacing.md,
     width: "100%",
   },
+  settingsColumn: {
+    flex: 1,
+    marginRight: theme.spacing.sm,
+  },
   settingsToggle: {
-    alignSelf: "flex-start",
     marginBottom: theme.spacing.xs,
   },
   settingsToggleText: {

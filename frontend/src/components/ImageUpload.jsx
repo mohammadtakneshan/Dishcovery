@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Platform,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import theme from "../theme";
 
 /**
@@ -17,6 +18,7 @@ import theme from "../theme";
  * onImageSelected receives: { uri, name, type, file }
  */
 export default function ImageUpload({ onImageSelected }) {
+  const { t } = useTranslation();
   const [preview, setPreview] = useState(null);
 
   if (Platform.OS === "web") {
@@ -39,7 +41,7 @@ export default function ImageUpload({ onImageSelected }) {
           style={webStyles.hiddenInput}
         />
         <label htmlFor="dishcovery-file-input" style={webStyles.label}>
-          <Text style={styles.buttonText}>Choose photo</Text>
+          <Text style={styles.buttonText}>{t('upload.choosePhoto')}</Text>
         </label>
 
         {preview ? (
@@ -47,7 +49,7 @@ export default function ImageUpload({ onImageSelected }) {
         ) : (
           <View style={styles.placeholder}>
             <Text style={styles.placeholderText}>
-              Select an image to preview
+              {t('upload.selectImagePreview')}
             </Text>
           </View>
         )}
@@ -101,14 +103,14 @@ export default function ImageUpload({ onImageSelected }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={pickImage} style={styles.button}>
-        <Text style={styles.buttonText}>Pick photo (native)</Text>
+        <Text style={styles.buttonText}>{t('upload.pickPhoto')}</Text>
       </TouchableOpacity>
 
       {preview ? (
         <Image source={{ uri: preview }} style={styles.preview} />
       ) : (
         <View style={styles.placeholder}>
-          <Text style={styles.placeholderText}>Select an image to preview</Text>
+          <Text style={styles.placeholderText}>{t('upload.selectImagePreview')}</Text>
         </View>
       )}
     </View>

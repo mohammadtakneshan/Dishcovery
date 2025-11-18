@@ -5,3 +5,4 @@ export { default as Card } from './Card';
 export { default as ErrorBanner } from './ErrorBanner';
 export { default as SettingsPanel } from './SettingsPanel';
 export { default as ImageUpload } from './ImageUpload';
+export { default as LanguageDropdown } from './LanguageDropdown';
