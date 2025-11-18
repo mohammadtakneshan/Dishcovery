@@ -68,7 +68,10 @@
     "configureApiKey": "Configure your API key to enable recipe generation."
   },
   "upload": {
-    "hint": "Tip: Use clear photos of a single dish for best results."
+    "hint": "Tip: Use clear photos of a single dish for best results.",
+    "choosePhoto": "Choose photo",
+    "pickPhoto": "Pick photo",
+    "selectImagePreview": "Select an image to preview"
   },
   "errors": {
     "noImage": "Please select an image first.",

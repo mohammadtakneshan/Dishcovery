@@ -68,7 +68,10 @@
     "configureApiKey": "Állítsd be az API kulcsodat a recept generálás engedélyezéséhez."
   },
   "upload": {
-    "hint": "Tipp: Használj tiszta képeket egyetlen ételről a legjobb eredményekhez."
+    "hint": "Tipp: Használj tiszta képeket egyetlen ételről a legjobb eredményekhez.",
+    "choosePhoto": "Fénykép választása",
+    "pickPhoto": "Fénykép kiválasztása",
+    "selectImagePreview": "Válassz egy képet az előnézethez"
   },
   "errors": {
     "noImage": "Kérlek, először válassz egy képet.",
