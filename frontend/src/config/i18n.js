@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
-import HttpBackend from 'i18next-http-backend';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Localization from 'expo-localization';
 
 import en from '../locales/en/translation.json';
 import hu from '../locales/hu/translation.json';
@@ -19,20 +19,48 @@ const resources = {
   vi: { translation: vi },
 };
 
+// Language detector plugin for React Native/Expo
+const languageDetector = {
+  type: 'languageDetector',
+  async: true,
+  detect: async (callback) => {
+    try {
+      // Try to get the language from AsyncStorage
+      const language = await AsyncStorage.getItem('user-language');
+      if (language) {
+        return callback(language);
+      }
+      // Fall back to device locale
+      const deviceLocale = Localization.getLocales()[0]?.languageCode || 'en';
+      return callback(deviceLocale);
+    } catch (error) {
+      console.error('Error detecting language:', error);
+      return callback('en');
+    }
+  },
+  init: () => {},
+  cacheUserLanguage: async (language) => {
+    try {
+      await AsyncStorage.setItem('user-language', language);
+    } catch (error) {
+      console.error('Error caching language:', error);
+    }
+  },
+};
+
 i18n
-  .use(HttpBackend)
-  .use(LanguageDetector)
+  .use(languageDetector)
   .use(initReactI18next)
   .init({
     resources,
     fallbackLng: 'en',
+    compatibilityJSON: 'v3',
     debug: false,
     interpolation: {
       escapeValue: false,
     },
-    detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage'],
+    react: {
+      useSuspense: false,
     },
   });
 
