@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Input from './Input';
 import theme from '../theme';
 import {
@@ -16,6 +17,7 @@ import {
 const STATUS_TIMEOUT_MS = 3500;
 
 export default function SettingsPanel({ onClose }) {
+  const { t } = useTranslation();
   const {
     settings,
     providers,
@@ -62,7 +64,7 @@ export default function SettingsPanel({ onClose }) {
     setStatus(null);
     try {
       await saveSettings(form);
-      setStatus({ type: 'success', message: 'Settings saved.' });
+      setStatus({ type: 'success', message: t('settingsPanel.saved') });
       if (onClose) {
         onClose();
       }
@@ -70,12 +72,12 @@ export default function SettingsPanel({ onClose }) {
       if (error instanceof SettingsValidationError) {
         setStatus({
           type: 'error',
-          message: 'Please fix the highlighted fields before saving.',
+          message: t('settingsPanel.fixFieldsError'),
         });
       } else {
         setStatus({
           type: 'error',
-          message: 'Could not save settings. Check your connection and try again.',
+          message: t('settingsPanel.saveError'),
         });
       }
     } finally {
@@ -89,11 +91,11 @@ export default function SettingsPanel({ onClose }) {
     try {
       const defaults = await resetSettings();
       setForm(defaults);
-      setStatus({ type: 'info', message: 'Settings reverted to defaults.' });
+      setStatus({ type: 'info', message: t('settingsPanel.resetSuccess') });
     } catch (error) {
       setStatus({
         type: 'error',
-        message: 'Unable to reset settings. Try again.',
+        message: t('settingsPanel.resetError'),
       });
     } finally {
       setSaving(false);
@@ -119,32 +121,32 @@ export default function SettingsPanel({ onClose }) {
   return (
     <View style={styles.wrapper}>
       <View style={styles.headerRow}>
-        <Text style={styles.heading}>Connection & Provider</Text>
+        <Text style={styles.heading}>{t('settingsPanel.title')}</Text>
         {onClose ? (
           <TouchableOpacity
             onPress={onClose}
             accessibilityRole="button"
             style={styles.closeButton}
           >
-            <Text style={styles.closeText}>Close</Text>
+            <Text style={styles.closeText}>{t('settingsPanel.close')}</Text>
           </TouchableOpacity>
         ) : null}
       </View>
 
       <Text style={styles.description}>
-        Configure where the app sends requests and which AI provider to use.
+        {t('settingsPanel.description')}
       </Text>
 
       {loading ? (
         <View style={styles.loadingRow}>
           <ActivityIndicator color={theme.colors.brand} size="small" />
-          <Text style={styles.loadingText}>Loading saved settings…</Text>
+          <Text style={styles.loadingText}>{t('settingsPanel.loading')}</Text>
         </View>
       ) : null}
 
       {renderStatus()}
 
-      <Text style={styles.label}>Provider</Text>
+      <Text style={styles.label}>{t('settingsPanel.provider')}</Text>
       <View style={styles.providerRow}>
         {providers.map((provider) => {
           const isActive = provider.id === form.provider;
@@ -170,12 +172,12 @@ export default function SettingsPanel({ onClose }) {
 
       <View style={styles.hintCard}>
         <Text style={styles.hintTitle}>{currentProvider.label}</Text>
-        <Text style={styles.hintCopy}>{currentProvider.description}</Text>
-        <Text style={styles.hintFootnote}>{currentProvider.keyHint}</Text>
+        <Text style={styles.hintCopy}>{t(currentProvider.description)}</Text>
+        <Text style={styles.hintFootnote}>{t(currentProvider.keyHint)}</Text>
       </View>
 
       <Input
-        label="Backend URL"
+label={t('settingsPanel.backendUrl')}
         value={form.apiBaseUrl}
         onChangeText={(value) => setForm((prev) => ({ ...prev, apiBaseUrl: value }))}
         placeholder="http://localhost:5001"
@@ -187,10 +189,10 @@ export default function SettingsPanel({ onClose }) {
       ) : null}
 
       <Input
-        label="API Key"
+        label={t('settingsPanel.apiKey')}
         value={form.apiKey}
         onChangeText={(value) => setForm((prev) => ({ ...prev, apiKey: value }))}
-        placeholder="Paste your API key"
+        placeholder={t('settingsPanel.apiKeyPlaceholder')}
         autoCapitalize="none"
         autoCorrect={false}
         secureTextEntry
@@ -201,7 +203,7 @@ export default function SettingsPanel({ onClose }) {
       ) : null}
 
       <Input
-        label="Model (optional)"
+        label={t('settingsPanel.model')}
         value={form.model || ''}
         onChangeText={(value) => setForm((prev) => ({ ...prev, model: value }))}
         placeholder={currentProvider.defaultModel}
@@ -219,7 +221,7 @@ export default function SettingsPanel({ onClose }) {
           {saving ? (
             <ActivityIndicator color={theme.colors.surface} />
           ) : (
-            <Text style={styles.primaryButtonText}>Save</Text>
+            <Text style={styles.primaryButtonText}>{t('settingsPanel.save')}</Text>
           )}
         </TouchableOpacity>
         <TouchableOpacity
@@ -228,13 +230,13 @@ export default function SettingsPanel({ onClose }) {
           disabled={saving}
           accessibilityRole="button"
         >
-          <Text style={styles.secondaryButtonText}>Reset</Text>
+          <Text style={styles.secondaryButtonText}>{t('settingsPanel.reset')}</Text>
         </TouchableOpacity>
       </View>
 
       {lastSavedAt ? (
         <Text style={styles.savedText}>
-          Last saved {new Date(lastSavedAt).toLocaleString()}
+          {t('settingsPanel.lastSaved')} {new Date(lastSavedAt).toLocaleString()}
         </Text>
       ) : null}
     </View>

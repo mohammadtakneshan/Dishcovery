@@ -78,5 +78,38 @@
     "settingsIncomplete": "Complete the provider settings before generating recipes.",
     "settingsInvalid": "Provider settings are invalid. Update and try again.",
     "unexpected": "An unexpected error occurred. Please try again."
+  },
+  "settingsPanel": {
+    "title": "Connection & Provider",
+    "description": "Configure where the app sends requests and which AI provider to use.",
+    "close": "Close",
+    "loading": "Loading saved settings…",
+    "provider": "Provider",
+    "backendUrl": "Backend URL",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "Paste your API key",
+    "model": "Model (optional)",
+    "save": "Save",
+    "reset": "Reset",
+    "lastSaved": "Last saved",
+    "saved": "Settings saved.",
+    "fixFieldsError": "Please fix the highlighted fields before saving.",
+    "saveError": "Could not save settings. Check your connection and try again.",
+    "resetSuccess": "Settings reverted to defaults.",
+    "resetError": "Unable to reset settings. Try again."
+},
+  "providers": {
+    "gemini": {
+      "description": "Gemini Vision via Google AI Studio",
+      "keyHint": "Keys start with \"AI\" and are generated in Google AI Studio."
+    },
+    "openai": {
+      "description": "Vision-enabled GPT models from OpenAI",
+      "keyHint": "Keys begin with \"sk-\" or \"sk-proj-\" and are managed in the OpenAI dashboard."
+    },
+    "anthropic": {
+      "description": "Claude 3 vision models",
+      "keyHint": "Keys start with \"sk-ant-\" and are available in the Anthropic console."
+    }
   }
 }

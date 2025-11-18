@@ -44,6 +44,7 @@ export async function generateRecipeFromImage({ uri, name, file } = {}, options 
   appendIfValue(formData, 'provider', options.provider);
   appendIfValue(formData, 'api_key', options.apiKey);
   appendIfValue(formData, 'model', options.model);
+  appendIfValue(formData, 'language', options.language);
 
   formData.append('client', 'frontend');
 

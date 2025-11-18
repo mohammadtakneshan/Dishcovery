@@ -14,7 +14,7 @@ import { SettingsValidationError } from "../context/SettingsContext";
 import { useTranslation } from 'react-i18next';
 
 export default function UploadScreen({ onRecipe }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [imagePayload, setImagePayload] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -64,6 +64,7 @@ export default function UploadScreen({ onRecipe }) {
           apiKey: settings.apiKey,
           baseUrl: settings.apiBaseUrl,
           model: settings.model,
+          language: i18n.language,
         },
       );
       onRecipe && onRecipe(resp);
