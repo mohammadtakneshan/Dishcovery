@@ -171,9 +171,9 @@ export default function SettingsPanel({ onClose }) {
       ) : null}
 
       <View style={styles.hintCard}>
-        <Text style={styles.hintTitle}>{currentProvider.label}</Text>
-        <Text style={styles.hintCopy}>{t(currentProvider.description)}</Text>
-        <Text style={styles.hintFootnote}>{t(currentProvider.keyHint)}</Text>
+     <Text style={styles.hintTitle}>{currentProvider.label}</Text> 
+     <Text style={styles.hintCopy}> {t(`providers.${currentProvider.id}.description`, { defaultValue: currentProvider.description })} </Text>
+      <Text style={styles.hintFootnote}> {t(`providers.${currentProvider.id}.keyHint`, { defaultValue: currentProvider.keyHint })} </Text>
       </View>
 
       <Input
