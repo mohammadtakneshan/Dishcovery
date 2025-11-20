@@ -78,5 +78,38 @@
     "settingsIncomplete": "Hoàn thành cài đặt nhà cung cấp trước khi tạo công thức.",
     "settingsInvalid": "Cài đặt nhà cung cấp không hợp lệ. Cập nhật và thử lại.",
     "unexpected": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại."
+ },
+  "settingsPanel": {
+    "title": "Kết nối & Nhà cung cấp",
+    "description": "Cấu hình nơi ứng dụng gửi yêu cầu và nhà cung cấp AI nào sẽ sử dụng.",
+    "close": "Đóng",
+    "loading": "Đang tải cài đặt đã lưu…",
+    "provider": "Nhà cung cấp",
+    "backendUrl": "URL Backend",
+    "apiKey": "Khóa API",
+    "apiKeyPlaceholder": "Dán khóa API của bạn",
+    "model": "Mô hình (tùy chọn)",
+    "save": "Lưu",
+    "reset": "Đặt lại",
+    "lastSaved": "Lần lưu cuối",
+    "saved": "Đã lưu cài đặt.",
+    "fixFieldsError": "Vui lòng sửa các trường được đánh dấu trước khi lưu.",
+    "saveError": "Không thể lưu cài đặt. Kiểm tra kết nối của bạn và thử lại.",
+    "resetSuccess": "Đã khôi phục cài đặt về mặc định.",
+    "resetError": "Không thể đặt lại cài đặt. Thử lại."
+},
+  "providers": {
+    "gemini": {
+      "description": "Gemini Vision qua Google AI Studio",
+      "keyHint": "Khóa bắt đầu bằng \"AI\" và được tạo trong Google AI Studio."
+    },
+    "openai": {
+      "description": "Các mô hình GPT hỗ trợ thị giác từ OpenAI",
+      "keyHint": "Khóa bắt đầu bằng \"sk-\" hoặc \"sk-proj-\" và được quản lý trong bảng điều khiển OpenAI."
+    },
+    "anthropic": {
+      "description": "Các mô hình thị giác Claude 3",
+      "keyHint": "Khóa bắt đầu bằng \"sk-ant-\" và có sẵn trong bảng điều khiển Anthropic."
+    }
   }
 }

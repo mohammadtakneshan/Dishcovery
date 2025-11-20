@@ -74,9 +74,42 @@
     "selectImagePreview": "プレビューする画像を選択してください"
   },
   "errors": {
-    "noImage": "最初に画像を選択してください。",
-    "settingsIncomplete": "レシピを生成する前に、プロバイダー設定を完了してください。",
+"noImage": "まず画像を選択してください。",
+    "settingsIncomplete": "レシピを生成する前にプロバイダー設定を完了してください。",
     "settingsInvalid": "プロバイダー設定が無効です。更新して再試行してください。",
     "unexpected": "予期しないエラーが発生しました。もう一度お試しください。"
+  },
+  "settingsPanel": {
+    "title": "接続とプロバイダー",
+    "description": "アプリがリクエストを送信する場所と使用するAIプロバイダーを設定します。",
+    "close": "閉じる",
+    "loading": "保存された設定を読み込んでいます…",
+    "provider": "プロバイダー",
+    "backendUrl": "バックエンドURL",
+    "apiKey": "APIキー",
+    "apiKeyPlaceholder": "APIキーを貼り付けてください",
+    "model": "モデル（オプション）",
+    "save": "保存",
+    "reset": "リセット",
+    "lastSaved": "最終保存日時",
+    "saved": "設定が保存されました。",
+    "fixFieldsError": "保存する前に、強調表示されたフィールドを修正してください。",
+    "saveError": "設定を保存できませんでした。接続を確認して再試行してください。",
+    "resetSuccess": "設定がデフォルトに戻されました。",
+    "resetError": "設定をリセットできませんでした。もう一度お試しください。"
+ },
+  "providers": {
+    "gemini": {
+      "description": "Google AI Studio経由のGemini Vision",
+      "keyHint": "キーは\"AI\"で始まり、Google AI Studioで生成されます。"
+    },
+    "openai": {
+      "description": "OpenAIのビジョン対応GPTモデル",
+      "keyHint": "キーは\"sk-\"または\"sk-proj-\"で始まり、OpenAIダッシュボードで管理されます。"
+    },
+    "anthropic": {
+      "description": "Claude 3ビジョンモデル",
+      "keyHint": "キーは\"sk-ant-\"で始まり、Anthropicコンソールで利用できます。"
+    }
   }
 }

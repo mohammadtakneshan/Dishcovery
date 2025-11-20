@@ -74,9 +74,42 @@
     "selectImagePreview": "Válassz egy képet az előnézethez"
   },
   "errors": {
-    "noImage": "Kérlek, először válassz egy képet.",
-    "settingsIncomplete": "Töltsd ki a szolgáltató beállításait a recept generálás előtt.",
-    "settingsInvalid": "A szolgáltató beállításai érvénytelenek. Frissítsd és próbáld újra.",
-    "unexpected": "Váratlan hiba történt. Kérlek, próbáld újra."
+ "noImage": "Kérjük, először válasszon egy képet.",
+    "settingsIncomplete": "Töltse ki a szolgáltató beállításait a receptek generálása előtt.",
+    "settingsInvalid": "A szolgáltató beállításai érvénytelenek. Frissítse és próbálja újra.",
+    "unexpected": "Váratlan hiba történt. Kérjük, próbálja újra."
+  },
+  "settingsPanel": {
+    "title": "Kapcsolat és szolgáltató",
+    "description": "Konfigurálja, hova küldi az alkalmazás a kéréseket és melyik AI szolgáltatót használja.",
+    "close": "Bezárás",
+    "loading": "Mentett beállítások betöltése…",
+    "provider": "Szolgáltató",
+    "backendUrl": "Backend URL",
+    "apiKey": "API kulcs",
+    "apiKeyPlaceholder": "Illessze be az API kulcsát",
+    "model": "Modell (opcionális)",
+    "save": "Mentés",
+    "reset": "Visszaállítás",
+    "lastSaved": "Utoljára mentve",
+    "saved": "Beállítások elmentve.",
+    "fixFieldsError": "Kérjük, javítsa ki a kiemelt mezőket mentés előtt.",
+    "saveError": "Nem sikerült menteni a beállításokat. Ellenőrizze a kapcsolatot és próbálja újra.",
+    "resetSuccess": "Beállítások visszaállítva az alapértelmezettekre.",
+    "resetError": "Nem sikerült visszaállítani a beállításokat. Próbálja újra."
+ },
+  "providers": {
+    "gemini": {
+      "description": "Gemini Vision a Google AI Studio-n keresztül",
+      "keyHint": "A kulcsok \"AI\"-val kezdődnek és a Google AI Studio-ban generálhatók."
+    },
+    "openai": {
+      "description": "Látással rendelkező GPT modellek az OpenAI-tól",
+      "keyHint": "A kulcsok \"sk-\" vagy \"sk-proj-\" előtaggal kezdődnek és az OpenAI vezérlőpulton kezelhetők."
+    },
+    "anthropic": {
+      "description": "Claude 3 látás modellek",
+      "keyHint": "A kulcsok \"sk-ant-\" előtaggal kezdődnek és az Anthropic konzolon érhetők el."
+    }
   }
 }

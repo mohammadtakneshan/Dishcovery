@@ -74,9 +74,42 @@
     "selectImagePreview": "حدد صورة للمعاينة"
   },
   "errors": {
-    "noImage": "يرجى تحديد صورة أولاً.",
+    "noImage": "الرجاء تحديد صورة أولاً.",
     "settingsIncomplete": "أكمل إعدادات المزود قبل إنشاء الوصفات.",
     "settingsInvalid": "إعدادات المزود غير صالحة. قم بالتحديث وحاول مرة أخرى.",
     "unexpected": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+  },
+  "settingsPanel": {
+    "title": "الاتصال والمزود",
+    "description": "قم بتكوين مكان إرسال الطلبات ومزود الذكاء الاصطناعي المراد استخدامه.",
+    "close": "إغلاق",
+    "loading": "جاري تحميل الإعدادات المحفوظة…",
+    "provider": "المزود",
+    "backendUrl": "رابط الخادم",
+    "apiKey": "مفتاح API",
+    "apiKeyPlaceholder": "الصق مفتاح API الخاص بك",
+    "model": "النموذج (اختياري)",
+    "save": "حفظ",
+    "reset": "إعادة تعيين",
+    "lastSaved": "آخر حفظ",
+    "saved": "تم حفظ الإعدادات.",
+    "fixFieldsError": "الرجاء إصلاح الحقول المميزة قبل الحفظ.",
+    "saveError": "تعذر حفظ الإعدادات. تحقق من اتصالك وحاول مرة أخرى.",
+    "resetSuccess": "تم إرجاع الإعدادات إلى الافتراضيات.",
+    "resetError": "تعذر إعادة تعيين الإعدادات. حاول مرة أخرى."
+  },
+  "providers": {
+    "gemini": {
+      "description": "رؤية Gemini عبر Google AI Studio",
+      "keyHint": "تبدأ المفاتيح بـ \"AI\" ويتم إنشاؤها في Google AI Studio."
+    },
+    "openai": {
+      "description": "نماذج GPT المزودة بالرؤية من OpenAI",
+      "keyHint": "تبدأ المفاتيح بـ \"sk-\" أو \"sk-proj-\" وتُدار في لوحة تحكم OpenAI."
+    },
+    "anthropic": {
+      "description": "نماذج Claude 3 للرؤية",
+      "keyHint": "تبدأ المفاتيح بـ \"sk-ant-\" ومتوفرة في وحدة تحكم Anthropic."
+    }
   }
 }
