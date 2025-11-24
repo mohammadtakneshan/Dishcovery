@@ -73,11 +73,28 @@
     "pickPhoto": "اختر صورة",
     "selectImagePreview": "حدد صورة للمعاينة"
   },
+  "modeSelector": {
+    "uploadMode": "تحميل صورة",
+    "textMode": "وصف نصي"
+  },
+  "textPrompt": {
+    "label": "صف طبقك",
+    "placeholder": "مثال: سباغيتي كاربونارا مع لحم الخنزير المقدد المقرمش",
+    "generateImage": "توليد صورة",
+    "generatedImage": "صورة مولدة",
+    "regenerateImage": "إعادة التوليد",
+    "generateRecipe": "توليد الوصفة",
+    "generatingImage": "جاري توليد الصورة...",
+    "generatingRecipe": "جاري توليد الوصفة...",
+    "recipeGeneratedWithoutImage": "تم إنشاء الوصفة من وصف نصي (بدون صورة)"
+  },
   "errors": {
     "noImage": "الرجاء تحديد صورة أولاً.",
     "settingsIncomplete": "أكمل إعدادات المزود قبل إنشاء الوصفات.",
     "settingsInvalid": "إعدادات المزود غير صالحة. قم بالتحديث وحاول مرة أخرى.",
-    "unexpected": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+    "unexpected": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
+    "promptTooShort": "الوصف قصير جداً",
+    "promptTooShortHint": "الرجاء تقديم وصف أكثر تفصيلاً (3 أحرف على الأقل)"
   },
   "settingsPanel": {
     "title": "الاتصال والمزود",

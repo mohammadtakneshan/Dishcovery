@@ -73,11 +73,28 @@
     "pickPhoto": "Chọn ảnh",
     "selectImagePreview": "Chọn một hình ảnh để xem trước"
   },
+  "modeSelector": {
+    "uploadMode": "Tải lên hình ảnh",
+    "textMode": "Mô tả văn bản"
+  },
+  "textPrompt": {
+    "label": "Mô tả món ăn của bạn",
+    "placeholder": "Ví dụ: mì spaghetti carbonara với thịt xông khói giòn",
+    "generateImage": "Tạo hình ảnh",
+    "generatedImage": "Hình ảnh đã tạo",
+    "regenerateImage": "Tạo lại",
+    "generateRecipe": "Tạo công thức",
+    "generatingImage": "Đang tạo hình ảnh...",
+    "generatingRecipe": "Đang tạo công thức...",
+    "recipeGeneratedWithoutImage": "Công thức được tạo từ mô tả văn bản (không có hình ảnh)"
+  },
   "errors": {
     "noImage": "Vui lòng chọn một hình ảnh trước.",
     "settingsIncomplete": "Hoàn thành cài đặt nhà cung cấp trước khi tạo công thức.",
     "settingsInvalid": "Cài đặt nhà cung cấp không hợp lệ. Cập nhật và thử lại.",
-    "unexpected": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại."
+    "unexpected": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+    "promptTooShort": "Mô tả quá ngắn",
+    "promptTooShortHint": "Vui lòng cung cấp mô tả chi tiết hơn (ít nhất 3 ký tự)"
  },
   "settingsPanel": {
     "title": "Kết nối & Nhà cung cấp",

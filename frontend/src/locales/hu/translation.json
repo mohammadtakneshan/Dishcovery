@@ -73,11 +73,28 @@
     "pickPhoto": "Fénykép kiválasztása",
     "selectImagePreview": "Válassz egy képet az előnézethez"
   },
+  "modeSelector": {
+    "uploadMode": "Kép feltöltése",
+    "textMode": "Szöveges leírás"
+  },
+  "textPrompt": {
+    "label": "Írd le az ételt",
+    "placeholder": "Pl.: spagetti carbonara ropogós szalonnával",
+    "generateImage": "Kép generálása",
+    "generatedImage": "Generált kép",
+    "regenerateImage": "Újragenerálás",
+    "generateRecipe": "Recept generálása",
+    "generatingImage": "Kép generálása...",
+    "generatingRecipe": "Recept generálása...",
+    "recipeGeneratedWithoutImage": "Recept generálva szöveges leírásból (kép nélkül)"
+  },
   "errors": {
  "noImage": "Kérjük, először válasszon egy képet.",
     "settingsIncomplete": "Töltse ki a szolgáltató beállításait a receptek generálása előtt.",
     "settingsInvalid": "A szolgáltató beállításai érvénytelenek. Frissítse és próbálja újra.",
-    "unexpected": "Váratlan hiba történt. Kérjük, próbálja újra."
+    "unexpected": "Váratlan hiba történt. Kérjük, próbálja újra.",
+    "promptTooShort": "A leírás túl rövid",
+    "promptTooShortHint": "Kérjük, adjon meg részletesebb leírást (legalább 3 karakter)"
   },
   "settingsPanel": {
     "title": "Kapcsolat és szolgáltató",

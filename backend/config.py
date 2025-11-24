@@ -38,6 +38,13 @@ class Config:
     MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 16 * 1024 * 1024))  # 16MB default
     ALLOWED_EXTENSIONS: ClassVar[frozenset[str]] = frozenset({'png', 'jpg', 'jpeg', 'gif', 'webp'})
 
+    # Image Generation Settings
+    IMAGE_GENERATION_MODEL = os.getenv('IMAGE_GENERATION_MODEL', 'dall-e-3')
+    DEFAULT_IMAGE_SIZE = os.getenv('DEFAULT_IMAGE_SIZE', '1024x1024')
+    ALLOWED_IMAGE_SIZES: ClassVar[frozenset[str]] = frozenset({'1024x1024', '1792x1024', '1024x1792'})
+    MAX_PROMPT_LENGTH = int(os.getenv('MAX_PROMPT_LENGTH', 500))
+    MIN_PROMPT_LENGTH = int(os.getenv('MIN_PROMPT_LENGTH', 3))
+
     @classmethod
     def get_api_key_for(cls, provider: str | None) -> str | None:
         if not provider:

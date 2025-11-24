@@ -73,11 +73,28 @@
     "pickPhoto": "انتخاب عکس",
     "selectImagePreview": "یک تصویر برای پیش‌نمایش انتخاب کنید"
   },
+  "modeSelector": {
+    "uploadMode": "بارگذاری تصویر",
+    "textMode": "توضیح متنی"
+  },
+  "textPrompt": {
+    "label": "غذای خود را توصیف کنید",
+    "placeholder": "مثال: اسپاگتی کربونارا با بیکن ترد",
+    "generateImage": "تولید تصویر",
+    "generatedImage": "تصویر تولید شده",
+    "regenerateImage": "تولید مجدد",
+    "generateRecipe": "تولید دستور پخت",
+    "generatingImage": "در حال تولید تصویر...",
+    "generatingRecipe": "در حال تولید دستور پخت...",
+    "recipeGeneratedWithoutImage": "دستور پخت از توضیح متنی تولید شد (بدون تصویر)"
+  },
   "errors": {
     "noImage": "لطفاً ابتدا یک تصویر انتخاب کنید.",
 "settingsIncomplete": "قبل از تولید دستور غذا، تنظیمات ارائه‌دهنده را تکمیل کنید.",
     "settingsInvalid": "تنظیمات ارائه‌دهنده نامعتبر است. به‌روزرسانی کرده و دوباره امتحان کنید.",
-    "unexpected": "یک خطای غیرمنتظره رخ داد. لطفاً دوباره امتحان کنید."
+    "unexpected": "یک خطای غیرمنتظره رخ داد. لطفاً دوباره امتحان کنید.",
+    "promptTooShort": "توضیح خیلی کوتاه است",
+    "promptTooShortHint": "لطفاً توضیح دقیق‌تری ارائه دهید (حداقل 3 کاراکتر)"
   },
   "settingsPanel": {
     "title": "اتصال و ارائه‌دهنده",

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,8 +6,15 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import { ErrorBanner, ImageUpload, SettingsPanel, LanguageDropdown } from "../components";
-import { ApiError, generateRecipeFromImage } from "../api/index";
+import {
+  ErrorBanner,
+  ImageUpload,
+  SettingsPanel,
+  LanguageDropdown,
+  ModeSelector,
+  TextPromptInput
+} from "../components";
+import { ApiError, generateRecipeFromImage, generateFoodImage } from "../api/index";
 import theme from "../theme";
 import { useSettings } from "../context/SettingsContext";
 import { SettingsValidationError } from "../context/SettingsContext";
@@ -19,6 +26,13 @@ export default function UploadScreen({ onRecipe }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+
+  // New state for text-to-image feature
+  const [mode, setMode] = useState('upload');
+  const [textPrompt, setTextPrompt] = useState('');
+  const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
+  const [generatingImage, setGeneratingImage] = useState(false);
+  const [postActionNotice, setPostActionNotice] = useState(null);
 
   const { settings, isReady, validate } = useSettings();
 
@@ -95,6 +109,88 @@ export default function UploadScreen({ onRecipe }) {
     }
   };
 
+  // Handle image generation (OpenAI only)
+  const handleGenerateImage = useCallback(async () => {
+    if (!textPrompt || textPrompt.trim().length < 3) {
+      setError({
+        message: t('errors.promptTooShort'),
+        hint: t('errors.promptTooShortHint')
+      });
+      return;
+    }
+
+    setGeneratingImage(true);
+    setError(null);
+
+    try {
+      const result = await generateFoodImage(textPrompt, {
+        provider: settings.provider,
+        apiKey: settings.apiKey,
+        baseUrl: settings.apiBaseUrl
+      });
+
+      setGeneratedImageUrl(result.imageUrl);
+    } catch (err) {
+      setError({
+        message: err.message,
+        hint: err.hint,
+        code: err.code
+      });
+    } finally {
+      setGeneratingImage(false);
+    }
+  }, [textPrompt, settings, t]);
+
+  // Handle recipe generation from text
+  const handleGenerateRecipeFromText = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setPostActionNotice(null);
+
+    const isOpenAI = settings.provider === 'openai';
+
+    try {
+      // For OpenAI: use generated image URL
+      // For others: use text prompt directly
+      const result = await generateRecipeFromImage(null, {
+        textPrompt: !isOpenAI ? textPrompt : undefined,
+        imageUrl: isOpenAI ? generatedImageUrl : undefined,
+        provider: settings.provider,
+        apiKey: settings.apiKey,
+        model: settings.model,
+        language: i18n.language,
+        baseUrl: settings.apiBaseUrl
+      });
+
+      // Pass full result to onRecipe (not just result.recipe)
+      onRecipe && onRecipe(result);
+
+      // Show post-action notice for non-OpenAI (will be shown after returning from recipe screen)
+      if (!isOpenAI) {
+        setPostActionNotice(t('textPrompt.recipeGeneratedWithoutImage'));
+      }
+
+    } catch (err) {
+      setError({
+        message: err.message,
+        hint: err.hint,
+        code: err.code
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [textPrompt, generatedImageUrl, settings, onRecipe, t, i18n]);
+
+  // Mode change handler
+  const handleModeChange = useCallback((newMode) => {
+    setMode(newMode);
+    setError(null);
+    setPostActionNotice(null);
+    setTextPrompt('');
+    setGeneratedImageUrl(null);
+    setImagePayload(null);
+  }, []);
+
   return (
     <View style={styles.root}>
       <View style={styles.header}>
@@ -129,21 +225,53 @@ export default function UploadScreen({ onRecipe }) {
           <SettingsPanel onClose={() => setShowSettings(false)} />
         ) : null}
 
-        <ImageUpload onImageSelected={handleImageSelected} />
-        <ErrorBanner error={error} onDismiss={() => setError(null)} />
+        {/* Mode selector */}
+        <ModeSelector mode={mode} onModeChange={handleModeChange} />
 
-        <TouchableOpacity
-          onPress={handleGenerate}
-          style={[styles.button, loading && styles.buttonDisabled]}
-          disabled={loading}
-          accessibilityLabel={t('actions.generate')}
-        >
-          {loading ? (
-            <ActivityIndicator color={theme.colors.surface} />
-          ) : (
-            <Text style={styles.buttonText}>{t('actions.generate')}</Text>
-          )}
-        </TouchableOpacity>
+        {/* Post-action notice banner */}
+        {postActionNotice && (
+          <View style={styles.successNotice}>
+            <Text style={styles.successNoticeText}>{postActionNotice}</Text>
+            <TouchableOpacity onPress={() => setPostActionNotice(null)}>
+              <Text style={styles.dismissText}>✕</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Conditional rendering based on mode */}
+        {mode === 'upload' ? (
+          <>
+            <ImageUpload onImageSelected={handleImageSelected} />
+            <ErrorBanner error={error} onDismiss={() => setError(null)} />
+
+            <TouchableOpacity
+              onPress={handleGenerate}
+              style={[styles.button, loading && styles.buttonDisabled]}
+              disabled={loading}
+              accessibilityLabel={t('actions.generate')}
+            >
+              {loading ? (
+                <ActivityIndicator color={theme.colors.surface} />
+              ) : (
+                <Text style={styles.buttonText}>{t('actions.generate')}</Text>
+              )}
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <TextPromptInput
+              value={textPrompt}
+              onChangeText={setTextPrompt}
+              onGenerateImage={handleGenerateImage}
+              onGenerateRecipe={handleGenerateRecipeFromText}
+              generatedImageUrl={generatedImageUrl}
+              generatingImage={generatingImage}
+              generatingRecipe={loading}
+              error={error?.message}
+            />
+            {error && <ErrorBanner error={error} onDismiss={() => setError(null)} />}
+          </>
+        )}
       </View>
 
       <Text style={styles.hint}>
@@ -222,5 +350,29 @@ const styles = StyleSheet.create({
   title: {
     ...theme.typography.heading,
     color: theme.colors.brandDark,
+  },
+  successNotice: {
+    backgroundColor: '#D4EDDA',
+    borderLeftWidth: 4,
+    borderLeftColor: '#28A745',
+    padding: 12,
+    marginBottom: 16,
+    borderRadius: 4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  successNoticeText: {
+    fontSize: 14,
+    color: '#155724',
+    lineHeight: 20,
+    flex: 1,
+  },
+  dismissText: {
+    fontSize: 18,
+    color: '#155724',
+    fontWeight: 'bold',
+    paddingLeft: 12,
   },
 });

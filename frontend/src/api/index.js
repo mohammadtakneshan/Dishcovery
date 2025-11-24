@@ -13,25 +13,110 @@ export class ApiError extends Error {
   }
 }
 
-export async function generateRecipeFromImage({ uri, name, file } = {}, options = {}) {
-  const formData = new FormData();
-
-  if (file instanceof File) {
-    formData.append('file', file, file.name);
-  } else if (uri && typeof uri === 'string') {
-    const fileName = name || inferFileNameFromUri(uri);
-    const fileType = inferMimeType(fileName);
-
-    formData.append('file', {
-      uri,
-      type: fileType,
-      name: fileName,
+export async function generateFoodImage(prompt, options = {}) {
+  const baseUrl = sanitizeBaseUrl(options.baseUrl) || DEFAULT_API_BASE;
+  if (!baseUrl) {
+    throw new ApiError('API base URL is not configured.', {
+      code: 'api_base_missing',
     });
-  } else {
-    throw new ApiError('No image provided. Please select a photo.', {
-      code: 'image_missing',
+  }
+
+  const formData = new FormData();
+  formData.append('prompt', prompt);
+
+  if (options.provider) formData.append('provider', options.provider);
+  if (options.apiKey) formData.append('api_key', options.apiKey);
+  if (options.size) formData.append('size', options.size);
+
+  try {
+    const headers = {};
+
+    // Add Vercel Protection Bypass if available
+    const bypassToken = process.env.EXPO_PUBLIC_VERCEL_BYPASS;
+    if (bypassToken) {
+      headers['x-vercel-protection-bypass'] = bypassToken;
+    }
+
+    const response = await fetch(`${baseUrl}/api/generate-image`, {
+      method: 'POST',
+      body: formData,
+      headers: headers,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const error = data.error || {};
+      throw new ApiError(error.message || 'Failed to generate image', {
+        code: error.code || 'image_generation_failed',
+        hint: error.hint,
+        status: response.status,
+      });
+    }
+
+    return data; // { success, imageUrl, meta }
+
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
+    throw new ApiError('Could not connect to server', {
+      code: 'network_error',
+      hint: 'Check your internet connection and try again',
+      status: 0,
+      cause: error,
+    });
+  }
+}
+
+export async function generateRecipeFromImage(imageData = null, options = {}) {
+  /**
+   * Generate recipe from image OR text prompt.
+   *
+   * @param {Object|null} imageData - Image data object { uri, name, file } or null for text-only
+   * @param {Object} options - Additional parameters including textPrompt, imageUrl, provider, etc.
+   */
+
+  // Relaxed validation - allow null imageData if textPrompt or imageUrl provided
+  const hasImage = imageData && (imageData.file || imageData.uri);
+  const hasTextPrompt = Boolean(options.textPrompt);
+  const hasImageUrl = Boolean(options.imageUrl);
+
+  if (!hasImage && !hasTextPrompt && !hasImageUrl) {
+    throw new ApiError('Either an image or text prompt is required', {
+      code: 'missing_input',
+      hint: 'Upload an image or enter a text description',
       status: 400,
     });
+  }
+
+  const formData = new FormData();
+
+  // Append image if provided
+  if (hasImage) {
+    if (imageData.file instanceof File) {
+      formData.append('file', imageData.file, imageData.file.name);
+    } else if (imageData.uri && typeof imageData.uri === 'string') {
+      const fileName = imageData.name || inferFileNameFromUri(imageData.uri);
+      const fileType = inferMimeType(fileName);
+
+      formData.append('file', {
+        uri: imageData.uri,
+        type: fileType,
+        name: fileName,
+      });
+    }
+  }
+
+  // Append text prompt if provided
+  if (hasTextPrompt) {
+    formData.append('text_prompt', options.textPrompt);
+  }
+
+  // Append image URL if provided
+  if (hasImageUrl) {
+    formData.append('image_url', options.imageUrl);
   }
 
   const baseUrl = sanitizeBaseUrl(options.baseUrl) || DEFAULT_API_BASE;
@@ -51,13 +136,13 @@ export async function generateRecipeFromImage({ uri, name, file } = {}, options 
   let response;
   try {
     const headers = {};
-    
+
     // Add Vercel Protection Bypass if available
     const bypassToken = process.env.EXPO_PUBLIC_VERCEL_BYPASS;
     if (bypassToken) {
       headers['x-vercel-protection-bypass'] = bypassToken;
     }
-    
+
     response = await fetch(`${baseUrl}/api/generate-recipe`, {
       method: 'POST',
       body: formData,
@@ -96,7 +181,7 @@ export async function generateRecipeFromImage({ uri, name, file } = {}, options 
     );
   }
 
-  return payload;
+  return payload; // { success, recipe, meta, warning }
 }
 
 function appendIfValue(formData, key, value) {

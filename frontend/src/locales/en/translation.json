@@ -73,11 +73,28 @@
     "pickPhoto": "Pick photo",
     "selectImagePreview": "Select an image to preview"
   },
+  "modeSelector": {
+    "uploadMode": "Upload Image",
+    "textMode": "Text Prompt"
+  },
+  "textPrompt": {
+    "label": "Describe your dish",
+    "placeholder": "E.g., spaghetti carbonara with crispy bacon",
+    "generateImage": "Generate Image",
+    "generatedImage": "Generated Image",
+    "regenerateImage": "Regenerate",
+    "generateRecipe": "Generate Recipe",
+    "generatingImage": "Generating image...",
+    "generatingRecipe": "Generating recipe...",
+    "recipeGeneratedWithoutImage": "Recipe generated from text prompt (no image created)"
+  },
   "errors": {
     "noImage": "Please select an image first.",
     "settingsIncomplete": "Complete the provider settings before generating recipes.",
     "settingsInvalid": "Provider settings are invalid. Update and try again.",
-    "unexpected": "An unexpected error occurred. Please try again."
+    "unexpected": "An unexpected error occurred. Please try again.",
+    "promptTooShort": "Prompt is too short",
+    "promptTooShortHint": "Please provide a more detailed description (at least 3 characters)"
   },
   "settingsPanel": {
     "title": "Connection & Provider",

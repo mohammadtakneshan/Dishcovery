@@ -6,3 +6,5 @@ export { default as ErrorBanner } from './ErrorBanner';
 export { default as SettingsPanel } from './SettingsPanel';
 export { default as ImageUpload } from './ImageUpload';
 export { default as LanguageDropdown } from './LanguageDropdown';
+export { default as ModeSelector } from './ModeSelector';
+export { default as TextPromptInput } from './TextPromptInput';

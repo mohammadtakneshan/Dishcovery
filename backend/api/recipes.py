@@ -50,90 +50,155 @@ def problem_response(code: str, message: str, *, status: int = 400, hint: str | 
 
 @api_bp.route('/generate-recipe', methods=['POST'])
 def generate_recipe():
-    """Generate recipe from a food image using the configured AI provider."""
+    """
+    Generate recipe from image OR text prompt.
+    Accepts:
+    - file: Image file upload
+    - image_url: URL to an image
+    - text_prompt: Text description of dish
+    """
     try:
+        # === INPUT EXTRACTION ===
         file = request.files.get('file')
-        if not file:
+        image_url = request.form.get('image_url', '').strip()
+        text_prompt = request.form.get('text_prompt', '').strip()
+
+        # === INPUT VALIDATION ===
+        has_file = bool(file)
+        has_url = bool(image_url)
+        has_prompt = bool(text_prompt)
+
+        if not has_file and not has_url and not has_prompt:
             return problem_response(
-                code='missing_file',
-                message='No image file provided. Please upload a food photo.',
-                hint='Choose a PNG, JPG, JPEG, GIF, or WEBP image.',
+                code='missing_input',
+                message='Either an image (file or URL) or text prompt is required',
+                hint='Upload an image, provide an image URL, or enter a text description',
+                status=400
             )
 
-        if not file.filename:
-            return problem_response(
-                code='empty_filename',
-                message='Empty filename. Please select a valid image.',
-            )
+        # === IMAGE PROCESSING ===
+        image_bytes = None
+        mime_type = None
 
-        extension = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
-        if extension not in Config.ALLOWED_EXTENSIONS:
-            return problem_response(
-                code='unsupported_file_type',
-                message=f'Invalid file type. Allowed: {", ".join(sorted(Config.ALLOWED_EXTENSIONS))}',
-            )
+        if has_file or has_url:
+            try:
+                if has_file:
+                    # Existing file upload logic
+                    filename = file.filename
+                    if not filename or '.' not in filename:
+                        return problem_response(
+                            code='invalid_filename',
+                            message='Invalid file name',
+                            hint='Ensure your image has a proper file extension',
+                            status=400
+                        )
 
-        mime_type = file.mimetype or mimetypes.guess_type(file.filename)[0] or 'image/jpeg'
+                    file_ext = filename.rsplit('.', 1)[1].lower()
+                    if file_ext not in Config.ALLOWED_EXTENSIONS:
+                        return problem_response(
+                            code='invalid_file_type',
+                            message=f'File type .{file_ext} not allowed',
+                            hint=f'Allowed types: {", ".join(Config.ALLOWED_EXTENSIONS)}',
+                            status=400
+                        )
 
-        image_bytes = file.read()
-        if not image_bytes:
-            return problem_response(
-                code='empty_image',
-                message='Empty image file.',
-            )
+                    image_bytes = file.read()
+                    mime_type = file.content_type or f'image/{file_ext}'
 
-        try:
-            candidate = Image.open(io.BytesIO(image_bytes))
-            candidate.verify()
-        except UnidentifiedImageError as validation_error:
-            logger.info("Invalid image upload: %s", validation_error)
-            return problem_response(
-                code='invalid_image',
-                message='Invalid or corrupted image file.',
-                hint='Try exporting the photo again as PNG or JPG.',
-            )
-        except Exception as validation_error:  # noqa: BLE001
-            logger.warning("Image validation failed: %s", validation_error)
-            return problem_response(
-                code='invalid_image',
-                message='Invalid or corrupted image file.',
-            )
+                    # Validate image
+                    image = Image.open(io.BytesIO(image_bytes))
+                    image.verify()
 
+                elif has_url:
+                    # Download image from URL
+                    import requests
+
+                    try:
+                        img_response = requests.get(image_url, timeout=10)
+                        img_response.raise_for_status()
+
+                        image_bytes = img_response.content
+                        mime_type = img_response.headers.get('Content-Type', 'image/png')
+
+                        # Validate image
+                        image = Image.open(io.BytesIO(image_bytes))
+                        image.verify()
+
+                    except requests.RequestException as e:
+                        return problem_response(
+                            code='invalid_image_url',
+                            message='Could not download image from URL',
+                            hint='Ensure the image URL is accessible and valid',
+                            status=400,
+                            debug=str(e)
+                        )
+
+            except Exception as e:
+                return problem_response(
+                    code='invalid_image',
+                    message='File is not a valid image',
+                    hint='Try uploading a JPEG or PNG file',
+                    status=400,
+                    debug=str(e)
+                )
+
+        # === PROVIDER CONFIGURATION ===
         language = request.form.get('language', Config.DEFAULT_LANGUAGE)
-        dietary_restrictions = request.form.get('dietary_restrictions', '')
-        cuisine_preference = request.form.get('cuisine_preference', '')
+        dietary_restrictions = request.form.get('dietary_restrictions')
+        cuisine_preference = request.form.get('cuisine_preference')
 
-        provider = (request.form.get('provider') or Config.DEFAULT_PROVIDER).lower()
-        provider_config = get_provider_config(provider)
+        provider_id = request.form.get('provider', Config.DEFAULT_PROVIDER).lower()
+        api_key = request.form.get('api_key')
+        model = request.form.get('model')
+
+        provider_config = get_provider_config(provider_id)
         if not provider_config:
             return problem_response(
-                code='unsupported_provider',
-                message=f'Provider "{provider}" is not supported.',
-                hint='Select one of: gemini, openai, anthropic.',
+                code='invalid_provider',
+                message=f'Provider "{provider_id}" not supported',
+                hint='Use gemini, openai, or anthropic',
+                status=400
             )
 
-        api_key = (request.form.get('api_key') or '').strip() or Config.get_api_key_for(provider)
+        if not api_key:
+            api_key = Config.get_api_key_for(provider_id)
+
         if not api_key:
             return problem_response(
                 code='missing_api_key',
-                message='API key is required for the selected provider.',
-                hint=provider_config['key_hint'],
+                message=f'{provider_config["label"]} API key required',
+                hint=provider_config.get('key_hint', 'Add API key in settings'),
+                status=400
             )
 
-        requested_model = (request.form.get('model') or '').strip()
-        default_model = Config.get_default_model_for(provider) or provider_config['default_model']
-        model = requested_model or default_model
+        if not model:
+            model = provider_config['default_model']
 
-        prompt = build_prompt(language, dietary_restrictions, cuisine_preference)
+        handler = provider_config['handler']
 
+        # Build prompt
+        recipe_prompt = build_prompt(language, dietary_restrictions, cuisine_preference)
+
+        # === RECIPE GENERATION ===
         try:
-            raw_text, provider_meta = provider_config['handler'](
-                image_bytes=image_bytes,
-                prompt=prompt,
-                model=model,
-                api_key=api_key,
-                mime_type=mime_type,
-            )
+            if image_bytes:
+                recipe_text, provider_meta = handler(
+                    image_bytes=image_bytes,
+                    text_prompt=None,
+                    prompt=recipe_prompt,
+                    model=model,
+                    api_key=api_key,
+                    mime_type=mime_type
+                )
+            else:
+                recipe_text, provider_meta = handler(
+                    image_bytes=None,
+                    text_prompt=text_prompt,
+                    prompt=recipe_prompt,
+                    model=model,
+                    api_key=api_key,
+                    mime_type=None
+                )
         except ProviderError as provider_error:
             logger.warning(
                 "Provider error (%s): %s",
@@ -160,38 +225,51 @@ def generate_recipe():
                 debug=str(unexpected_error),
             )
 
-        recipe, warning = parse_recipe(raw_text)
+        # === RESPONSE FORMATTING ===
+        try:
+            recipe_data, warning = parse_recipe(recipe_text)
+        except Exception as e:
+            logger.warning(f"Recipe parsing failed: {str(e)}")
+            return problem_response(
+                code='recipe_parse_error',
+                message='Could not parse recipe from AI response',
+                hint='The AI response format was unexpected. Please try again.',
+                status=500,
+                debug=str(e)
+            )
 
-        response_payload: Dict[str, Any] = {
+        response_data = {
             'success': True,
-            'recipe': recipe,
+            'recipe': recipe_data,
             'meta': {
-                'provider': provider,
+                'provider': provider_id,
                 'provider_label': provider_config['label'],
-                'model': provider_meta.get('model', model),
+                'model': model,
                 'language': language,
-                'dietary_restrictions': dietary_restrictions or None,
-                'cuisine_preference': cuisine_preference or None,
-            },
+                'dietary_restrictions': dietary_restrictions,
+                'cuisine_preference': cuisine_preference,
+                'input_type': 'image' if image_bytes else 'text_prompt'
+            }
         }
 
         if warning:
-            response_payload['warning'] = warning
+            response_data['warning'] = warning
 
         if Config.FLASK_ENV.lower() in {'development', 'debug'}:
-            response_payload['debug'] = {
-                'raw_response': raw_text,
+            response_data['debug'] = {
+                'raw_response': recipe_text,
             }
 
-        return jsonify(response_payload)
+        return jsonify(response_data), 200
 
-    except Exception as exc:  # noqa: BLE001
-        logger.error('Server error: %s', exc)
+    except Exception as e:
+        logger.error(f"Recipe generation error: {str(e)}")
         logger.debug(traceback.format_exc())
         return problem_response(
-            code='server_error',
-            message='Server error. Please try again later.',
+            code='internal_error',
+            message='An unexpected error occurred',
             status=500,
+            debug=str(e)
         )
 
 @api_bp.route('/health', methods=['GET'])
@@ -202,6 +280,139 @@ def health_check():
         'service': 'Dishcovery API',
         'version': '1.0.0'
     })
+
+
+@api_bp.route('/generate-image', methods=['POST'])
+def generate_food_image():
+    """
+    Generate a food image from text prompt using OpenAI DALL-E.
+    Only works with OpenAI provider.
+    """
+    try:
+        # Extract prompt
+        prompt = request.form.get('prompt', '').strip()
+
+        if not prompt:
+            return problem_response(
+                code='missing_prompt',
+                message='Text prompt is required',
+                hint='Enter a description of the dish you want to generate',
+                status=400
+            )
+
+        # Validate prompt length
+        if len(prompt) < Config.MIN_PROMPT_LENGTH:
+            return problem_response(
+                code='prompt_too_short',
+                message=f'Prompt must be at least {Config.MIN_PROMPT_LENGTH} characters',
+                hint='Provide a more detailed description',
+                status=400
+            )
+
+        if len(prompt) > Config.MAX_PROMPT_LENGTH:
+            return problem_response(
+                code='prompt_too_long',
+                message=f'Prompt must be less than {Config.MAX_PROMPT_LENGTH} characters',
+                hint='Please shorten your description',
+                status=400
+            )
+
+        # Extract provider (must be OpenAI for image generation)
+        provider = request.form.get('provider', 'openai').lower()
+        if provider != 'openai':
+            return problem_response(
+                code='invalid_provider',
+                message='Image generation is only supported with OpenAI provider',
+                hint='Switch to OpenAI in settings',
+                status=400
+            )
+
+        # Get API key
+        api_key = request.form.get('api_key', '').strip()
+        if not api_key:
+            api_key = Config.get_api_key_for('openai')
+
+        if not api_key:
+            return problem_response(
+                code='missing_api_key',
+                message='OpenAI API key is required',
+                hint='Add your OpenAI API key in settings',
+                status=400
+            )
+
+        # Get image size
+        size = request.form.get('size', Config.DEFAULT_IMAGE_SIZE)
+        if size not in Config.ALLOWED_IMAGE_SIZES:
+            return problem_response(
+                code='invalid_size',
+                message=f'Invalid image size: {size}',
+                hint=f'Allowed sizes: {", ".join(Config.ALLOWED_IMAGE_SIZES)}',
+                status=400
+            )
+
+        # Generate image using OpenAI DALL-E
+        try:
+            client = OpenAI(api_key=api_key)
+
+            # Enhance prompt for food photography
+            enhanced_prompt = f"Professional food photography of {prompt}, appetizing, well-lit, high quality"
+
+            response = client.images.generate(
+                model=Config.IMAGE_GENERATION_MODEL,
+                prompt=enhanced_prompt,
+                size=size,
+                quality="standard",
+                n=1
+            )
+
+            if not response.data or len(response.data) == 0:
+                raise ProviderError(
+                    code='empty_response',
+                    message='OpenAI did not return an image',
+                    hint='Please try again with a different prompt'
+                )
+
+            image_url = response.data[0].url
+
+            return jsonify({
+                'success': True,
+                'imageUrl': image_url,
+                'meta': {
+                    'provider': 'openai',
+                    'model': Config.IMAGE_GENERATION_MODEL,
+                    'size': size,
+                    'prompt': prompt
+                }
+            }), 200
+
+        except ProviderError:
+            raise
+        except Exception as exc:
+            logger.error(f"Image generation error: {str(exc)}")
+            raise ProviderError(
+                code='image_generation_failed',
+                message='Failed to generate image',
+                hint='Check your OpenAI API key and quota',
+                debug=str(exc)
+            ) from exc
+
+    except ProviderError as e:
+        return problem_response(
+            code=e.code,
+            message=e.message,
+            hint=e.hint,
+            status=e.status,
+            debug=e.debug
+        )
+    except Exception as e:
+        logger.error(f"Server error: {str(e)}")
+        logger.debug(traceback.format_exc())
+        return problem_response(
+            code='server_error',
+            message='Server error. Please try again later.',
+            status=500,
+            debug=str(e)
+        )
 
 
 def get_provider_config(provider: str | None) -> Dict[str, Any] | None:
@@ -295,12 +506,43 @@ def transform_recipe(recipe_json: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def generate_with_gemini(*, image_bytes: bytes, prompt: str, model: str, api_key: str, mime_type: str) -> Tuple[str, Dict[str, Any]]:
+def generate_with_gemini(
+    *,
+    image_bytes: bytes | None = None,
+    text_prompt: str | None = None,
+    prompt: str,
+    model: str,
+    api_key: str,
+    mime_type: str | None = None
+) -> Tuple[str, Dict[str, Any]]:
+    """
+    Generate recipe using Gemini.
+    Accepts either image_bytes OR text_prompt.
+
+    Args:
+        image_bytes: Image file bytes (optional)
+        text_prompt: Text description for text-only generation (optional)
+        prompt: Recipe generation prompt (from build_prompt)
+        model: Gemini model name
+        api_key: Gemini API key
+        mime_type: Image MIME type (optional, required if image_bytes provided)
+    """
+    if not image_bytes and not text_prompt:
+        raise ValueError("Either image_bytes or text_prompt is required")
+
     try:
         genai.configure(api_key=api_key)
-        image = Image.open(io.BytesIO(image_bytes))
         generative_model = genai.GenerativeModel(model)
-        response = generative_model.generate_content([prompt, image])
+
+        if image_bytes:
+            # Existing vision logic
+            image = Image.open(io.BytesIO(image_bytes))
+            response = generative_model.generate_content([prompt, image])
+        else:
+            # NEW: Text-only recipe generation
+            enhanced_prompt = f"{prompt}\n\nGenerate a recipe for: {text_prompt}"
+            response = generative_model.generate_content([enhanced_prompt])
+
         text = getattr(response, 'text', None)
         if not text:
             raise ProviderError('empty_response', 'AI did not return a response. Please try again.', hint='Try another photo or wait a moment before retrying.')
@@ -310,29 +552,63 @@ def generate_with_gemini(*, image_bytes: bytes, prompt: str, model: str, api_key
     except Exception as exc:  # noqa: BLE001
         raise ProviderError(
             code='gemini_error',
-            message='Gemini could not process the image.',
+            message='Gemini could not process the request.',
             hint='Verify the API key and quota in Google AI Studio.',
             debug=str(exc),
         ) from exc
 
 
-def generate_with_openai(*, image_bytes: bytes, prompt: str, model: str, api_key: str, mime_type: str) -> Tuple[str, Dict[str, Any]]:
+def generate_with_openai(
+    *,
+    image_bytes: bytes | None = None,
+    text_prompt: str | None = None,
+    prompt: str,
+    model: str,
+    api_key: str,
+    mime_type: str | None = None
+) -> Tuple[str, Dict[str, Any]]:
+    """
+    Generate recipe using OpenAI.
+    Uses responses.create API (NOT chat.completions.create).
+    """
+    if not image_bytes and not text_prompt:
+        raise ValueError("Either image_bytes or text_prompt is required")
+
     try:
         client = OpenAI(api_key=api_key)
-        base64_image = base64.b64encode(image_bytes).decode('utf-8')
-        response = client.responses.create(
-            model=model,
-            input=[
-                {
-                    'role': 'user',
-                    'content': [
-                        {'type': 'input_text', 'text': prompt},
-                        {'type': 'input_image', 'image': {'base64': base64_image}},
-                    ],
-                }
-            ],
-            max_output_tokens=1024,
-        )
+
+        if image_bytes:
+            # Existing vision logic - Use responses.create
+            base64_image = base64.b64encode(image_bytes).decode('utf-8')
+            response = client.responses.create(
+                model=model,
+                input=[
+                    {
+                        'role': 'user',
+                        'content': [
+                            {'type': 'input_text', 'text': prompt},
+                            {'type': 'input_image', 'image': {'base64': base64_image}},
+                        ],
+                    }
+                ],
+                max_output_tokens=1024,
+            )
+        else:
+            # NEW: Text-only recipe generation
+            enhanced_prompt = f"{prompt}\n\nGenerate a recipe for: {text_prompt}"
+            response = client.responses.create(
+                model=model,
+                input=[
+                    {
+                        'role': 'user',
+                        'content': [
+                            {'type': 'input_text', 'text': enhanced_prompt},
+                        ],
+                    }
+                ],
+                max_output_tokens=1024,
+            )
+
         text = getattr(response, 'output_text', None) or extract_openai_text(response)
         if not text:
             raise ProviderError('empty_response', 'AI did not return a response. Please try again.', hint='Try another image or retry with a different model.')
@@ -342,36 +618,55 @@ def generate_with_openai(*, image_bytes: bytes, prompt: str, model: str, api_key
     except Exception as exc:  # noqa: BLE001
         raise ProviderError(
             code='openai_error',
-            message='OpenAI could not process the image.',
+            message='OpenAI could not process the request.',
             hint='Check the model availability and your API key permissions.',
             debug=str(exc),
         ) from exc
 
 
-def generate_with_anthropic(*, image_bytes: bytes, prompt: str, model: str, api_key: str, mime_type: str) -> Tuple[str, Dict[str, Any]]:
+def generate_with_anthropic(
+    *,
+    image_bytes: bytes | None = None,
+    text_prompt: str | None = None,
+    prompt: str,
+    model: str,
+    api_key: str,
+    mime_type: str | None = None
+) -> Tuple[str, Dict[str, Any]]:
+    """
+    Generate recipe using Anthropic Claude.
+    """
+    if not image_bytes and not text_prompt:
+        raise ValueError("Either image_bytes or text_prompt is required")
+
     try:
         client = Anthropic(api_key=api_key)
-        base64_image = base64.b64encode(image_bytes).decode('utf-8')
+
+        content_parts = []
+
+        if image_bytes:
+            # Existing vision logic
+            base64_image = base64.b64encode(image_bytes).decode('utf-8')
+            content_parts.append({
+                'type': 'image',
+                'source': {
+                    'type': 'base64',
+                    'media_type': mime_type or 'image/jpeg',
+                    'data': base64_image,
+                },
+            })
+            content_parts.append({'type': 'text', 'text': prompt})
+        else:
+            # NEW: Text-only recipe generation
+            enhanced_prompt = f"{prompt}\n\nGenerate a recipe for: {text_prompt}"
+            content_parts.append({'type': 'text', 'text': enhanced_prompt})
+
         response = client.messages.create(
             model=model,
-            max_output_tokens=1024,
-            messages=[
-                {
-                    'role': 'user',
-                    'content': [
-                        {'type': 'text', 'text': prompt},
-                        {
-                            'type': 'image',
-                            'source': {
-                                'type': 'base64',
-                                'media_type': mime_type,
-                                'data': base64_image,
-                            },
-                        },
-                    ],
-                }
-            ],
+            max_tokens=4096,
+            messages=[{'role': 'user', 'content': content_parts}],
         )
+
         text = extract_anthropic_text(response)
         if not text:
             raise ProviderError('empty_response', 'AI did not return a response. Please try again.', hint='Try switching to another Claude model or re-upload the image.')
@@ -381,7 +676,7 @@ def generate_with_anthropic(*, image_bytes: bytes, prompt: str, model: str, api_
     except Exception as exc:  # noqa: BLE001
         raise ProviderError(
             code='anthropic_error',
-            message='Anthropic could not process the image.',
+            message='Anthropic could not process the request.',
             hint='Verify your Claude API key and model access.',
             debug=str(exc),
         ) from exc
