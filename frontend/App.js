@@ -3,7 +3,8 @@ import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import UploadScreen from "./src/screens/UploadScreen";
 import RecipeScreen from "./src/screens/RecipeScreen";
 import { SettingsProvider } from "./src/context/SettingsContext";
-import './src/config/i18n';
+import "./src/config/i18n";
+import theme from "./src/theme.js";
 
 function RootApp() {
   const [recipeResult, setRecipeResult] = useState(null);
@@ -44,10 +45,12 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
     flex: 1,
-    justifyContent: 'center',
+    width: "100%",
+    minHeight: "100vh",
+    alignItems: "center",
+    backgroundColor: theme.colors.background || "#FBF7F5",
+    justifyContent: "flex-start",
     padding: 20,
   },
 });

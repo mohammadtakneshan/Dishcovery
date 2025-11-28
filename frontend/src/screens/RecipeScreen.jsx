@@ -17,9 +17,9 @@ export default function RecipeScreen({ data, recipe, onBack }) {
   if (!recipeData) {
     return (
       <View style={styles.center}>
-        <Text style={styles.muted}>{t('recipe.noRecipe')}</Text>
+        <Text style={styles.muted}>{t("recipe.noRecipe")}</Text>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Text style={styles.backText}>{t('actions.back')}</Text>
+          <Text style={styles.backText}>{t("actions.back")}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -33,31 +33,36 @@ export default function RecipeScreen({ data, recipe, onBack }) {
     ingredients = [],
     steps = [],
     nutrition = {},
-    tips = ""
+    tips = "",
   } = recipeData;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>{title || t('recipe.generatedRecipe')}</Text>
+        <Text style={styles.title}>{title || t("recipe.generatedRecipe")}</Text>
 
         {meta ? (
           <View style={styles.metaSummary}>
             <Text style={styles.metaSummaryText}>
-              {t('recipe.provider')}: {meta.provider_label || capitalise(meta.provider)}
+              {t("recipe.provider")}:{" "}
+              {meta.provider_label || capitalise(meta.provider)}
             </Text>
             {meta.model ? (
-              <Text style={styles.metaSummaryText}>{t('recipe.model')}: {meta.model}</Text>
+              <Text style={styles.metaSummaryText}>
+                {t("recipe.model")}: {meta.model}
+              </Text>
             ) : null}
             {meta.language ? (
-              <Text style={styles.metaSummaryText}>{t('recipe.language')}: {meta.language}</Text>
+              <Text style={styles.metaSummaryText}>
+                {t("recipe.language")}: {meta.language}
+              </Text>
             ) : null}
           </View>
         ) : null}
 
         {warning ? (
           <View style={styles.warningBox}>
-            <Text style={styles.warningTitle}>{t('recipe.headsUp')}</Text>
+            <Text style={styles.warningTitle}>{t("recipe.headsUp")}</Text>
             <Text style={styles.warningText}>{warning}</Text>
           </View>
         ) : null}
@@ -66,28 +71,28 @@ export default function RecipeScreen({ data, recipe, onBack }) {
         <View style={styles.metaRow}>
           {prep_time && (
             <View style={styles.metaItem}>
-              <Text style={styles.metaLabel}>{t('recipe.prep')}:</Text>
+              <Text style={styles.metaLabel}>{t("recipe.prep")}:</Text>
               <Text style={styles.metaValue}>{prep_time}</Text>
             </View>
           )}
           {cook_time && (
             <View style={styles.metaItem}>
-              <Text style={styles.metaLabel}>{t('recipe.cook')}:</Text>
+              <Text style={styles.metaLabel}>{t("recipe.cook")}:</Text>
               <Text style={styles.metaValue}>{cook_time}</Text>
             </View>
           )}
           {servings && (
             <View style={styles.metaItem}>
-              <Text style={styles.metaLabel}>{t('recipe.servingsLabel')}:</Text>
+              <Text style={styles.metaLabel}>{t("recipe.servingsLabel")}:</Text>
               <Text style={styles.metaValue}>{servings}</Text>
             </View>
           )}
         </View>
 
         {/* Ingredients section */}
-        <Text style={styles.sectionHeading}>{t('recipe.ingredients')}</Text>
+        <Text style={styles.sectionHeading}>{t("recipe.ingredients")}</Text>
         {ingredients.length === 0 ? (
-          <Text style={styles.muted}>{t('recipe.noIngredients')}</Text>
+          <Text style={styles.muted}>{t("recipe.noIngredients")}</Text>
         ) : (
           ingredients.map((ing, i) => (
             <Text key={i} style={styles.listItem}>
@@ -96,10 +101,12 @@ export default function RecipeScreen({ data, recipe, onBack }) {
           ))
         )}
 
+        <View style={styles.separator} />
+
         {/* Instructions section */}
-        <Text style={styles.sectionHeading}>{t('recipe.instructions')}</Text>
+        <Text style={styles.sectionHeading}>{t("recipe.instructions")}</Text>
         {steps.length === 0 ? (
-          <Text style={styles.muted}>{t('recipe.noSteps')}</Text>
+          <Text style={styles.muted}>{t("recipe.noSteps")}</Text>
         ) : (
           steps.map((s, i) => (
             <Text key={i} style={styles.step}>
@@ -108,32 +115,42 @@ export default function RecipeScreen({ data, recipe, onBack }) {
           ))
         )}
 
+        <View style={styles.separator} />
+
         {/* Nutrition section */}
         {nutrition && Object.keys(nutrition).length > 0 && (
           <>
-            <Text style={styles.sectionHeading}>{t('recipe.nutritionPerServing')}</Text>
+            <Text style={styles.sectionHeading}>
+              {t("recipe.nutritionPerServing")}
+            </Text>
             <View style={styles.nutritionGrid}>
               {nutrition.calories && (
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionLabel}>{t('recipe.calories')}</Text>
-                  <Text style={styles.nutritionValue}>{nutrition.calories}</Text>
+                  <Text style={styles.nutritionLabel}>
+                    {t("recipe.calories")}
+                  </Text>
+                  <Text style={styles.nutritionValue}>
+                    {nutrition.calories}
+                  </Text>
                 </View>
               )}
               {nutrition.protein && (
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionLabel}>{t('recipe.protein')}</Text>
+                  <Text style={styles.nutritionLabel}>
+                    {t("recipe.protein")}
+                  </Text>
                   <Text style={styles.nutritionValue}>{nutrition.protein}</Text>
                 </View>
               )}
               {nutrition.fat && (
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionLabel}>{t('recipe.fat')}</Text>
+                  <Text style={styles.nutritionLabel}>{t("recipe.fat")}</Text>
                   <Text style={styles.nutritionValue}>{nutrition.fat}</Text>
                 </View>
               )}
               {nutrition.carbs && (
                 <View style={styles.nutritionItem}>
-                  <Text style={styles.nutritionLabel}>{t('recipe.carbs')}</Text>
+                  <Text style={styles.nutritionLabel}>{t("recipe.carbs")}</Text>
                   <Text style={styles.nutritionValue}>{nutrition.carbs}</Text>
                 </View>
               )}
@@ -141,17 +158,14 @@ export default function RecipeScreen({ data, recipe, onBack }) {
           </>
         )}
 
-        {/* Tips section */}
+        <View style={styles.separator} />
+
         {tips && (
           <>
-            <Text style={styles.sectionHeading}>{t('recipe.tipsServing')}</Text>
+            <Text style={styles.sectionHeading}>{t("recipe.tipsServing")}</Text>
             <Text style={styles.tipsText}>{tips}</Text>
           </>
         )}
-
-        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Text style={styles.backText}>← {t('recipe.backToUpload')}</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -171,12 +185,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  backText: {
-    color: theme.colors.surface,
-    fontSize: 14,
-    fontWeight: "700",
+  card: {
+    maxWidth: 760,
+    width: "100%",
+    ...theme.card,
+    backgroundColor: theme.colors.background,
+    boxShadow: "none",
   },
-  card: { maxWidth: 760, width: "100%", ...theme.card },
   center: {
     alignItems: "center",
     flex: 1,
@@ -187,6 +202,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: theme.colors.background,
     padding: theme.spacing.md,
+    marginRight: 100,
   },
   listItem: {
     color: theme.colors.text,
@@ -271,7 +287,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   tipsText: {
-    backgroundColor: "#fffaf6",
+    backgroundColor: theme.colors.infoBg,
     borderLeftColor: theme.colors.accent,
     borderLeftWidth: 3,
     borderRadius: theme.radii.sm,
@@ -284,13 +300,14 @@ const styles = StyleSheet.create({
   },
   title: {
     ...theme.typography.heading,
-    color: theme.colors.brandDark,
+    color: theme.colors.headerBlue,
     fontSize: 24,
+    fontWeight: "500",
     marginBottom: theme.spacing.sm,
   },
   warningBox: {
-    backgroundColor: "#fff3cd",
-    borderColor: "#ffeeba",
+    backgroundColor: theme.colors.infoBg,
+    borderColor: theme.colors.infoBorder,
     borderRadius: theme.radii.sm,
     borderWidth: 1,
     marginBottom: theme.spacing.md,
@@ -306,5 +323,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     marginBottom: 4,
+  },
+  separator: {
+    height: 1,
+    marginVertical: 18,
+    backgroundColor: "#E6E6E6",
   },
 });

@@ -1,13 +1,25 @@
 const theme = {
   colors: {
-    brand: "#E76F51",
-    brandDark: "#C85A3F",
-    accent: "#47966a", // green for action & success
-    background: "#FFF8F3", // very light warm background
-    surface: "#FFFFFF", // card surface
-    muted: "#6B7280", // for secondary text
-    text: "#1F2937", // primary text
-    danger: "#E53E3E",
+    headerBlue: "#1F4E79",
+    brand: "#1F4E79",
+
+    pageBg: "#F6F4F4",
+    background: "#F6F4F4",
+
+    surface: "#F6F4F4",
+    subtleBorder: "#ECEBEA",
+    cardBorder: "#ECEBEA",
+    outline: "#E8E4E2",
+
+    muted: "#6B7280",
+    text: "#1F2937",
+
+    buttonBg: "#0B0B0B",
+    buttonHover: "#1F4E79",
+    buttonText: "#FFFFFF",
+
+    infoBg: "#F1F6FB",
+    infoBorder: "#DDEAF6",
   },
 
   spacing: {
@@ -22,6 +34,24 @@ const theme = {
     sm: 6,
     md: 10,
     lg: 14,
+    apple: 12,
+  },
+
+  shadows: {
+    soft: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.06,
+      shadowRadius: 12,
+      elevation: 3,
+    },
+    pronounced: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.12,
+      shadowRadius: 18,
+      elevation: 6,
+    },
   },
 
   typography: {
@@ -33,8 +63,8 @@ const theme = {
 
   card: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    padding: 14,
+    borderRadius: 12,
+    padding: 18,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.06,
@@ -43,7 +73,7 @@ const theme = {
   },
 
   button: {
-    borderRadius: 10,
+    borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
   },

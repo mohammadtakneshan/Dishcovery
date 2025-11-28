@@ -1,80 +1,55 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { Text, Pressable, StyleSheet, Platform } from "react-native";
+import theme from "../theme.js";
 
-const Button = ({
-  title,
-  onPress,
-  variant = "primary",
-  disabled = false,
-  icon = null,
-}) => {
-  const getButtonStyle = () => {
-    if (disabled) return styles.buttonDisabled;
-    return variant === "primary"
-      ? styles.buttonPrimary
-      : styles.buttonSecondary;
-  };
+export default function Button({ children, onPress, style, disabled }) {
+  const [hovered, setHovered] = useState(false);
 
-  const getTextStyle = () => {
-    if (disabled) return styles.textDisabled;
-    return variant === "primary" ? styles.textPrimary : styles.textSecondary;
-  };
+  const bgColor =
+    Platform.OS === "web" && hovered
+      ? theme.colors.headerBlue
+      : theme.colors.buttonBg;
 
   return (
-    <TouchableOpacity
-      style={[styles.button, getButtonStyle()]}
+    <Pressable
       onPress={onPress}
+      onHoverIn={() => Platform.OS === "web" && setHovered(true)}
+      onHoverOut={() => Platform.OS === "web" && setHovered(false)}
+      style={({ pressed }) => [
+        styles.button,
+        { backgroundColor: bgColor, opacity: pressed || disabled ? 0.9 : 1 },
+        style,
+      ]}
       disabled={disabled}
-      activeOpacity={0.7}
     >
-      {icon && <View style={styles.icon}>{icon}</View>}
-      <Text style={[styles.text, getTextStyle()]}>{title}</Text>
-    </TouchableOpacity>
+      <Text style={[styles.text, disabled && styles.textDisabled]}>
+        {children}
+      </Text>
+    </Pressable>
   );
-};
+}
 
 const styles = StyleSheet.create({
   button: {
     alignItems: "center",
-    borderRadius: 12,
-    elevation: 3,
-    flexDirection: "row",
     justifyContent: "center",
-    paddingHorizontal: 24,
-    paddingVertical: 14,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  buttonDisabled: {
-    backgroundColor: "#e0e0e0",
-  },
-  buttonPrimary: {
-    backgroundColor: "#0ea5e9",
-  },
-  buttonSecondary: {
-    backgroundColor: "#f2f2f7",
-    borderColor: "#d1d1d6",
-    borderWidth: 1,
-  },
-  icon: {
-    marginRight: 8,
+    borderRadius: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    shadowColor: theme.shadows?.soft?.shadowColor || "#000",
+    shadowOffset: theme.shadows?.soft?.shadowOffset || { width: 0, height: 6 },
+    shadowOpacity: theme.shadows?.soft?.shadowOpacity ?? 0.06,
+    shadowRadius: theme.shadows?.soft?.shadowRadius ?? 12,
+    ...(Platform.OS === "web"
+      ? { boxShadow: "0 6px 18px rgba(0,0,0,0.06)" }
+      : {}),
   },
   text: {
-    fontFamily: "SF Pro Display",
-    fontSize: 16,
-    fontWeight: "600",
+    color: theme.colors.buttonText || "#fff",
+    fontWeight: "700",
+    fontSize: 15,
   },
   textDisabled: {
-    color: "#999999",
-  },
-  textPrimary: {
-    color: "#ffffff",
-  },
-  textSecondary: {
-    color: "#000000",
+    color: "#9CA3AF",
   },
 });
-
-export default Button;
