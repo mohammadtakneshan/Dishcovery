@@ -6,6 +6,14 @@ import { SettingsProvider } from "./src/context/SettingsContext";
 import "./src/config/i18n";
 import theme from "./src/theme.js";
 
+/**
+ * Root application component that manages recipe state and renders either the upload screen or the recipe screen.
+ *
+ * Manages internal `recipeResult` state and supplies handlers to update or reset it; when `recipeResult` is present,
+ * the recipe screen is shown with the payload derived from `recipeResult`, otherwise the upload screen is shown.
+ *
+ * @returns {JSX.Element} The root SafeAreaView containing either UploadScreen (no recipe) or RecipeScreen (with recipe).
+ */
 function RootApp() {
   const [recipeResult, setRecipeResult] = useState(null);
 

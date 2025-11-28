@@ -2,6 +2,15 @@ import React, { useState } from "react";
 import { Text, Pressable, StyleSheet, Platform } from "react-native";
 import theme from "../theme.js";
 
+/**
+ * Renders a themed Pressable button that displays the given children and handles presses.
+ *
+ * @param {import('react').ReactNode} children - Content rendered inside the button (usually text or icons).
+ * @param {() => void} onPress - Callback invoked when the button is pressed.
+ * @param {import('react-native').StyleProp<import('react-native').ViewStyle>} [style] - Additional style(s) merged into the button's container.
+ * @param {boolean} [disabled=false] - If true, the button appears disabled and does not respond to presses.
+ * @returns {import('react').JSX.Element} A Pressable button element that updates its background on web hover and applies disabled/pressed visual states.
+ */
 export default function Button({ children, onPress, style, disabled }) {
   const [hovered, setHovered] = useState(false);
 

@@ -8,6 +8,18 @@ import {
 import { useTranslation } from "react-i18next";
 import theme from "../theme";
 
+/**
+ * Render a recipe detail screen with metadata, ingredients, instructions, nutrition, and optional tips.
+ *
+ * @param {{ data?: { recipe?: object, meta?: object, warning?: string }, recipe?: object, onBack?: function }} props - Component props.
+ * @param {object} [props.data] - Optional payload containing recipe information and auxiliary data.
+ * @param {object} [props.data.recipe] - Recipe object with fields like title, prep_time, cook_time, servings, ingredients, steps, nutrition, and tips.
+ * @param {object} [props.data.meta] - Optional metadata (e.g., provider, model, language) shown alongside the recipe.
+ * @param {string} [props.data.warning] - Optional warning text shown at the top of the recipe card.
+ * @param {object} [props.recipe] - Optional recipe object that overrides `data.recipe` when provided.
+ * @param {function} [props.onBack] - Callback invoked when the user presses the back button in the no-recipe fallback UI.
+ * @returns {JSX.Element} The rendered recipe screen component.
+ */
 export default function RecipeScreen({ data, recipe, onBack }) {
   const { t } = useTranslation();
   const recipeData = recipe || data?.recipe;

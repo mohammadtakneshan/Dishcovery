@@ -11,11 +11,18 @@ import { useTranslation } from "react-i18next";
 import theme from "../theme.js";
 
 /**
- * Minimal image picker component.
- * - Web: uses a hidden <input type="file"> and passes a File object to onImageSelected
- * - Native/Expo: gracefully informs user
+ * Image upload component that provides platform-specific flows for selecting an image and exposing its data.
  *
- * onImageSelected receives: { uri, name, type, file }
+ * On web, selection is done via a hidden file input and the selected File is passed to the callback.
+ * On native (Expo), the component attempts to use `expo-image-picker` to obtain an image and requests media library permission when needed.
+ *
+ * @param {{ onImageSelected?: (image: { uri: string, name: string, type?: string, file?: File }) => void }} props
+ * @param {Function} props.onImageSelected - Optional callback invoked when an image is selected. Receives an object containing:
+ *   - `uri`: local URL or file URI for preview,
+ *   - `name`: filename,
+ *   - `type`: MIME type (web File only),
+ *   - `file`: the original File object (web only).
+ * @returns {JSX.Element} The image upload UI for the current platform.
  */
 export default function ImageUpload({ onImageSelected }) {
   const { t } = useTranslation();

@@ -61,6 +61,17 @@ export class SettingsValidationError extends Error {
 
 const SettingsContext = createContext(null);
 
+/**
+ * Provides application settings and related actions to descendant components via context.
+ *
+ * Exposes the current settings, available providers, validation state, loading status, and functions
+ * to save, reset, and validate settings. On mount it hydrates settings from persistent storage and
+ * keeps storage in sync when settings are saved or reset.
+ *
+ * @param {object} props
+ * @param {import("react").ReactNode} props.children - Child elements that receive the settings context.
+ * @returns {import("react").JSX.Element} The SettingsContext provider element.
+ */
 export function SettingsProvider({ children }) {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [validationErrors, setValidationErrors] = useState({});
@@ -177,6 +188,11 @@ export function SettingsProvider({ children }) {
   );
 }
 
+/**
+ * Access the current settings context value.
+ * @returns {import("./path").SettingsContextValue} The value supplied by a surrounding SettingsProvider.
+ * @throws {Error} If called outside of a SettingsProvider.
+ */
 export function useSettings() {
   const context = useContext(SettingsContext);
   if (!context) {
@@ -185,6 +201,19 @@ export function useSettings() {
   return context;
 }
 
+/**
+ * Validate and sanitize a candidate settings object for AI provider configuration.
+ *
+ * @param {Object} candidate - Partial or complete settings to validate.
+ * @param {string} [candidate.provider] - Provider id or label (case-insensitive).
+ * @param {string} [candidate.apiKey] - API key for the selected provider.
+ * @param {string} [candidate.apiBaseUrl] - Base URL for provider API requests.
+ * @param {string} [candidate.model] - Preferred model identifier.
+ * @returns {{ sanitized: { provider: string, apiKey: string, apiBaseUrl: string, model: string }, errors: Object }} 
+ * An object containing:
+ *  - `sanitized`: the normalized settings (provider id when known, trimmed apiKey, validated apiBaseUrl, and resolved model).
+ *  - `errors`: a map of field names to error messages for any validation failures (fields with no errors are omitted).
+ */
 function validateSettings(candidate) {
   const errors = {};
   const normalizedProvider = (candidate.provider || "").toLowerCase().trim();
@@ -218,6 +247,12 @@ function validateSettings(candidate) {
   return { sanitized, errors };
 }
 
+/**
+ * Validate an API key for a given provider.
+ * @param {string} providerId - Provider identifier (e.g., "gemini", "openai", "anthropic").
+ * @param {string} key - The API key to validate.
+ * @returns {string|null} An error message describing the validation failure, or `null` if the key is valid.
+ */
 function validateApiKey(providerId, key) {
   if (!key) {
     return "Enter an API key for this provider.";
@@ -245,6 +280,11 @@ function validateApiKey(providerId, key) {
   return null;
 }
 
+/**
+ * Ensures a candidate API base URL is valid and returns a sanitized version or an error.
+ * @param {unknown} value - Candidate API base URL; typically a string.
+ * @returns {{value: string, error: string|null}} Sanitized base URL in `value` or empty string on error; `error` contains a human-facing message when invalid, otherwise `null`.
+ */
 function validateApiBaseUrl(value) {
   const trimmed = typeof value === "string" ? value.trim() : "";
   if (!trimmed) {
@@ -270,6 +310,12 @@ function validateApiBaseUrl(value) {
   }
 }
 
+/**
+ * Selects the model to use based on an explicit model string or the provider's default.
+ * @param {string|any} model - Candidate model; trimmed before evaluation.
+ * @param {{defaultModel: string}|null|undefined} providerConfig - Provider configuration whose `defaultModel` will be returned when `model` is empty.
+ * @returns {string} The trimmed `model` if non-empty; otherwise the provider's `defaultModel`, or an empty string if neither is available.
+ */
 function normalizeModel(model, providerConfig) {
   const trimmed = typeof model === "string" ? model.trim() : "";
   if (trimmed) {
@@ -278,6 +324,11 @@ function normalizeModel(model, providerConfig) {
   return providerConfig ? providerConfig.defaultModel : trimmed;
 }
 
+/**
+ * Parse a JSON settings string into an object, falling back to an empty object on parse failure.
+ * @param {string} raw - The raw JSON string to parse.
+ * @returns {Object} The parsed settings object, or an empty object if parsing fails.
+ */
 function safeParseSettings(raw) {
   try {
     return JSON.parse(raw);
@@ -286,6 +337,11 @@ function safeParseSettings(raw) {
   }
 }
 
+/**
+ * Remove a single trailing slash from a string value.
+ * @param {any} value - The value to normalize; if a string, a trailing '/' will be removed.
+ * @returns {string|any} The string without a trailing slash, or the original value if it was not a string.
+ */
 function trimTrailingSlash(value) {
   if (typeof value !== "string") {
     return value;

@@ -26,6 +26,15 @@ import { SettingsValidationError } from "../context/SettingsContext";
 import { useTranslation } from "react-i18next";
 import RecipeScreen from "./RecipeScreen";
 
+/**
+ * Render the upload UI that lets users generate recipes from a photo or a descriptive prompt.
+ *
+ * Renders a responsive, two-column screen with a top header and language selector, a settings panel,
+ * a segmented control to switch between "Photo to Recipe" and "Prompt to Food", an image upload or
+ * prompt input flow, error banner, generate controls, and a preview area that displays the generated recipe.
+ *
+ * @returns {JSX.Element} The rendered Upload screen including header, settings panel, photo and prompt workflows, error handling, and recipe preview.
+ */
 export default function UploadScreen() {
   const { t, i18n } = useTranslation();
 

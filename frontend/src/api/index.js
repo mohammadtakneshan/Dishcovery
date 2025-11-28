@@ -15,6 +15,18 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Upload an image and request recipe generation from the server.
+ * @param {{uri?: string, name?: string, file?: File}} [image] - Image input; supply a File via `file` or a URI via `uri`. `name` overrides the inferred filename when provided.
+ * @param {{baseUrl?: string, provider?: string, apiKey?: string, model?: string, language?: string}} [options] - Optional request settings.
+ * @param {string} [options.baseUrl] - Custom API base URL; trailing slash is removed. If not set, DEFAULT_API_BASE is used.
+ * @param {string} [options.provider] - Provider identifier to include with the request.
+ * @param {string} [options.apiKey] - API key to include with the request.
+ * @param {string} [options.model] - Model identifier to include with the request.
+ * @param {string} [options.language] - Language code to include with the request.
+ * @returns {Promise<any>} The parsed response payload returned by the generate-recipe endpoint.
+ * @throws {ApiError} If no image is provided, the API base URL is not configured, a network error occurs, or the server returns an error or unsuccessful payload.
+ */
 export async function generateRecipeFromImage(
   { uri, name, file } = {},
   options = {}
@@ -101,12 +113,23 @@ export async function generateRecipeFromImage(
   return payload;
 }
 
+/**
+ * Appends a key/value pair to a FormData instance when the value is not undefined, not null, and not an empty string.
+ * @param {FormData} formData - The FormData instance to append the field to.
+ * @param {string} key - The form field name.
+ * @param {*} value - The value to append; its string representation is used to determine emptiness.
+ */
 function appendIfValue(formData, key, value) {
   if (value !== undefined && value !== null && String(value).trim() !== "") {
     formData.append(key, value);
   }
 }
 
+/**
+ * Parse an HTTP Response body into JSON or a standardized error object.
+ * @param {Response} response - The Response object whose body should be parsed.
+ * @returns {any|null|{success: false, error: {message: string}}} Parsed JSON if the response indicates JSON or the text can be parsed as JSON; `null` if the body is empty; otherwise an object `{ success: false, error: { message } }` with the raw text.
+ */
 async function parseResponse(response) {
   const contentType = response.headers.get("content-type") || "";
   if (contentType.includes("application/json")) {
@@ -125,6 +148,11 @@ async function parseResponse(response) {
   }
 }
 
+/**
+ * Remove a trailing slash from a base URL string and return an empty string for falsy or non-string input.
+ * @param {string} value - The base URL to sanitize.
+ * @returns {string} The input with any trailing slash removed, or an empty string if the input is falsy or not a string.
+ */
 function sanitizeBaseUrl(value) {
   if (!value || typeof value !== "string") {
     return "";
@@ -132,6 +160,11 @@ function sanitizeBaseUrl(value) {
   return value.replace(/\/$/, "");
 }
 
+/**
+ * Derives a file name from a URI's last path segment, or returns "photo.jpg" if one cannot be determined.
+ * @param {string} uri - The URI to extract the file name from.
+ * @returns {string} The extracted file name, or "photo.jpg" if extraction fails.
+ */
 function inferFileNameFromUri(uri) {
   try {
     const url = new URL(uri);
@@ -145,6 +178,11 @@ function inferFileNameFromUri(uri) {
   return "photo.jpg";
 }
 
+/**
+ * Determine the image MIME type based on a file name's extension.
+ * @param {string} fileName - The file name or path from which to infer the MIME type.
+ * @returns {string} The MIME type inferred from the file extension (`image/png`, `image/webp`, `image/gif`, `image/jpeg`).
+ */
 function inferMimeType(fileName) {
   if (fileName.endsWith(".png")) return "image/png";
   if (fileName.endsWith(".webp")) return "image/webp";

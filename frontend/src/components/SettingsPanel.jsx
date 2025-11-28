@@ -18,6 +18,17 @@ import {
 
 const STATUS_TIMEOUT_MS = 3500;
 
+/**
+ * Renders a settings panel UI that displays and manages application settings, including provider selection,
+ * API configuration fields, validation state, status messages, and a save action.
+ *
+ * The component keeps a local form copy of settings, validates input, shows transient status messages,
+ * and persists changes through the SettingsContext. After a successful save, it will call `onClose` if provided.
+ *
+ * @param {{ onClose?: function }} props - Component props.
+ * @param {function} [props.onClose] - Optional callback invoked when the panel should be closed (called after a successful save or when the user presses the close control).
+ * @returns {JSX.Element} The rendered settings panel component.
+ */
 export default function SettingsPanel({ onClose }) {
   const { t } = useTranslation();
   const {
