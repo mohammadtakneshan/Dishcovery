@@ -1,18 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { useTranslation } from 'react-i18next';
-import Input from './Input';
-import theme from '../theme';
+  Pressable,
+  Platform,
+} from "react-native";
+import { useTranslation } from "react-i18next";
+import Input from "./Input";
+import theme from "../theme";
 import {
   SettingsValidationError,
   useSettings,
-} from '../context/SettingsContext';
+} from "../context/SettingsContext";
 
 const STATUS_TIMEOUT_MS = 3500;
 
@@ -23,14 +25,14 @@ export default function SettingsPanel({ onClose }) {
     providers,
     providerMap,
     saveSettings,
-  resetSettings,
-  validate,
+    validate,
     loading,
     lastSavedAt,
   } = useSettings();
   const [form, setForm] = useState(settings);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState(null);
+  const [hoverSave, setHoverSave] = useState(false);
 
   useEffect(() => {
     setForm(settings);
@@ -47,7 +49,7 @@ export default function SettingsPanel({ onClose }) {
 
   const currentProvider = useMemo(
     () => providerMap[form.provider] || providers[0],
-    [form.provider, providerMap, providers],
+    [form.provider, providerMap, providers]
   );
 
   const handleProviderSelect = (providerId) => {
@@ -64,20 +66,20 @@ export default function SettingsPanel({ onClose }) {
     setStatus(null);
     try {
       await saveSettings(form);
-      setStatus({ type: 'success', message: t('settingsPanel.saved') });
+      setStatus({ type: "success", message: t("settingsPanel.saved") });
       if (onClose) {
         onClose();
       }
     } catch (error) {
       if (error instanceof SettingsValidationError) {
         setStatus({
-          type: 'error',
-          message: t('settingsPanel.fixFieldsError'),
+          type: "error",
+          message: t("settingsPanel.fixFieldsError"),
         });
       } else {
         setStatus({
-          type: 'error',
-          message: t('settingsPanel.saveError'),
+          type: "error",
+          message: t("settingsPanel.saveError"),
         });
       }
     } finally {
@@ -85,29 +87,29 @@ export default function SettingsPanel({ onClose }) {
     }
   };
 
-  const handleReset = async () => {
-    setSaving(true);
-    setStatus(null);
-    try {
-      const defaults = await resetSettings();
-      setForm(defaults);
-      setStatus({ type: 'info', message: t('settingsPanel.resetSuccess') });
-    } catch (error) {
-      setStatus({
-        type: 'error',
-        message: t('settingsPanel.resetError'),
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
+  // const handleReset = async () => {
+  //   setSaving(true);
+  //   setStatus(null);
+  //   try {
+  //     const defaults = await resetSettings();
+  //     setForm(defaults);
+  //     setStatus({ type: "info", message: t("settingsPanel.resetSuccess") });
+  //   } catch (error) {
+  //     setStatus({
+  //       type: "error",
+  //       message: t("settingsPanel.resetError"),
+  //     });
+  //   } finally {
+  //     setSaving(false);
+  //   }
+  // };
 
   const renderStatus = () => {
     if (!status) return null;
     const palette =
-      status.type === 'success'
+      status.type === "success"
         ? styles.statusSuccess
-        : status.type === 'error'
+        : status.type === "error"
         ? styles.statusError
         : styles.statusInfo;
 
@@ -121,32 +123,26 @@ export default function SettingsPanel({ onClose }) {
   return (
     <View style={styles.wrapper}>
       <View style={styles.headerRow}>
-        <Text style={styles.heading}>{t('settingsPanel.title')}</Text>
+        <Text style={styles.heading}>{t("settingsPanel.title")}</Text>
         {onClose ? (
-          <TouchableOpacity
-            onPress={onClose}
-            accessibilityRole="button"
-            style={styles.closeButton}
-          >
-            <Text style={styles.closeText}>{t('settingsPanel.close')}</Text>
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Text style={styles.closeText}>{t("settingsPanel.close")}</Text>
           </TouchableOpacity>
         ) : null}
       </View>
 
-      <Text style={styles.description}>
-        {t('settingsPanel.description')}
-      </Text>
+      <Text style={styles.description}>{t("settingsPanel.description")}</Text>
 
       {loading ? (
         <View style={styles.loadingRow}>
           <ActivityIndicator color={theme.colors.brand} size="small" />
-          <Text style={styles.loadingText}>{t('settingsPanel.loading')}</Text>
+          <Text style={styles.loadingText}>{t("settingsPanel.loading")}</Text>
         </View>
       ) : null}
 
       {renderStatus()}
 
-      <Text style={styles.label}>{t('settingsPanel.provider')}</Text>
+      <Text style={styles.label}>{t("settingsPanel.provider")}</Text>
       <View style={styles.providerRow}>
         {providers.map((provider) => {
           const isActive = provider.id === form.provider;
@@ -154,11 +150,17 @@ export default function SettingsPanel({ onClose }) {
             <TouchableOpacity
               key={provider.id}
               onPress={() => handleProviderSelect(provider.id)}
-              style={[styles.providerChip, isActive && styles.providerChipActive]}
+              style={[
+                styles.providerChip,
+                isActive && styles.providerChipActive,
+              ]}
               accessibilityState={{ selected: isActive }}
             >
               <Text
-                style={[styles.providerText, isActive && styles.providerTextActive]}
+                style={[
+                  styles.providerText,
+                  isActive && styles.providerTextActive,
+                ]}
               >
                 {provider.label}
               </Text>
@@ -171,28 +173,44 @@ export default function SettingsPanel({ onClose }) {
       ) : null}
 
       <View style={styles.hintCard}>
-     <Text style={styles.hintTitle}>{currentProvider.label}</Text> 
-     <Text style={styles.hintCopy}> {t(`providers.${currentProvider.id}.description`, { defaultValue: currentProvider.description })} </Text>
-      <Text style={styles.hintFootnote}> {t(`providers.${currentProvider.id}.keyHint`, { defaultValue: currentProvider.keyHint })} </Text>
+        <Text style={styles.hintTitle}>{currentProvider.label}</Text>
+        <Text style={styles.hintCopy}>
+          {" "}
+          {t(`providers.${currentProvider.id}.description`, {
+            defaultValue: currentProvider.description,
+          })}{" "}
+        </Text>
+        <Text style={styles.hintFootnote}>
+          {" "}
+          {t(`providers.${currentProvider.id}.keyHint`, {
+            defaultValue: currentProvider.keyHint,
+          })}{" "}
+        </Text>
       </View>
 
       <Input
-label={t('settingsPanel.backendUrl')}
+        label={t("settingsPanel.backendUrl")}
         value={form.apiBaseUrl}
-        onChangeText={(value) => setForm((prev) => ({ ...prev, apiBaseUrl: value }))}
+        onChangeText={(value) =>
+          setForm((prev) => ({ ...prev, apiBaseUrl: value }))
+        }
         placeholder="http://localhost:5001"
         autoCapitalize="none"
         keyboardType="url"
       />
       {validationState.errors.apiBaseUrl ? (
-        <Text style={styles.errorText}>{validationState.errors.apiBaseUrl}</Text>
+        <Text style={styles.errorText}>
+          {validationState.errors.apiBaseUrl}
+        </Text>
       ) : null}
 
       <Input
-        label={t('settingsPanel.apiKey')}
+        label={t("settingsPanel.apiKey")}
         value={form.apiKey}
-        onChangeText={(value) => setForm((prev) => ({ ...prev, apiKey: value }))}
-        placeholder={t('settingsPanel.apiKeyPlaceholder')}
+        onChangeText={(value) =>
+          setForm((prev) => ({ ...prev, apiKey: value }))
+        }
+        placeholder={t("settingsPanel.apiKeyPlaceholder")}
         autoCapitalize="none"
         autoCorrect={false}
         secureTextEntry
@@ -203,40 +221,51 @@ label={t('settingsPanel.backendUrl')}
       ) : null}
 
       <Input
-        label={t('settingsPanel.model')}
-        value={form.model || ''}
+        label={t("settingsPanel.model")}
+        value={form.model || ""}
         onChangeText={(value) => setForm((prev) => ({ ...prev, model: value }))}
         placeholder={currentProvider.defaultModel}
         autoCapitalize="none"
         autoCorrect={false}
       />
 
-      <View style={styles.actionsRow}>
-        <TouchableOpacity
-          onPress={handleSave}
-          style={[styles.primaryButton, (saving || hasErrors) && styles.disabledButton]}
-          disabled={saving || hasErrors}
-          accessibilityRole="button"
-        >
-          {saving ? (
-            <ActivityIndicator color={theme.colors.surface} />
-          ) : (
-            <Text style={styles.primaryButtonText}>{t('settingsPanel.save')}</Text>
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleReset}
-          style={styles.secondaryButton}
-          disabled={saving}
-          accessibilityRole="button"
-        >
-          <Text style={styles.secondaryButtonText}>{t('settingsPanel.reset')}</Text>
-        </TouchableOpacity>
-      </View>
+      {(() => {
+        // compute disabled and bgColor in-scope
+        const disabled = saving || hasErrors;
+        const bgColor =
+          Platform.OS === "web" && hoverSave
+            ? theme.colors.headerBlue
+            : theme.colors.buttonBg || theme.colors.brand;
+
+        return (
+          <Pressable
+            onPress={handleSave}
+            onHoverIn={() => Platform.OS === "web" && setHoverSave(true)}
+            onHoverOut={() => Platform.OS === "web" && setHoverSave(false)}
+            style={[
+              styles.primaryButton,
+              { backgroundColor: bgColor },
+              disabled && styles.disabledButtonInline,
+              (saving || hasErrors) && styles.disabledButton,
+            ]}
+            disabled={disabled}
+            accessibilityRole="button"
+          >
+            {saving ? (
+              <ActivityIndicator color={theme.colors.surface} />
+            ) : (
+              <Text style={styles.primaryButtonText}>
+                {t("settingsPanel.save")}
+              </Text>
+            )}
+          </Pressable>
+        );
+      })()}
 
       {lastSavedAt ? (
         <Text style={styles.savedText}>
-          {t('settingsPanel.lastSaved')} {new Date(lastSavedAt).toLocaleString()}
+          {t("settingsPanel.lastSaved")}{" "}
+          {new Date(lastSavedAt).toLocaleString()}
         </Text>
       ) : null}
     </View>
@@ -244,18 +273,13 @@ label={t('settingsPanel.backendUrl')}
 }
 
 const styles = StyleSheet.create({
-  actionsRow: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: theme.spacing.md,
-  },
   closeButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
   closeText: {
     color: theme.colors.brand,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   description: {
     color: theme.colors.muted,
@@ -272,16 +296,17 @@ const styles = StyleSheet.create({
   heading: {
     ...theme.typography.heading,
     fontSize: 20,
+    fontWeight: "500",
   },
   headerRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: theme.spacing.sm,
   },
   hintCard: {
-    backgroundColor: '#fff8f0',
-    borderColor: '#f0d3b8',
+    backgroundColor: theme.colors.infoBg || "#F1F6FB",
+    borderColor: theme.colors.infoBorder || "#DDEAF6",
     borderRadius: theme.radii.md,
     borderWidth: 1,
     marginBottom: theme.spacing.md,
@@ -299,19 +324,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   hintTitle: {
-    color: theme.colors.brandDark,
+    color: theme.colors.headerBlue || theme.colors.brand,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   label: {
     color: theme.colors.text,
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: theme.spacing.xs,
   },
   loadingRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    flexDirection: "row",
     gap: 8,
     marginBottom: theme.spacing.sm,
   },
@@ -320,19 +345,25 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   primaryButton: {
-    alignItems: 'center',
-    backgroundColor: theme.colors.brand,
-    borderRadius: theme.radii.sm,
+    alignItems: "center",
+    borderRadius: theme.radii.apple,
     flex: 1,
     paddingVertical: 12,
+    ...(Platform.OS === "web"
+      ? {
+          transition: "background-color 180ms ease, box-shadow 180ms ease",
+          boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
+          cursor: "pointer",
+        }
+      : {}),
   },
   primaryButtonText: {
-    color: theme.colors.surface,
+    color: theme.colors.buttonText || theme.colors.surface || "#ffffff",
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   providerChip: {
-    backgroundColor: '#f6f6f6',
+    backgroundColor: "#f6f6f6",
     borderRadius: theme.radii.sm,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -341,30 +372,18 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.brand,
   },
   providerRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 10,
     marginBottom: theme.spacing.sm,
   },
   providerText: {
     color: theme.colors.text,
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   providerTextActive: {
     color: theme.colors.surface,
-  },
-  secondaryButton: {
-    alignItems: 'center',
-    borderColor: theme.colors.brand,
-    borderRadius: theme.radii.sm,
-    borderWidth: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-  },
-  secondaryButtonText: {
-    color: theme.colors.brand,
-    fontWeight: '600',
   },
   status: {
     borderRadius: theme.radii.sm,
@@ -373,18 +392,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   statusError: {
-    backgroundColor: '#ffe8e6',
-    borderColor: '#ffbdb6',
+    backgroundColor: "#ffe8e6",
+    borderColor: "#ffbdb6",
     borderWidth: 1,
   },
   statusInfo: {
-    backgroundColor: '#edf3ff',
-    borderColor: '#c7d7ff',
+    backgroundColor: "#edf3ff",
+    borderColor: "#c7d7ff",
     borderWidth: 1,
   },
   statusSuccess: {
-    backgroundColor: '#e8f9ef',
-    borderColor: '#b5edcc',
+    backgroundColor: "#e8f9ef",
+    borderColor: "#b5edcc",
     borderWidth: 1,
   },
   statusText: {
@@ -397,9 +416,14 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.sm,
   },
   wrapper: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.pageBg || theme.colors.surface,
     borderRadius: theme.radii.md,
     padding: theme.spacing.md,
-    width: '100%',
+    width: "100%",
+    borderWidth: 1,
+    borderColor: theme.colors.subtleBorder,
+  },
+  disabledButtonInline: {
+    opacity: 0.65,
   },
 });

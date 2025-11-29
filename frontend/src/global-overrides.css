@@ -1,0 +1,34 @@
+/* src/global-overrides.css
+   Overrides for generated padding class and layout helpers.
+   We keep them tight here and explicitly control spacing from React components.
+*/
+
+/* Fragile selectors removed - using React Native positioning in UploadScreen instead */
+
+.r-maxWidth-1vamr63,
+.r-maxWidth-yp55cy {
+  max-width: 100% !important;
+}
+
+/* restore global page gutters that you asked for (bigger left/right spacing)
+   the app root will use .app-root, set it below so it applies after library CSS */
+.app-root {
+  padding-left: 40px !important;
+  padding-right: 40px !important;
+  box-sizing: border-box;
+}
+
+/* Small tweak to ensure header strip uses full viewport width */
+.top-full-header {
+  width: 100% !important;
+  max-width: 100%;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.r-backgroundColor-14lw9ot {
+  background-color: #ffffff !important;
+  box-shadow: none !important;
+}

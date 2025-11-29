@@ -40,6 +40,14 @@ class Config:
 
     @classmethod
     def get_api_key_for(cls, provider: str | None) -> str | None:
+        """Retrieve the API key for the specified provider from environment variables.
+
+        Args:
+            provider: Provider name ('gemini', 'openai', or 'anthropic')
+
+        Returns:
+            API key string from environment, or None if provider is invalid or key not set
+        """
         if not provider:
             return None
         env_attr = cls.PROVIDER_KEY_MAP.get(provider.lower())
@@ -49,6 +57,14 @@ class Config:
 
     @classmethod
     def get_default_model_for(cls, provider: str | None) -> str | None:
+        """Get the default model identifier for the specified provider.
+
+        Args:
+            provider: Provider name ('gemini', 'openai', or 'anthropic')
+
+        Returns:
+            Model identifier string, or None if provider is invalid
+        """
         if not provider:
             return None
         return cls.DEFAULT_MODELS.get(provider.lower())

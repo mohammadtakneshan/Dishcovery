@@ -20,6 +20,11 @@ def create_app(config_class=Config):
     
     @app.route('/')
     def index():
+        """API root endpoint providing service information and available endpoints.
+
+        Returns:
+            JSON response with welcome message, version, and endpoint directory
+        """
         return jsonify({
             'message': 'Welcome to Dishcovery API',
             'version': '1.0.0',

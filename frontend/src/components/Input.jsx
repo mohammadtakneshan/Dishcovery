@@ -1,5 +1,6 @@
-import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, TextInput, StyleSheet } from "react-native";
+import theme from "../theme.js";
 
 const Input = ({
   label,
@@ -8,8 +9,8 @@ const Input = ({
   placeholder,
   multiline = false,
   numberOfLines = 1,
-  keyboardType = 'default',
-  autoCapitalize = 'sentences',
+  keyboardType = "default",
+  autoCapitalize = "sentences",
   isDarkMode = false,
   style,
   ...rest
@@ -30,7 +31,7 @@ const Input = ({
       value={value}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      placeholderTextColor={isDarkMode ? '#8e8e93' : '#999999'}
+      placeholderTextColor={isDarkMode ? "#8e8e93" : "#999999"}
       multiline={multiline}
       numberOfLines={numberOfLines}
       keyboardType={keyboardType}
@@ -45,35 +46,37 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   input: {
-    borderRadius: 12,
+    borderRadius: theme.radii.apple,
     borderWidth: 1,
-    fontFamily: 'SF Pro Text',
+    borderColor: "#E5E7EB",
+    fontFamily: "SF Pro Text",
     fontSize: 16,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
+    backgroundColor: theme.colors.surface,
+  },
+  multiline: {
+    minHeight: 120,
+    textAlignVertical: "top",
   },
   inputDark: {
-    backgroundColor: '#1c1c1e',
-    borderColor: '#38383a',
-    color: '#ffffff',
+    backgroundColor: "#1c1c1e",
+    borderColor: "#38383a",
+    color: "#ffffff",
   },
   inputLight: {
-    backgroundColor: '#ffffff',
-    borderColor: '#d1d1d6',
-    color: '#000000',
+    backgroundColor: "#ffffff",
+    borderColor: "#d1d1d6",
+    color: "#000000",
   },
   label: {
-    fontFamily: 'SF Pro Text',
+    fontFamily: "SF Pro Text",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
   },
   labelDark: {
-    color: '#ffffff',
-  },
-  multiline: {
-    minHeight: 100,
-    textAlignVertical: 'top',
+    color: "#ffffff",
   },
 });
 

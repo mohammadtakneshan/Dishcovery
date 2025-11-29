@@ -23,6 +23,15 @@ class ProviderError(Exception):
     """Raised when a provider fails to return a usable response."""
 
     def __init__(self, code: str, message: str, *, status: int = 500, hint: str | None = None, debug: str | None = None):
+        """Initialize a provider error with structured error information.
+
+        Args:
+            code: Machine-readable error code (e.g., 'gemini_error', 'empty_response')
+            message: Human-friendly error message for the user
+            status: HTTP status code for the response (default: 500)
+            hint: Optional suggestion for the user to resolve the error
+            debug: Optional debug information (only shown in development mode)
+        """
         super().__init__(message)
         self.code = code
         self.status = status
@@ -31,6 +40,18 @@ class ProviderError(Exception):
 
 
 def problem_response(code: str, message: str, *, status: int = 400, hint: str | None = None, debug: str | None = None):
+    """Create a standardized error response in JSON format.
+
+    Args:
+        code: Machine-readable error code for client-side handling
+        message: User-friendly error message
+        status: HTTP status code (default: 400 for client errors)
+        hint: Optional suggestion for error recovery
+        debug: Optional debug info (only included in development/debug mode)
+
+    Returns:
+        Tuple of (JSON response, HTTP status code) ready for Flask to return
+    """
     payload: Dict[str, Any] = {
         "success": False,
         "error": {
@@ -205,6 +226,15 @@ def health_check():
 
 
 def get_provider_config(provider: str | None) -> Dict[str, Any] | None:
+    """Retrieve configuration dictionary for the specified AI provider.
+
+    Args:
+        provider: Provider identifier ('gemini', 'openai', or 'anthropic')
+
+    Returns:
+        Dictionary containing provider configuration (label, default_model, key_hint, handler)
+        Returns None if provider is not supported
+    """
     providers: Dict[str, Dict[str, Any]] = {
         'gemini': {
             'label': 'Google Gemini',
@@ -229,6 +259,16 @@ def get_provider_config(provider: str | None) -> Dict[str, Any] | None:
 
 
 def build_prompt(language: str, dietary_restrictions: str, cuisine_preference: str) -> str:
+    """Construct the AI prompt for recipe generation with user preferences.
+
+    Args:
+        language: ISO language code for recipe output (e.g., 'en', 'es', 'ja')
+        dietary_restrictions: Dietary requirements (e.g., 'vegetarian', 'gluten-free')
+        cuisine_preference: Desired cuisine style (e.g., 'Italian', 'Thai')
+
+    Returns:
+        Formatted prompt string instructing the AI to return structured JSON recipe data
+    """
     dietary_text = dietary_restrictions if dietary_restrictions else 'None'
     cuisine_text = cuisine_preference if cuisine_preference else 'Auto-detect from image'
 
@@ -259,6 +299,18 @@ Important: Return ONLY valid JSON. Do not include markdown fences or commentary.
 
 
 def parse_recipe(raw_text: str) -> Tuple[Dict[str, Any], str | None]:
+    """Parse and clean AI-generated recipe text into structured format.
+
+    Removes markdown code fences and attempts JSON parsing with fallback to raw text.
+
+    Args:
+        raw_text: Raw response text from the AI provider
+
+    Returns:
+        Tuple of (recipe_dict, warning_message):
+            - recipe_dict: Structured recipe data
+            - warning_message: None on success, error description on parse failure
+    """
     cleaned = raw_text.strip()
     cleaned = re.sub(r'^```json\s*', '', cleaned)
     cleaned = re.sub(r'^```\s*', '', cleaned)
@@ -283,6 +335,14 @@ def parse_recipe(raw_text: str) -> Tuple[Dict[str, Any], str | None]:
 
 
 def transform_recipe(recipe_json: Dict[str, Any]) -> Dict[str, Any]:
+    """Transform AI provider's JSON recipe format to Dishcovery's standard schema.
+
+    Args:
+        recipe_json: Raw recipe dictionary from AI provider
+
+    Returns:
+        Recipe dictionary with standardized field names and default values for missing fields
+    """
     return {
         'title': recipe_json.get('name', 'Delicious Recipe'),
         'prep_time': recipe_json.get('prep_time', 'N/A'),
@@ -296,6 +356,21 @@ def transform_recipe(recipe_json: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def generate_with_gemini(*, image_bytes: bytes, prompt: str, model: str, api_key: str, mime_type: str) -> Tuple[str, Dict[str, Any]]:
+    """Generate recipe using Google Gemini Vision API.
+
+    Args:
+        image_bytes: Raw image data as bytes
+        prompt: Recipe generation prompt with user preferences
+        model: Gemini model identifier (e.g., 'gemini-2.5-flash')
+        api_key: Google AI Studio API key
+        mime_type: Image MIME type
+
+    Returns:
+        Tuple of (response_text, metadata_dict) where metadata contains the model used
+
+    Raises:
+        ProviderError: If Gemini API fails or returns empty response
+    """
     try:
         genai.configure(api_key=api_key)
         image = Image.open(io.BytesIO(image_bytes))
@@ -317,6 +392,21 @@ def generate_with_gemini(*, image_bytes: bytes, prompt: str, model: str, api_key
 
 
 def generate_with_openai(*, image_bytes: bytes, prompt: str, model: str, api_key: str, mime_type: str) -> Tuple[str, Dict[str, Any]]:
+    """Generate recipe using OpenAI GPT-4o Vision API.
+
+    Args:
+        image_bytes: Raw image data as bytes
+        prompt: Recipe generation prompt with user preferences
+        model: OpenAI model identifier (e.g., 'gpt-4o-mini')
+        api_key: OpenAI API key (starts with 'sk-' or 'sk-proj-')
+        mime_type: Image MIME type for base64 encoding
+
+    Returns:
+        Tuple of (response_text, metadata_dict) where metadata contains the model used
+
+    Raises:
+        ProviderError: If OpenAI API fails or model is unavailable
+    """
     try:
         client = OpenAI(api_key=api_key)
         base64_image = base64.b64encode(image_bytes).decode('utf-8')
@@ -349,6 +439,21 @@ def generate_with_openai(*, image_bytes: bytes, prompt: str, model: str, api_key
 
 
 def generate_with_anthropic(*, image_bytes: bytes, prompt: str, model: str, api_key: str, mime_type: str) -> Tuple[str, Dict[str, Any]]:
+    """Generate recipe using Anthropic Claude Vision API.
+
+    Args:
+        image_bytes: Raw image data as bytes
+        prompt: Recipe generation prompt with user preferences
+        model: Claude model identifier (e.g., 'claude-3-sonnet-20240229')
+        api_key: Anthropic API key (starts with 'sk-ant-')
+        mime_type: Image MIME type for base64 source
+
+    Returns:
+        Tuple of (response_text, metadata_dict) where metadata contains the model used
+
+    Raises:
+        ProviderError: If Claude API fails or access is denied
+    """
     try:
         client = Anthropic(api_key=api_key)
         base64_image = base64.b64encode(image_bytes).decode('utf-8')
@@ -388,6 +493,16 @@ def generate_with_anthropic(*, image_bytes: bytes, prompt: str, model: str, api_
 
 
 def extract_openai_text(response: Any) -> str:
+    """Extract text content from OpenAI API response object.
+
+    Navigates nested structure and handles missing attributes safely.
+
+    Args:
+        response: OpenAI API response object
+
+    Returns:
+        Extracted text string, or empty string if extraction fails
+    """
     try:
         outputs = getattr(response, 'outputs', [])
         if outputs:
@@ -403,6 +518,16 @@ def extract_openai_text(response: Any) -> str:
 
 
 def extract_anthropic_text(response: Any) -> str:
+    """Extract text content from Anthropic API response object.
+
+    Iterates through content blocks and joins text-type blocks.
+
+    Args:
+        response: Anthropic API response object with content blocks
+
+    Returns:
+        Concatenated text from all text blocks, or empty string if extraction fails
+    """
     try:
         parts = getattr(response, 'content', [])
         texts = [part.text for part in parts if getattr(part, 'type', None) == 'text']

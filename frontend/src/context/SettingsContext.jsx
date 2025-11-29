@@ -5,35 +5,37 @@ import React, {
   useEffect,
   useMemo,
   useState,
-} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const STORAGE_KEY = '@dishcovery/settings/v1';
+const STORAGE_KEY = "@dishcovery/settings/v1";
 const DEFAULT_BASE_URL = trimTrailingSlash(
-  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001',
+  process.env.EXPO_PUBLIC_API_URL || "http://localhost:5001"
 );
 
 const PROVIDERS = [
   {
-    id: 'gemini',
-    label: 'Google Gemini',
-    description: 'Gemini Vision via Google AI Studio',
-    defaultModel: 'gemini-2.5-flash',
+    id: "gemini",
+    label: "Google Gemini",
+    description: "Gemini Vision via Google AI Studio",
+    defaultModel: "gemini-2.5-flash",
     keyHint: 'Keys start with "AI" and are generated in Google AI Studio.',
   },
   {
-    id: 'openai',
-    label: 'OpenAI GPT-4o',
-    description: 'Vision-enabled GPT models from OpenAI',
-    defaultModel: 'gpt-4o-mini',
-    keyHint: 'Keys begin with "sk-" or "sk-proj-" and are managed in the OpenAI dashboard.',
+    id: "openai",
+    label: "OpenAI GPT-4o",
+    description: "Vision-enabled GPT models from OpenAI",
+    defaultModel: "gpt-4o-mini",
+    keyHint:
+      'Keys begin with "sk-" or "sk-proj-" and are managed in the OpenAI dashboard.',
   },
   {
-    id: 'anthropic',
-    label: 'Anthropic Claude',
-    description: 'Claude 3 vision models',
-    defaultModel: 'claude-3-sonnet-20240229',
-    keyHint: 'Keys start with "sk-ant-" and are available in the Anthropic console.',
+    id: "anthropic",
+    label: "Anthropic Claude",
+    description: "Claude 3 vision models",
+    defaultModel: "claude-3-sonnet-20240229",
+    keyHint:
+      'Keys start with "sk-ant-" and are available in the Anthropic console.',
   },
 ];
 
@@ -43,16 +45,16 @@ const PROVIDER_MAP = PROVIDERS.reduce((acc, provider) => {
 }, {});
 
 const DEFAULT_SETTINGS = {
-  provider: 'gemini',
-  apiKey: '',
+  provider: "gemini",
+  apiKey: "",
   apiBaseUrl: DEFAULT_BASE_URL,
   model: PROVIDER_MAP.gemini.defaultModel,
 };
 
 export class SettingsValidationError extends Error {
   constructor(errors) {
-    super('Settings validation failed');
-    this.name = 'SettingsValidationError';
+    super("Settings validation failed");
+    this.name = "SettingsValidationError";
     this.errors = errors;
   }
 }
@@ -116,31 +118,45 @@ export function SettingsProvider({ children }) {
         throw new SettingsValidationError(errors);
       }
 
-      setSettings(sanitized);
-
       try {
+        // Write to storage FIRST before updating state
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
-        setLastSavedAt(new Date().toISOString());
-      } catch (error) {
-        throw error;
-      }
 
-      return sanitized;
+        // Only update state after successful write
+        setSettings(sanitized);
+        setLastSavedAt(new Date().toISOString());
+
+        return sanitized;
+      } catch (storageError) {
+        console.error('Failed to save settings to storage:', storageError);
+        throw new Error(
+          'Failed to save settings. Please check storage permissions and try again.'
+        );
+      }
     },
-    [settings],
+    [settings]
   );
 
   const resetSettings = useCallback(async () => {
-    setSettings(DEFAULT_SETTINGS);
-    setValidationErrors({});
-    setLastSavedAt(new Date().toISOString());
-    await AsyncStorage.removeItem(STORAGE_KEY);
-    return DEFAULT_SETTINGS;
+    try {
+      // Remove from storage FIRST before updating state
+      await AsyncStorage.removeItem(STORAGE_KEY);
+
+      // Only update state after successful removal
+      setSettings(DEFAULT_SETTINGS);
+      setValidationErrors({});
+      setLastSavedAt(new Date().toISOString());
+
+      return DEFAULT_SETTINGS;
+    } catch (storageError) {
+      console.error('Failed to reset settings:', storageError);
+      throw new Error('Failed to reset settings. Please try again.');
+    }
   }, []);
 
   const validate = useCallback(
     (candidate) => validateSettings({ ...settings, ...candidate }),
-    [settings],
+    [settings]
   );
 
   const value = useMemo(
@@ -169,7 +185,7 @@ export function SettingsProvider({ children }) {
       validationErrors,
       validate,
       lastSavedAt,
-    ],
+    ]
   );
 
   return (
@@ -182,24 +198,24 @@ export function SettingsProvider({ children }) {
 export function useSettings() {
   const context = useContext(SettingsContext);
   if (!context) {
-    throw new Error('useSettings must be used within a SettingsProvider');
+    throw new Error("useSettings must be used within a SettingsProvider");
   }
   return context;
 }
 
 function validateSettings(candidate) {
   const errors = {};
-  const normalizedProvider = (candidate.provider || '').toLowerCase().trim();
+  const normalizedProvider = (candidate.provider || "").toLowerCase().trim();
   const providerConfig = PROVIDER_MAP[normalizedProvider];
 
   if (!providerConfig) {
-    errors.provider = 'Select a supported AI provider.';
+    errors.provider = "Select a supported AI provider.";
   }
 
-  const apiKey = (candidate.apiKey || '').trim();
+  const apiKey = (candidate.apiKey || "").trim();
   const keyError = providerConfig
     ? validateApiKey(providerConfig.id, apiKey)
-    : 'API key is required for the selected provider.';
+    : "API key is required for the selected provider.";
 
   if (keyError) {
     errors.apiKey = keyError;
@@ -222,52 +238,58 @@ function validateSettings(candidate) {
 
 function validateApiKey(providerId, key) {
   if (!key) {
-    return 'Enter an API key for this provider.';
+    return "Enter an API key for this provider.";
   }
 
-  if (providerId === 'gemini' && !key.startsWith('AI')) {
+  if (providerId === "gemini" && !key.startsWith("AI")) {
     return 'Gemini keys should start with "AI" (Google AI Studio).';
   }
 
   if (
-    providerId === 'openai' &&
-    !(key.startsWith('sk-') || key.startsWith('sk-proj-'))
+    providerId === "openai" &&
+    !(key.startsWith("sk-") || key.startsWith("sk-proj-"))
   ) {
     return 'OpenAI keys typically start with "sk-" or "sk-proj-".';
   }
 
-  if (providerId === 'anthropic' && !key.startsWith('sk-ant-')) {
+  if (providerId === "anthropic" && !key.startsWith("sk-ant-")) {
     return 'Anthropic keys should start with "sk-ant-".';
   }
 
   if (key.length < 12) {
-    return 'API key looks too short. Double-check and paste the full value.';
+    return "API key looks too short. Double-check and paste the full value.";
   }
 
   return null;
 }
 
 function validateApiBaseUrl(value) {
-  const trimmed = typeof value === 'string' ? value.trim() : '';
+  const trimmed = typeof value === "string" ? value.trim() : "";
   if (!trimmed) {
-    return { value: '', error: 'API base URL is required.' };
+    return { value: "", error: "API base URL is required." };
   }
 
   try {
     const url = new URL(trimmed);
-    if (!(url.protocol === 'http:' || url.protocol === 'https:')) {
-      return { value: '', error: 'API URL must start with http:// or https://.' };
+    if (!(url.protocol === "http:" || url.protocol === "https:")) {
+      return {
+        value: "",
+        error: "API URL must start with http:// or https://.",
+      };
     }
 
-    const sanitized = `${url.origin}${url.pathname.replace(/\/$/, '')}`;
+    const sanitized = `${url.origin}${url.pathname.replace(/\/$/, "")}`;
     return { value: sanitized, error: null };
   } catch (error) {
-    return { value: '', error: 'Enter a valid API URL (e.g., http://localhost:5001).' };
+    return {
+      value: "",
+      error: "Enter a valid API URL (e.g., http://localhost:5001).",
+    };
   }
 }
 
 function normalizeModel(model, providerConfig) {
-  const trimmed = typeof model === 'string' ? model.trim() : '';
+  const trimmed = typeof model === "string" ? model.trim() : "";
   if (trimmed) {
     return trimmed;
   }
@@ -283,8 +305,8 @@ function safeParseSettings(raw) {
 }
 
 function trimTrailingSlash(value) {
-  if (typeof value !== 'string') {
+  if (typeof value !== "string") {
     return value;
   }
-  return value.replace(/\/$/, '');
+  return value.replace(/\/$/, "");
 }

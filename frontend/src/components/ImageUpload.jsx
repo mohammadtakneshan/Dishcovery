@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import theme from "../theme";
+import theme from "../theme.js";
 
 /**
  * Minimal image picker component.
@@ -40,19 +40,35 @@ export default function ImageUpload({ onImageSelected }) {
           onChange={handleFile}
           style={webStyles.hiddenInput}
         />
-        <label htmlFor="dishcovery-file-input" style={webStyles.label}>
-          <Text style={styles.buttonText}>{t('upload.choosePhoto')}</Text>
+        <label htmlFor="dishcovery-file-input" style={webStyles.uploadArea}>
+          {preview ? (
+            <div style={webStyles.previewWrapper}>
+              <img src={preview} alt="preview" style={webStyles.previewImage} />
+            </div>
+          ) : (
+            <div style={webStyles.placeholderBox}>
+              <View style={webStyles.iconPlaceholder}>
+                <Text accessible={false} aria-hidden="true">
+                  ⬆
+                </Text>
+              </View>
+              <div style={webStyles.placeholderText}>
+                {t("upload.selectImagePreview")}
+              </div>
+            </div>
+          )}
         </label>
 
         {preview ? (
-          <Image source={{ uri: preview }} style={styles.preview} />
-        ) : (
-          <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>
-              {t('upload.selectImagePreview')}
-            </Text>
-          </View>
-        )}
+          <TouchableOpacity
+            onPress={() =>
+              document.getElementById("dishcovery-file-input").click()
+            }
+            style={styles.chooseButton}
+          >
+            <Text style={styles.buttonText}>{t("upload.changePhoto")}</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     );
   }
@@ -81,7 +97,7 @@ export default function ImageUpload({ onImageSelected }) {
       }
 
       const res = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
+        mediaTypes: ["images"],
         quality: 0.8,
         allowsEditing: false,
       });
@@ -103,14 +119,16 @@ export default function ImageUpload({ onImageSelected }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={pickImage} style={styles.button}>
-        <Text style={styles.buttonText}>{t('upload.pickPhoto')}</Text>
+        <Text style={styles.buttonText}>{t("upload.pickPhoto")}</Text>
       </TouchableOpacity>
 
       {preview ? (
         <Image source={{ uri: preview }} style={styles.preview} />
       ) : (
         <View style={styles.placeholder}>
-          <Text style={styles.placeholderText}>{t('upload.selectImagePreview')}</Text>
+          <Text style={styles.placeholderText}>
+            {t("upload.selectImagePreview")}
+          </Text>
         </View>
       )}
     </View>
@@ -118,17 +136,60 @@ export default function ImageUpload({ onImageSelected }) {
 }
 
 const webStyles = {
-  hiddenInput: {
-    display: "none",
-  },
-  label: {
-    display: "inline-block",
-    padding: "10px 16px",
-    backgroundColor: theme.colors.accent,
-    color: theme.colors.surface,
-    borderRadius: theme.radii.sm,
+  hiddenInput: { display: "none" },
+  uploadArea: {
+    display: "flex",
+    borderStyle: "dashed",
+    borderWidth: 2,
+    borderColor: "#E5E7EB",
+    borderRadius: theme.radii.apple,
+    padding: 28,
+    backgroundColor: "#FBFBFB",
+    height: 250,
+    width: "100%",
     cursor: "pointer",
-    textDecoration: "none",
+    textAlign: "center",
+    boxSizing: "border-box",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  previewWrapper: {
+    borderRadius: theme.radii.apple,
+    overflow: "hidden",
+    boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
+  },
+  previewImage: {
+    width: "100%",
+    height: 200,
+    maxHeight: 420,
+    objectFit: "cover",
+    display: "block",
+    borderRadius: 10,
+  },
+  placeholderBox: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  iconPlaceholder: {
+    fontSize: 40,
+    color: "#9CA3AF",
+  },
+  placeholderText: {
+    color: "#6B7280",
+    fontSize: 15,
+  },
+  emptyPreviewText: {
+    color: theme.colors.muted,
+    fontSize: 13,
+    textAlign: "center",
+    paddingHorizontal: 8,
+  },
+  smallText: {
+    color: "#9CA3AF",
+    fontSize: 12,
+    marginTop: 6,
   },
 };
 
@@ -143,7 +204,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     marginVertical: theme.spacing.md,
-    maxWidth: 640,
+    maxWidth: 720,
     width: "100%",
   },
   placeholder: {
@@ -161,11 +222,11 @@ const styles = StyleSheet.create({
   placeholderText: { color: theme.colors.muted },
   preview: {
     borderColor: theme.colors.muted,
-    borderRadius: theme.radii.md,
+    borderRadius: theme.radii.apple,
     borderWidth: 2,
-    height: 260,
+    height: 360,
     marginTop: theme.spacing.sm,
     resizeMode: "cover",
-    width: 360,
+    width: "100%",
   },
 });

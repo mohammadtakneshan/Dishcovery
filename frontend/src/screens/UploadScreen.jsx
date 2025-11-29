@@ -2,25 +2,60 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
+  Pressable,
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
+  useWindowDimensions,
+  ScrollView,
+  Platform,
+  TextInput,
 } from "react-native";
-import { ErrorBanner, ImageUpload, SettingsPanel, LanguageDropdown } from "../components";
+import {
+  ErrorBanner,
+  ImageUpload,
+  SettingsPanel,
+  LanguageDropdown,
+  Card,
+} from "../components";
 import { ApiError, generateRecipeFromImage } from "../api/index";
 import theme from "../theme";
 import { useSettings } from "../context/SettingsContext";
 import { SettingsValidationError } from "../context/SettingsContext";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
+import RecipeScreen from "./RecipeScreen";
 
-export default function UploadScreen({ onRecipe }) {
+export default function UploadScreen() {
   const { t, i18n } = useTranslation();
+
   const [imagePayload, setImagePayload] = useState(null);
+  const [previewRecipe, setPreviewRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
 
+  const [activeTab, setActiveTab] = useState("photo");
+  const [foodPrompt, setFoodPrompt] = useState("");
+
+  const [hoveredPrompt, setHoveredPrompt] = useState(false);
+  const [hoveredMain, setHoveredMain] = useState(false);
+
+  const handleGenerateFromPrompt = async () => {
+    setLoading(true);
+
+    try {
+      // TODO: Implement prompt→recipe generation
+      // For OpenAI: Call DALL-E API for image generation
+      // For other providers: Generate recipe only
+      console.warn('Prompt to recipe generation not yet implemented');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const { settings, isReady, validate } = useSettings();
+  const { width } = useWindowDimensions();
+  const isWide = Platform.OS === "web" ? width >= 1024 : false;
 
   useEffect(() => {
     if (!isReady) {
@@ -28,7 +63,10 @@ export default function UploadScreen({ onRecipe }) {
     }
   }, [isReady]);
 
-  const validationState = useMemo(() => validate(settings), [settings, validate]);
+  const validationState = useMemo(
+    () => validate(settings),
+    [settings, validate]
+  );
 
   const handleImageSelected = (payload) => {
     setImagePayload(payload);
@@ -37,7 +75,7 @@ export default function UploadScreen({ onRecipe }) {
 
   const handleGenerate = async () => {
     if (!imagePayload) {
-      setError(t('errors.noImage'));
+      setError(t("errors.noImage"));
       return;
     }
     try {
@@ -47,7 +85,7 @@ export default function UploadScreen({ onRecipe }) {
       if (Object.keys(validationState.errors).length > 0) {
         setError({
           code: "settings_incomplete",
-          message: t('errors.settingsIncomplete'),
+          message: t("errors.settingsIncomplete"),
           hint:
             validationState.errors.apiKey ||
             validationState.errors.apiBaseUrl ||
@@ -65,14 +103,14 @@ export default function UploadScreen({ onRecipe }) {
           baseUrl: settings.apiBaseUrl,
           model: settings.model,
           language: i18n.language,
-        },
+        }
       );
-      onRecipe && onRecipe(resp);
+      setPreviewRecipe(resp);
     } catch (err) {
       if (err instanceof SettingsValidationError) {
         setError({
           code: "settings_invalid",
-          message: t('errors.settingsInvalid'),
+          message: t("errors.settingsInvalid"),
           hint:
             err.errors.apiKey || err.errors.apiBaseUrl || err.errors.provider,
         });
@@ -96,60 +134,240 @@ export default function UploadScreen({ onRecipe }) {
   };
 
   return (
-    <View style={styles.root}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{t('app.name')}</Text>
-        <Text style={styles.subtitle}>
-          {t('home.subtitle')}
-        </Text>
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={[
+        styles.root,
+        styles.rootScrollContent,
+        isWide && styles.rootWide,
+      ]}
+    >
+      {/* Top white header strip - full viewport wide; uses global override to neutralize lib padding */}
+      <View
+        style={[
+          styles.topHeaderStrip,
+          {
+            /* make sure it uses full viewport */
+          },
+        ]}
+        className="top-full-header"
+      >
+        <View style={styles.headerRowTop}>
+          <View style={styles.headerLeftEdge}>
+            <Text
+              style={[styles.title, { color: theme.colors.headerBlue }]}
+              accessible={true}
+            >
+              Dishcovery
+            </Text>
+          </View>
+
+          <View style={styles.headerRightTop}>
+            <LanguageDropdown />
+          </View>
+        </View>
       </View>
 
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View style={styles.settingsColumn}>
-            <TouchableOpacity
-              onPress={() => setShowSettings((prev) => !prev)}
-              style={styles.settingsToggle}
-              accessibilityRole="button"
-            >
-              <Text style={styles.settingsToggleText}>
-                {showSettings ? t('settings.hide') : t('settings.show')} {t('settings.connectionSettings')}
-              </Text>
-            </TouchableOpacity>
-            {!isReady ? (
-              <Text style={styles.settingsWarning}>
-                {t('settings.configureApiKey')}
-              </Text>
+      <View style={styles.headerGap} />
+
+      <View style={[styles.columns, isWide && styles.columnsWide]}>
+        <View style={[styles.cardColumn, isWide && styles.leftColumn]}>
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.settingsColumn}>
+                <TouchableOpacity
+                  onPress={() => setShowSettings((prev) => !prev)}
+                  style={styles.settingsToggle}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.settingsToggleText}>
+                    {showSettings ? t("settings.hide") : t("settings.show")}{" "}
+                    {t("settings.connectionSettings")}
+                  </Text>
+                </TouchableOpacity>
+                {!isReady ? (
+                  <Text style={styles.settingsWarning}>
+                    {t("settings.configureApiKey")}
+                  </Text>
+                ) : null}
+              </View>
+              <View style={styles.thinLine} />
+            </View>
+
+            {showSettings ? (
+              <SettingsPanel onClose={() => setShowSettings(false)} />
             ) : null}
+
+            <View style={styles.segmentedWrapper}>
+              <View style={styles.segmentedTrack}>
+                <View
+                  style={[
+                    styles.segmentedPill,
+                    activeTab === "photo"
+                      ? styles.leftOffset4
+                      : styles.leftHalf,
+                  ]}
+                  pointerEvents="none"
+                />
+                <TouchableOpacity
+                  style={styles.segmentedOption}
+                  onPress={() => setActiveTab("photo")}
+                >
+                  <Text
+                    style={[
+                      styles.segmentedText,
+                      activeTab === "photo" && styles.segmentedTextActive,
+                    ]}
+                  >
+                    Photo to Recipe
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.segmentedOption}
+                  onPress={() => setActiveTab("prompt")}
+                >
+                  <Text
+                    style={[
+                      styles.segmentedText,
+                      activeTab === "prompt" && styles.segmentedTextActive,
+                    ]}
+                  >
+                    Prompt to Food
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {activeTab === "photo" ? (
+              <>
+                <Text style={styles.tabSubtitle}>Upload Photo</Text>
+                <Text style={styles.tabSubtitleSmall}>
+                  Upload a photo of your food to generate a recipe.
+                </Text>
+                <ImageUpload
+                  onImageSelected={handleImageSelected}
+                  preview={imagePayload?.uri || imagePayload?.url}
+                />
+              </>
+            ) : (
+              <>
+                <Text style={styles.tabSubtitle}>Describe a Dish</Text>
+                <Text style={styles.tabSubtitleSmall}>
+                  Describe the dish you want and we&apos;ll generate a recipe
+                  (and image for supported providers).
+                </Text>
+                <View style={styles.promptBlock}>
+                  <TextInput
+                    multiline
+                    value={foodPrompt}
+                    onChangeText={setFoodPrompt}
+                    placeholder="A spicy Thai curry with vegetables and coconut milk"
+                    style={styles.promptInput}
+                  />
+                  <Pressable
+                    onPress={handleGenerateFromPrompt}
+                    onHoverIn={() =>
+                      Platform.OS === "web" && setHoveredPrompt(true)
+                    }
+                    onHoverOut={() =>
+                      Platform.OS === "web" && setHoveredPrompt(false)
+                    }
+                    style={({ pressed }) => [
+                      styles.button,
+                      {
+                        backgroundColor:
+                          Platform.OS === "web" && hoveredPrompt
+                            ? theme.colors.headerBlue
+                            : theme.colors.buttonBg,
+                        opacity: pressed || loading ? 0.9 : 1,
+                      },
+                      loading && styles.buttonDisabled,
+                    ]}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <ActivityIndicator color={theme.colors.buttonText} />
+                    ) : (
+                      <Text style={styles.buttonText}>
+                        {settings?.provider === "openai"
+                          ? "Generate Image & Recipe"
+                          : "Generate Recipe"}
+                      </Text>
+                    )}
+                  </Pressable>
+
+                  {/* Image generation coming soon for OpenAI */}
+                  {activeTab === "prompt" &&
+                    settings?.provider === "openai" && (
+                      <View style={styles.generatedImageContainer}>
+                        <Text style={styles.generatedImagePlaceholder}>
+                          Image generation coming soon for OpenAI
+                        </Text>
+                      </View>
+                    )}
+                </View>
+              </>
+            )}
+
+            <ErrorBanner error={error} onDismiss={() => setError(null)} />
+
+            {activeTab === "photo" && (
+              <Pressable
+                onPress={handleGenerate}
+                onHoverIn={() => Platform.OS === "web" && setHoveredMain(true)}
+                onHoverOut={() =>
+                  Platform.OS === "web" && setHoveredMain(false)
+                }
+                style={({ pressed }) => [
+                  styles.button,
+                  {
+                    backgroundColor:
+                      Platform.OS === "web" && hoveredMain
+                        ? theme.colors.headerBlue
+                        : theme.colors.buttonBg,
+                    opacity: pressed || loading ? 0.9 : 1,
+                  },
+                  loading && styles.buttonDisabled,
+                ]}
+                disabled={loading}
+                accessibilityLabel={t("actions.generate")}
+              >
+                {loading ? (
+                  <ActivityIndicator color={theme.colors.surface} />
+                ) : (
+                  <Text style={styles.buttonText}>Generate Recipe</Text>
+                )}
+              </Pressable>
+            )}
           </View>
-          <LanguageDropdown />
         </View>
 
-        {showSettings ? (
-          <SettingsPanel onClose={() => setShowSettings(false)} />
-        ) : null}
-
-        <ImageUpload onImageSelected={handleImageSelected} />
-        <ErrorBanner error={error} onDismiss={() => setError(null)} />
-
-        <TouchableOpacity
-          onPress={handleGenerate}
-          style={[styles.button, loading && styles.buttonDisabled]}
-          disabled={loading}
-          accessibilityLabel={t('actions.generate')}
+        <View
+          style={[
+            styles.previewColumn,
+            isWide ? styles.rightColumn : styles.previewStack,
+          ]}
         >
-          {loading ? (
-            <ActivityIndicator color={theme.colors.surface} />
+          {previewRecipe ? (
+            <RecipeScreen
+              data={previewRecipe}
+              recipe={previewRecipe.recipe || previewRecipe}
+              onBack={() => setPreviewRecipe(null)}
+            />
           ) : (
-            <Text style={styles.buttonText}>{t('actions.generate')}</Text>
+            <Card style={styles.placeholderCard}>
+              <Text style={styles.placeholderTitle}>No recipe yet</Text>
+              <Text style={styles.placeholderText}>
+                Create a delicious recipe from a photo or prompt. Your generated
+                recipe will appear here.
+              </Text>
+            </Card>
           )}
-        </TouchableOpacity>
+        </View>
       </View>
 
-      <Text style={styles.hint}>
-        {t('upload.hint')}
-      </Text>
-    </View>
+      <View style={styles.spacerBottom} />
+    </ScrollView>
   );
 }
 
@@ -157,30 +375,52 @@ const styles = StyleSheet.create({
   button: {
     ...theme.button,
     alignItems: "center",
-    backgroundColor: theme.colors.brand,
+    backgroundColor: theme.colors.buttonBg || "#0B0B0B",
     marginTop: theme.spacing.md,
+    borderRadius: theme.radii.apple,
+    width: "100%",
+    ...(Platform.OS === "web"
+      ? {
+          transition: "background-color 180ms ease, box-shadow 180ms ease",
+          boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
+          cursor: "pointer",
+        }
+      : {}),
   },
   buttonDisabled: {
     opacity: 0.65,
   },
   buttonText: {
-    color: theme.colors.surface,
+    color: theme.colors.buttonText || "#ffffff",
     fontWeight: "700",
   },
   card: {
-    ...theme.card,
-    alignItems: "center",
-    maxWidth: 760,
-    width: "100%",
+    backgroundColor: theme.colors.pageBg || theme.colors.surface,
+    borderRadius: theme.radii.apple,
+    padding: theme.spacing.lg,
+    borderWidth: 0,
+    borderColor: theme.colors.subtleBorder,
+    ...(Platform.OS === "web" ? { boxShadow: "none" } : {}),
   },
-  header: {
+  placeholderCard: {
+    padding: theme.spacing.lg,
+    justifyContent: "center",
     alignItems: "center",
-    marginBottom: theme.spacing.md,
+    flexShrink: 1,
+    maxWidth: "90%",
   },
-  hint: {
+  placeholderTitle: {
+    ...theme.typography.subheading,
+    fontSize: 18,
+    color: theme.colors.muted,
+    marginBottom: 6,
+  },
+  placeholderText: {
     color: theme.colors.muted,
     fontSize: 13,
-    marginTop: theme.spacing.lg,
+    textAlign: "center",
+    flexWrap: "wrap",
+    maxWidth: 400,
   },
   cardHeader: {
     flexDirection: "row",
@@ -208,19 +448,190 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   root: {
+    backgroundColor: theme.colors.pageBg || theme.colors.background,
+    width: "100%",
+    paddingHorizontal: 18,
+    alignItems: "stretch",
+  },
+  rootScrollContent: {
+    flexGrow: 1,
     alignItems: "center",
-    backgroundColor: theme.colors.background,
-    flex: 1,
     padding: theme.spacing.md,
   },
-  subtitle: {
-    ...theme.typography.subheading,
-    color: theme.colors.muted,
-    fontWeight: "600",
-    marginTop: 6,
+  rootWide: {
+    alignItems: "stretch",
+    paddingHorizontal: theme.spacing.lg,
   },
   title: {
     ...theme.typography.heading,
-    color: theme.colors.brandDark,
+    fontSize: 24,
+    fontWeight: "600",
+    color: theme.colors.headerBlue || theme.colors.brand,
+    marginBottom: 6,
+  },
+  columns: {
+    width: "100%",
+    alignSelf: "center",
+    paddingHorizontal: 0,
+  },
+  columnsWide: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+    alignItems: "flex-start",
+  },
+  cardColumn: {
+    width: "100%",
+    alignItems: "stretch",
+  },
+  leftColumn: {
+    width: "50%",
+    paddingRight: 12,
+    marginLeft: 60,
+  },
+  rightColumn: {
+    width: "50%",
+    paddingLeft: 12,
+    marginRight: 60,
+  },
+  previewColumn: {
+    width: "100%",
+    marginTop: theme.spacing.md,
+  },
+  previewStack: {
+    width: "100%",
+  },
+  scrollView: {
+    flex: 1,
+    width: "100%",
+    ...(Platform.OS === "web" ? { overflow: "auto" } : {}),
+  },
+  promptBlock: {
+    marginTop: 12,
+  },
+  promptInput: {
+    borderRadius: theme.radii.apple || 12,
+    borderWidth: 1,
+    borderColor: theme.colors.outline,
+    padding: 12,
+    minHeight: 120,
+    backgroundColor: "#ffffff",
+    textAlignVertical: "top",
+  },
+  spacerBottom: {
+    height: 64,
+  },
+  topHeaderStrip: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.subtleBorder,
+    alignItems: "stretch",
+    paddingHorizontal: 70,
+    zIndex: 100,
+  },
+  headerRowTop: {
+    width: "100%",
+    maxWidth: 1600,
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingLeft: 0,
+    paddingRight: 0,
+  },
+  headerLeftEdge: {
+    paddingLeft: 6,
+  },
+  headerRightTop: {
+    width: 200,
+    alignItems: "flex-end",
+  },
+  headerGap: {
+    height: 70,
+  },
+  segmentedWrapper: {
+    marginVertical: theme.spacing.sm,
+  },
+  segmentedTrack: {
+    width: "100%",
+    backgroundColor: "#e1e1e3",
+    borderRadius: 999,
+    height: 42,
+    position: "relative",
+    flexDirection: "row",
+    overflow: "hidden",
+    alignItems: "center",
+  },
+  segmentedOption: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2,
+    height: "100%",
+  },
+  segmentedText: {
+    color: theme.colors.muted,
+    fontWeight: "600",
+  },
+  segmentedTextActive: {
+    color: theme.colors.headerBlue,
+    fontWeight: "700",
+  },
+  segmentedPill: {
+    position: "absolute",
+    top: 4,
+    width: "48%",
+    height: 34,
+    borderRadius: 999,
+    backgroundColor: "#FFFFFF",
+    zIndex: 1,
+    ...(Platform.OS === "web"
+      ? { boxShadow: "0 6px 18px rgba(0,0,0,0.04)" }
+      : {}),
+  },
+  tabSubtitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginTop: theme.spacing.sm,
+    marginBottom: 8,
+    color: theme.colors.text,
+  },
+  tabSubtitleSmall: {
+    fontSize: 13,
+    color: theme.colors.muted,
+    marginBottom: theme.spacing.md,
+  },
+  thinLine: {
+    width: 1,
+  },
+  leftOffset4: {
+    left: 4,
+  },
+  leftHalf: {
+    left: "50%",
+  },
+  generatedImageContainer: {
+    marginTop: theme.spacing.md,
+    width: "100%",
+    height: 240,
+    backgroundColor: "#FFFFFF",
+    borderRadius: theme.radii.apple,
+    borderWidth: 1,
+    borderColor: theme.colors.subtleBorder,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  generatedImagePlaceholder: {
+    color: theme.colors.muted,
+    fontSize: 14,
+    textAlign: "center",
+    paddingHorizontal: 20,
   },
 });

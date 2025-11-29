@@ -26,6 +26,7 @@ module.exports = {
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react-native/no-color-literals": "off",
+    "react-native/sort-styles": "off",
     "no-console": ["warn", { allow: ["warn", "error", "info"] }],
     "import/no-unresolved": "off",
   },
