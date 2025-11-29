@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
-  Image,
   Pressable,
   TouchableOpacity,
   ActivityIndicator,
@@ -40,13 +39,15 @@ export default function UploadScreen() {
 
   const [hoveredPrompt, setHoveredPrompt] = useState(false);
   const [hoveredMain, setHoveredMain] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState(null); //for future use, don't mind the unused-vars error
 
   const handleGenerateFromPrompt = async () => {
     setLoading(true);
 
     try {
-      // TODO: call prompt->recipe (and image for OpenAI) API here and setGeneratedImage(...)
+      // TODO: Implement prompt→recipe generation
+      // For OpenAI: Call DALL-E API for image generation
+      // For other providers: Generate recipe only
+      console.warn('Prompt to recipe generation not yet implemented');
     } finally {
       setLoading(false);
     }
@@ -295,20 +296,13 @@ export default function UploadScreen() {
                     )}
                   </Pressable>
 
-                  {/* Always show image space if OpenAI provider is selected */}
+                  {/* Image generation coming soon for OpenAI */}
                   {activeTab === "prompt" &&
                     settings?.provider === "openai" && (
                       <View style={styles.generatedImageContainer}>
-                        {generatedImage ? (
-                          <Image
-                            source={{ uri: generatedImage }}
-                            style={styles.generatedImage}
-                          />
-                        ) : (
-                          <Text style={styles.generatedImagePlaceholder}>
-                            Generated image will appear here
-                          </Text>
-                        )}
+                        <Text style={styles.generatedImagePlaceholder}>
+                          Image generation coming soon for OpenAI
+                        </Text>
                       </View>
                     )}
                 </View>
@@ -528,14 +522,18 @@ const styles = StyleSheet.create({
     height: 64,
   },
   topHeaderStrip: {
-    width: "100%",
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    width: '100%',
     backgroundColor: "#FFFFFF",
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.subtleBorder,
     alignItems: "stretch",
-    paddingLeft: 70,
-    paddingRight: 70,
+    paddingHorizontal: 70,
+    zIndex: 100,
   },
   headerRowTop: {
     width: "100%",
@@ -555,7 +553,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   headerGap: {
-    height: 18,
+    height: 70,
   },
   segmentedWrapper: {
     marginVertical: theme.spacing.sm,
@@ -635,10 +633,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     paddingHorizontal: 20,
-  },
-  generatedImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
   },
 });

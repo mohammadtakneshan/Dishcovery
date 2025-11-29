@@ -118,22 +118,40 @@ export function SettingsProvider({ children }) {
         throw new SettingsValidationError(errors);
       }
 
-      setSettings(sanitized);
+      try {
+        // Write to storage FIRST before updating state
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
 
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
-      setLastSavedAt(new Date().toISOString());
+        // Only update state after successful write
+        setSettings(sanitized);
+        setLastSavedAt(new Date().toISOString());
 
-      return sanitized;
+        return sanitized;
+      } catch (storageError) {
+        console.error('Failed to save settings to storage:', storageError);
+        throw new Error(
+          'Failed to save settings. Please check storage permissions and try again.'
+        );
+      }
     },
     [settings]
   );
 
   const resetSettings = useCallback(async () => {
-    setSettings(DEFAULT_SETTINGS);
-    setValidationErrors({});
-    setLastSavedAt(new Date().toISOString());
-    await AsyncStorage.removeItem(STORAGE_KEY);
-    return DEFAULT_SETTINGS;
+    try {
+      // Remove from storage FIRST before updating state
+      await AsyncStorage.removeItem(STORAGE_KEY);
+
+      // Only update state after successful removal
+      setSettings(DEFAULT_SETTINGS);
+      setValidationErrors({});
+      setLastSavedAt(new Date().toISOString());
+
+      return DEFAULT_SETTINGS;
+    } catch (storageError) {
+      console.error('Failed to reset settings:', storageError);
+      throw new Error('Failed to reset settings. Please try again.');
+    }
   }, []);
 
   const validate = useCallback(

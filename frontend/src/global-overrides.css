@@ -3,15 +3,7 @@
    We keep them tight here and explicitly control spacing from React components.
 */
 
-/* remove the 24px forced inset so header can be full width;
-   keep this minimal and scoped so other layouts are not unexpectedly broken.
-*/
-.r-paddingInline-cxgwc0,
-.r-paddingInline-284m6k {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  padding-top: 0 !important;
-}
+/* Fragile selectors removed - using React Native positioning in UploadScreen instead */
 
 .r-maxWidth-1vamr63,
 .r-maxWidth-yp55cy {
@@ -28,10 +20,12 @@
 
 /* Small tweak to ensure header strip uses full viewport width */
 .top-full-header {
-  width: 100vw !important;
+  width: 100% !important;
+  max-width: 100%;
   left: 0;
   right: 0;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .r-backgroundColor-14lw9ot {
