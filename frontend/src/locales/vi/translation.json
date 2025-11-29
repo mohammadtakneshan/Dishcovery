@@ -71,7 +71,19 @@
     "hint": "Mẹo: Sử dụng ảnh rõ ràng của một món ăn để có kết quả tốt nhất.",
     "choosePhoto": "Chọn ảnh",
     "pickPhoto": "Chọn ảnh",
-    "selectImagePreview": "Chọn một hình ảnh để xem trước"
+    "selectImagePreview": "Chọn một hình ảnh để xem trước",
+    "photoToRecipe": "Ảnh thành công thức",
+    "promptToFood": "Mô tả thành món ăn",
+    "uploadPhoto": "Tải ảnh lên",
+    "uploadPhotoDescription": "Tải lên ảnh món ăn của bạn để tạo công thức.",
+    "describeADish": "Mô tả món ăn",
+    "describeADishDescription": "Mô tả món ăn bạn muốn và chúng tôi sẽ tạo công thức (và hình ảnh cho các nhà cung cấp được hỗ trợ).",
+    "promptPlaceholder": "Một món cà ri Thái cay với rau và sữa dừa",
+    "generateImageAndRecipe": "Tạo hình ảnh & công thức",
+    "generateRecipe": "Tạo công thức",
+    "imageGenerationComingSoon": "Tạo hình ảnh sẽ sớm có cho OpenAI",
+    "noRecipeYet": "Chưa có công thức nào",
+    "noRecipeYetDescription": "Tạo một công thức ngon từ ảnh hoặc mô tả. Công thức được tạo của bạn sẽ xuất hiện ở đây."
   },
   "errors": {
     "noImage": "Vui lòng chọn một hình ảnh trước.",
