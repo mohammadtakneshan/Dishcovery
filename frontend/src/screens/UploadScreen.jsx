@@ -219,7 +219,7 @@ export default function UploadScreen() {
                       activeTab === "photo" && styles.segmentedTextActive,
                     ]}
                   >
-                    Photo to Recipe
+                    {t("upload.photoToRecipe")}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -232,7 +232,7 @@ export default function UploadScreen() {
                       activeTab === "prompt" && styles.segmentedTextActive,
                     ]}
                   >
-                    Prompt to Food
+                    {t("upload.promptToFood")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -240,9 +240,9 @@ export default function UploadScreen() {
 
             {activeTab === "photo" ? (
               <>
-                <Text style={styles.tabSubtitle}>Upload Photo</Text>
+                <Text style={styles.tabSubtitle}>{t("upload.uploadPhoto")}</Text>
                 <Text style={styles.tabSubtitleSmall}>
-                  Upload a photo of your food to generate a recipe.
+                  {t("upload.uploadPhotoDescription")}
                 </Text>
                 <ImageUpload
                   onImageSelected={handleImageSelected}
@@ -251,17 +251,16 @@ export default function UploadScreen() {
               </>
             ) : (
               <>
-                <Text style={styles.tabSubtitle}>Describe a Dish</Text>
+                <Text style={styles.tabSubtitle}>{t("upload.describeADish")}</Text>
                 <Text style={styles.tabSubtitleSmall}>
-                  Describe the dish you want and we&apos;ll generate a recipe
-                  (and image for supported providers).
+                  {t("upload.describeADishDescription")}
                 </Text>
                 <View style={styles.promptBlock}>
                   <TextInput
                     multiline
                     value={foodPrompt}
                     onChangeText={setFoodPrompt}
-                    placeholder="A spicy Thai curry with vegetables and coconut milk"
+                    placeholder={t("upload.promptPlaceholder")}
                     style={styles.promptInput}
                   />
                   <Pressable
@@ -290,8 +289,8 @@ export default function UploadScreen() {
                     ) : (
                       <Text style={styles.buttonText}>
                         {settings?.provider === "openai"
-                          ? "Generate Image & Recipe"
-                          : "Generate Recipe"}
+                          ? t("upload.generateImageAndRecipe")
+                          : t("upload.generateRecipe")}
                       </Text>
                     )}
                   </Pressable>
@@ -301,7 +300,7 @@ export default function UploadScreen() {
                     settings?.provider === "openai" && (
                       <View style={styles.generatedImageContainer}>
                         <Text style={styles.generatedImagePlaceholder}>
-                          Image generation coming soon for OpenAI
+                          {t("upload.imageGenerationComingSoon")}
                         </Text>
                       </View>
                     )}
@@ -335,7 +334,7 @@ export default function UploadScreen() {
                 {loading ? (
                   <ActivityIndicator color={theme.colors.surface} />
                 ) : (
-                  <Text style={styles.buttonText}>Generate Recipe</Text>
+                  <Text style={styles.buttonText}>{t("upload.generateRecipe")}</Text>
                 )}
               </Pressable>
             )}
@@ -356,10 +355,9 @@ export default function UploadScreen() {
             />
           ) : (
             <Card style={styles.placeholderCard}>
-              <Text style={styles.placeholderTitle}>No recipe yet</Text>
+              <Text style={styles.placeholderTitle}>{t("upload.noRecipeYet")}</Text>
               <Text style={styles.placeholderText}>
-                Create a delicious recipe from a photo or prompt. Your generated
-                recipe will appear here.
+                {t("upload.noRecipeYetDescription")}
               </Text>
             </Card>
           )}

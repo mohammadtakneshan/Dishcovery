@@ -71,7 +71,19 @@
     "hint": "Tip: Use clear photos of a single dish for best results.",
     "choosePhoto": "Choose photo",
     "pickPhoto": "Pick photo",
-    "selectImagePreview": "Select an image to preview"
+    "selectImagePreview": "Select an image to preview",
+    "photoToRecipe": "Photo to Recipe",
+    "promptToFood": "Prompt to Food",
+    "uploadPhoto": "Upload Photo",
+    "uploadPhotoDescription": "Upload a photo of your food to generate a recipe.",
+    "describeADish": "Describe a Dish",
+    "describeADishDescription": "Describe the dish you want and we'll generate a recipe (and image for supported providers).",
+    "promptPlaceholder": "A spicy Thai curry with vegetables and coconut milk",
+    "generateImageAndRecipe": "Generate Image & Recipe",
+    "generateRecipe": "Generate Recipe",
+    "imageGenerationComingSoon": "Image generation coming soon for OpenAI",
+    "noRecipeYet": "No recipe yet",
+    "noRecipeYetDescription": "Create a delicious recipe from a photo or prompt. Your generated recipe will appear here."
   },
   "errors": {
     "noImage": "Please select an image first.",

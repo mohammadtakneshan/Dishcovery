@@ -71,7 +71,19 @@
     "hint": "Tipp: Használj tiszta képeket egyetlen ételről a legjobb eredményekhez.",
     "choosePhoto": "Fénykép választása",
     "pickPhoto": "Fénykép kiválasztása",
-    "selectImagePreview": "Válassz egy képet az előnézethez"
+    "selectImagePreview": "Válassz egy képet az előnézethez",
+    "photoToRecipe": "Fotóból recept",
+    "promptToFood": "Leírásból étel",
+    "uploadPhoto": "Fotó feltöltése",
+    "uploadPhotoDescription": "Töltsd fel az ételedről készült fotót, hogy receptet készíts.",
+    "describeADish": "Étel leírása",
+    "describeADishDescription": "Írd le a kívánt ételt, és mi generálunk egy receptet (és képet a támogatott szolgáltatóknál).",
+    "promptPlaceholder": "Egy csípős thai curry zöldségekkel és kókusztejjel",
+    "generateImageAndRecipe": "Kép és recept generálása",
+    "generateRecipe": "Recept generálása",
+    "imageGenerationComingSoon": "A képgenerálás hamarosan elérhető lesz az OpenAI-hoz",
+    "noRecipeYet": "Még nincs recept",
+    "noRecipeYetDescription": "Készíts egy finom receptet fotóból vagy leírásból. A generált recept itt jelenik meg."
   },
   "errors": {
  "noImage": "Kérjük, először válasszon egy képet.",

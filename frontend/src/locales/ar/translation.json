@@ -71,7 +71,19 @@
     "hint": "نصيحة: استخدم صورًا واضحة لطبق واحد للحصول على أفضل النتائج.",
     "choosePhoto": "اختر صورة",
     "pickPhoto": "اختر صورة",
-    "selectImagePreview": "حدد صورة للمعاينة"
+    "selectImagePreview": "حدد صورة للمعاينة",
+    "photoToRecipe": "صورة إلى وصفة",
+    "promptToFood": "وصف إلى طعام",
+    "uploadPhoto": "تحميل صورة",
+    "uploadPhotoDescription": "قم بتحميل صورة لطعامك لإنشاء وصفة.",
+    "describeADish": "وصف الطبق",
+    "describeADishDescription": "صف الطبق الذي تريده وسنقوم بإنشاء وصفة (وصورة للمزودين المدعومين).",
+    "promptPlaceholder": "كاري تايلاندي حار مع الخضار وحليب جوز الهند",
+    "generateImageAndRecipe": "إنشاء صورة ووصفة",
+    "generateRecipe": "إنشاء وصفة",
+    "imageGenerationComingSoon": "سيتوفر إنشاء الصور قريبًا لـ OpenAI",
+    "noRecipeYet": "لا توجد وصفة بعد",
+    "noRecipeYetDescription": "أنشئ وصفة لذيذة من صورة أو وصف. ستظهر وصفتك المُنشأة هنا."
   },
   "errors": {
     "noImage": "الرجاء تحديد صورة أولاً.",

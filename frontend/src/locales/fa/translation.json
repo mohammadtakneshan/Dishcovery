@@ -71,7 +71,19 @@
     "hint": "نکته: برای بهترین نتایج از عکس‌های واضح یک غذا استفاده کنید.",
     "choosePhoto": "انتخاب عکس",
     "pickPhoto": "انتخاب عکس",
-    "selectImagePreview": "یک تصویر برای پیش‌نمایش انتخاب کنید"
+    "selectImagePreview": "یک تصویر برای پیش‌نمایش انتخاب کنید",
+    "photoToRecipe": "عکس به دستور",
+    "promptToFood": "توصیف به غذا",
+    "uploadPhoto": "بارگذاری عکس",
+    "uploadPhotoDescription": "عکسی از غذای خود بارگذاری کنید تا یک دستور پخت تولید شود.",
+    "describeADish": "توصیف یک غذا",
+    "describeADishDescription": "غذای مورد نظر خود را توصیف کنید و ما یک دستور پخت تولید خواهیم کرد (و تصویر برای ارائه‌دهندگان پشتیبانی‌شده).",
+    "promptPlaceholder": "یک کاری تایلندی تند با سبزیجات و شیر نارگیل",
+    "generateImageAndRecipe": "تولید تصویر و دستور",
+    "generateRecipe": "تولید دستور",
+    "imageGenerationComingSoon": "تولید تصویر به زودی برای OpenAI در دسترس خواهد بود",
+    "noRecipeYet": "هنوز دستوری وجود ندارد",
+    "noRecipeYetDescription": "یک دستور خوشمزه از عکس یا توصیف ایجاد کنید. دستور تولید شده شما اینجا ظاهر خواهد شد."
   },
   "errors": {
     "noImage": "لطفاً ابتدا یک تصویر انتخاب کنید.",

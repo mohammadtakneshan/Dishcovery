@@ -71,7 +71,19 @@
     "hint": "ヒント: 最良の結果を得るには、1つの料理の鮮明な写真を使用してください。",
     "choosePhoto": "写真を選択",
     "pickPhoto": "写真を選ぶ",
-    "selectImagePreview": "プレビューする画像を選択してください"
+    "selectImagePreview": "プレビューする画像を選択してください",
+    "photoToRecipe": "写真からレシピ",
+    "promptToFood": "説明から料理",
+    "uploadPhoto": "写真をアップロード",
+    "uploadPhotoDescription": "料理の写真をアップロードしてレシピを生成します。",
+    "describeADish": "料理を説明",
+    "describeADishDescription": "希望する料理を説明すると、レシピを生成します（対応プロバイダーでは画像も生成）。",
+    "promptPlaceholder": "野菜とココナッツミルクを使ったスパイシーなタイカレー",
+    "generateImageAndRecipe": "画像とレシピを生成",
+    "generateRecipe": "レシピを生成",
+    "imageGenerationComingSoon": "OpenAIの画像生成は近日公開予定",
+    "noRecipeYet": "まだレシピがありません",
+    "noRecipeYetDescription": "写真または説明から美味しいレシピを作成します。生成されたレシピがここに表示されます。"
   },
   "errors": {
 "noImage": "まず画像を選択してください。",
