@@ -220,15 +220,6 @@ export function SettingsProvider({ children }) {
     }
   }, [settings]);
 
-  // Reset validation when provider or API key changes
-  useEffect(() => {
-    setSettings(prev => ({
-      ...prev,
-      isKeyValidated: false,
-      availableModels: [],
-    }));
-    setValidationError(null);
-  }, [settings.provider, settings.apiKey]);
 
   const value = useMemo(
     () => ({
