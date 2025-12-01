@@ -172,7 +172,7 @@ export function SettingsProvider({ children }) {
 
     if (!keyToUse || !providerToUse) {
       setValidationError('API key and provider required');
-      return;
+      return { valid: false, error: 'API key and provider required' };
     }
 
     setIsValidating(true);
@@ -199,21 +199,19 @@ export function SettingsProvider({ children }) {
         // Do not persist to AsyncStorage here; only update local state
         setSettings(updatedSettings);
         setValidationError(null);
+        return {
+          valid: true,
+          models: result.models || [],
+          defaultModel: result.models?.[0]?.id || ''
+        };
       } else {
-        setSettings(prev => ({
-          ...prev,
-          isKeyValidated: false,
-          availableModels: []
-        }));
         setValidationError(result.error || 'Validation failed');
+        return { valid: false, error: result.error || 'Validation failed' };
       }
     } catch (error) {
-      setSettings(prev => ({
-        ...prev,
-        isKeyValidated: false,
-        availableModels: []
-      }));
-      setValidationError(error.message || 'Failed to validate API key');
+      const errorMessage = error.message || 'Failed to validate API key';
+      setValidationError(errorMessage);
+      return { valid: false, error: errorMessage };
     } finally {
       setIsValidating(false);
     }
