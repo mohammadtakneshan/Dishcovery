@@ -196,8 +196,7 @@ export function SettingsProvider({ children }) {
           model: result.models && result.models.length > 0 ? result.models[0].id : settings.model
         };
 
-        // Persist to AsyncStorage
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSettings));
+        // Do not persist to AsyncStorage here; only update local state
         setSettings(updatedSettings);
         setValidationError(null);
       } else {
