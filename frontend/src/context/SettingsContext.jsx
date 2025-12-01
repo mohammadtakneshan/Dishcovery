@@ -172,7 +172,7 @@ export function SettingsProvider({ children }) {
 
     if (!keyToUse || !providerToUse) {
       setValidationError('API key and provider required');
-      return;
+      return { valid: false, error: 'API key and provider required' };
     }
 
     setIsValidating(true);
@@ -186,49 +186,26 @@ export function SettingsProvider({ children }) {
       );
 
       if (result.valid) {
-        const updatedSettings = {
-          ...settings,
-          apiBaseUrl: urlToUse,
-          provider: providerToUse,
-          apiKey: keyToUse,
-          availableModels: result.models || [],
-          isKeyValidated: true,
-          model: result.models && result.models.length > 0 ? result.models[0].id : settings.model
-        };
-
-        // Persist to AsyncStorage
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSettings));
-        setSettings(updatedSettings);
+        // Return validation results without modifying global settings
+        // Settings will only be updated when user explicitly saves
         setValidationError(null);
+        return {
+          valid: true,
+          models: result.models || [],
+          defaultModel: result.models && result.models.length > 0 ? result.models[0].id : ''
+        };
       } else {
-        setSettings(prev => ({
-          ...prev,
-          isKeyValidated: false,
-          availableModels: []
-        }));
         setValidationError(result.error || 'Validation failed');
+        return { valid: false, error: result.error || 'Validation failed' };
       }
     } catch (error) {
-      setSettings(prev => ({
-        ...prev,
-        isKeyValidated: false,
-        availableModels: []
-      }));
-      setValidationError(error.message || 'Failed to validate API key');
+      const errorMessage = error.message || 'Failed to validate API key';
+      setValidationError(errorMessage);
+      return { valid: false, error: errorMessage };
     } finally {
       setIsValidating(false);
     }
-  }, [settings]);
-
-  // Reset validation when provider or API key changes
-  useEffect(() => {
-    setSettings(prev => ({
-      ...prev,
-      isKeyValidated: false,
-      availableModels: [],
-    }));
-    setValidationError(null);
-  }, [settings.provider, settings.apiKey]);
+  }, [settings.apiBaseUrl, settings.provider, settings.apiKey]);
 
   const value = useMemo(
     () => ({
