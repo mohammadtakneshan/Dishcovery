@@ -192,7 +192,7 @@ export function SettingsProvider({ children }) {
         return {
           valid: true,
           models: result.models || [],
-          defaultModel: result.models && result.models.length > 0 ? result.models[0].id : ''
+          defaultModel: result.models?.[0]?.id || ''
         };
       } else {
         setValidationError(result.error || 'Validation failed');

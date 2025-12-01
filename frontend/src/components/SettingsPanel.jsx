@@ -75,7 +75,7 @@ export default function SettingsPanel({ onClose }) {
         ...prev,
         isKeyValidated: true,
         availableModels: result.models || [],
-        model: result.defaultModel || prev.model,
+        model: result.defaultModel ? result.defaultModel : prev.model,
       }));
     } else {
       setForm((prev) => ({
