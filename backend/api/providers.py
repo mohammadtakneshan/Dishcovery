@@ -113,6 +113,10 @@ def validate_gemini_key(api_key: str) -> Dict:
         }
     """
     try:
+        # SECURITY NOTE:
+        # The Gemini API key is passed directly in the URL query parameter as required by Google's API design.
+        # This can expose the API key in server logs, browser history, proxy logs, and referrer headers.
+        # If Google supports header-based authentication in the future, update this code to use it.
         response = requests.get(
             f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}",
             timeout=10
