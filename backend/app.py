@@ -8,10 +8,10 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
-    # Enable CORS with explicit configuration
+    # Enable CORS with environment-based configuration
     CORS(app, resources={
         r"/api/*": {
-            "origins": "*",  # Allow all origins for development
+            "origins": Config.ALLOWED_ORIGINS,
             "methods": ["GET", "POST", "OPTIONS"],
             "allow_headers": ["Content-Type", "Authorization", "x-api-key", "anthropic-version"]
         }

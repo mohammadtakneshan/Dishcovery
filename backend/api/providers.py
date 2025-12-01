@@ -4,6 +4,23 @@ import requests
 from typing import Dict, List
 
 
+def _get_user_friendly_error(exception: requests.RequestException) -> str:
+    """
+    Convert a requests exception to a user-friendly error message.
+    
+    Avoids exposing sensitive or overly technical information from
+    the underlying exception.
+    """
+    if isinstance(exception, requests.exceptions.Timeout):
+        return "Request timed out. Please try again."
+    elif isinstance(exception, requests.exceptions.ConnectionError):
+        return "Unable to connect to the API. Please check your network connection."
+    elif isinstance(exception, requests.exceptions.HTTPError):
+        return "The API returned an error. Please try again later."
+    else:
+        return "Unable to validate API key. Please check your network connection and try again."
+
+
 def validate_openai_key(api_key: str) -> Dict:
     """
     Validates OpenAI API key and fetches available models.
@@ -49,7 +66,7 @@ def validate_openai_key(api_key: str) -> Dict:
         return {"valid": True, "models": models}
 
     except requests.RequestException as e:
-        return {"valid": False, "error": str(e)}
+        return {"valid": False, "error": _get_user_friendly_error(e)}
 
 
 def validate_anthropic_key(api_key: str) -> Dict:
@@ -96,7 +113,7 @@ def validate_anthropic_key(api_key: str) -> Dict:
         return {"valid": True, "models": models}
 
     except requests.RequestException as e:
-        return {"valid": False, "error": str(e)}
+        return {"valid": False, "error": _get_user_friendly_error(e)}
 
 
 def validate_gemini_key(api_key: str) -> Dict:
@@ -113,6 +130,10 @@ def validate_gemini_key(api_key: str) -> Dict:
         }
     """
     try:
+        # SECURITY NOTE:
+        # The Gemini API key is passed directly in the URL query parameter as required by Google's API design.
+        # This can expose the API key in server logs, browser history, proxy logs, and referrer headers.
+        # If Google supports header-based authentication in the future, update this code to use it.
         response = requests.get(
             f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}",
             timeout=10
@@ -146,7 +167,7 @@ def validate_gemini_key(api_key: str) -> Dict:
         return {"valid": True, "models": models}
 
     except requests.RequestException as e:
-        return {"valid": False, "error": str(e)}
+        return {"valid": False, "error": _get_user_friendly_error(e)}
 
 
 def format_model_name(model_id: str) -> str:

@@ -186,8 +186,18 @@ export function SettingsProvider({ children }) {
       );
 
       if (result.valid) {
-        // Return validation results without modifying global settings
-        // Settings will only be updated when user explicitly saves
+        const updatedSettings = {
+          ...settings,
+          apiBaseUrl: urlToUse,
+          provider: providerToUse,
+          apiKey: keyToUse,
+          availableModels: result.models || [],
+          isKeyValidated: true,
+          model: result.models && result.models.length > 0 ? result.models[0].id : settings.model
+        };
+
+        // Do not persist to AsyncStorage here; only update local state
+        setSettings(updatedSettings);
         setValidationError(null);
         return {
           valid: true,
@@ -205,7 +215,8 @@ export function SettingsProvider({ children }) {
     } finally {
       setIsValidating(false);
     }
-  }, [settings.apiBaseUrl, settings.provider, settings.apiKey]);
+  }, [settings]);
+
 
   const value = useMemo(
     () => ({
