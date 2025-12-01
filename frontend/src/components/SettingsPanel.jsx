@@ -68,7 +68,21 @@ export default function SettingsPanel({ onClose }) {
 
   const handleValidateApiKey = async () => {
     // Use form values instead of saved settings
-    await validateRemoteApiKey(form.apiBaseUrl, form.provider, form.apiKey);
+    const result = await validateRemoteApiKey(form.apiBaseUrl, form.provider, form.apiKey);
+    if (result.valid) {
+      setForm((prev) => ({
+        ...prev,
+        isKeyValidated: true,
+        availableModels: result.models,
+        model: result.defaultModel || prev.model,
+      }));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        isKeyValidated: false,
+        availableModels: [],
+      }));
+    }
   };
 
   const handleSave = async () => {
@@ -240,7 +254,7 @@ export default function SettingsPanel({ onClose }) {
         >
           {isValidating ? (
             <ActivityIndicator size="small" color="#fff" />
-          ) : settings.isKeyValidated ? (
+          ) : form.isKeyValidated ? (
             <Text style={styles.validateButtonText}>✓</Text>
           ) : (
             <Text style={styles.validateButtonText}>
@@ -256,7 +270,7 @@ export default function SettingsPanel({ onClose }) {
         <Text style={styles.errorText}>{validationError}</Text>
       ) : null}
 
-      {settings.isKeyValidated && settings.availableModels?.length > 0 && (
+      {form.isKeyValidated && form.availableModels?.length > 0 && (
         <>
           <Text style={styles.label}>{t("settings.model")}</Text>
           <View style={styles.pickerContainer}>
@@ -267,7 +281,7 @@ export default function SettingsPanel({ onClose }) {
               }
               style={styles.picker}
             >
-              {settings.availableModels.map((m) => (
+              {form.availableModels.map((m) => (
                 <Picker.Item key={m.id} label={m.name} value={m.id} />
               ))}
             </Picker>
