@@ -65,7 +65,15 @@
     "show": "نمایش",
     "hide": "پنهان کردن",
     "connectionSettings": "تنظیمات اتصال",
-    "configureApiKey": "برای فعال کردن تولید دستور پخت، کلید API خود را پیکربندی کنید."
+    "configureApiKey": "برای فعال کردن تولید دستور پخت، کلید API خود را پیکربندی کنید.",
+    "validate": "تأیید",
+    "validating": "در حال تأیید...",
+    "validated": "تأیید شد",
+    "validationFailed": "کلید API نامعتبر است",
+    "model": "مدل",
+    "selectModel": "یک مدل انتخاب کنید",
+    "apiKeyRequired": "کلید API مورد نیاز است",
+    "validationError": "تأیید ناموفق بود: {{error}}"
   },
   "upload": {
     "hint": "نکته: برای بهترین نتایج از عکس‌های واضح یک غذا استفاده کنید.",

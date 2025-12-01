@@ -207,7 +207,6 @@ export default function UploadScreen() {
                       ? styles.leftOffset4
                       : styles.leftHalf,
                   ]}
-                  pointerEvents="none"
                 />
                 <TouchableOpacity
                   style={styles.segmentedOption}
@@ -589,6 +588,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: "#FFFFFF",
     zIndex: 1,
+    pointerEvents: "none",
     ...(Platform.OS === "web"
       ? { boxShadow: "0 6px 18px rgba(0,0,0,0.04)" }
       : {}),

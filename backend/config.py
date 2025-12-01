@@ -28,7 +28,10 @@ class Config:
     }
     
     # CORS Settings
-    ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', '*').split(',')
+    ALLOWED_ORIGINS: ClassVar[list[str]] = [
+        origin.strip()
+        for origin in os.getenv('ALLOWED_ORIGINS', '*').split(',')
+    ]
     
     # API Settings
     MAX_INGREDIENTS = int(os.getenv('MAX_INGREDIENTS', 10))

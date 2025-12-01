@@ -27,7 +27,12 @@
     },
     "web": {
       "favicon": "./src/assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "name": "Dishcovery",
+      "shortName": "Dishcovery",
+      "description": "AI-powered recipe generator from food photos",
+      "themeColor": "#1F4E79",
+      "backgroundColor": "#F6F4F4"
     },
     "extra": {
       "eas": {

@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { validateApiKey as validateApiKeyRemote } from "../api";
 
 const STORAGE_KEY = "@dishcovery/settings/v1";
 const DEFAULT_BASE_URL = trimTrailingSlash(
@@ -23,7 +24,7 @@ const PROVIDERS = [
   },
   {
     id: "openai",
-    label: "OpenAI GPT-4o",
+    label: "OpenAI",
     description: "Vision-enabled GPT models from OpenAI",
     defaultModel: "gpt-4o-mini",
     keyHint:
@@ -48,7 +49,9 @@ const DEFAULT_SETTINGS = {
   provider: "gemini",
   apiKey: "",
   apiBaseUrl: DEFAULT_BASE_URL,
-  model: PROVIDER_MAP.gemini.defaultModel,
+  model: "",
+  availableModels: [],
+  isKeyValidated: false,
 };
 
 export class SettingsValidationError extends Error {
@@ -67,6 +70,8 @@ export function SettingsProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [lastSavedAt, setLastSavedAt] = useState(null);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationError, setValidationError] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -159,6 +164,60 @@ export function SettingsProvider({ children }) {
     [settings]
   );
 
+  const validateRemoteApiKey = useCallback(async (baseUrl, provider, apiKey) => {
+    // Use provided parameters or fall back to settings
+    const urlToUse = baseUrl || settings.apiBaseUrl;
+    const providerToUse = provider || settings.provider;
+    const keyToUse = apiKey || settings.apiKey;
+
+    if (!keyToUse || !providerToUse) {
+      setValidationError('API key and provider required');
+      return { valid: false, error: 'API key and provider required' };
+    }
+
+    setIsValidating(true);
+    setValidationError(null);
+
+    try {
+      const result = await validateApiKeyRemote(
+        urlToUse,
+        providerToUse,
+        keyToUse
+      );
+
+      if (result.valid) {
+        const updatedSettings = {
+          ...settings,
+          apiBaseUrl: urlToUse,
+          provider: providerToUse,
+          apiKey: keyToUse,
+          availableModels: result.models || [],
+          isKeyValidated: true,
+          model: result.models && result.models.length > 0 ? result.models[0].id : settings.model
+        };
+
+        // Do not persist to AsyncStorage here; only update local state
+        setSettings(updatedSettings);
+        setValidationError(null);
+        return {
+          valid: true,
+          models: result.models || [],
+          defaultModel: result.models?.[0]?.id || ''
+        };
+      } else {
+        setValidationError(result.error || 'Validation failed');
+        return { valid: false, error: result.error || 'Validation failed' };
+      }
+    } catch (error) {
+      const errorMessage = error.message || 'Failed to validate API key';
+      setValidationError(errorMessage);
+      return { valid: false, error: errorMessage };
+    } finally {
+      setIsValidating(false);
+    }
+  }, [settings]);
+
+
   const value = useMemo(
     () => ({
       settings,
@@ -167,7 +226,10 @@ export function SettingsProvider({ children }) {
       saveSettings,
       resetSettings,
       validate,
+      validateRemoteApiKey,
       validationErrors,
+      validationError,
+      isValidating,
       loading,
       loadError,
       lastSavedAt,
@@ -183,7 +245,10 @@ export function SettingsProvider({ children }) {
       saveSettings,
       settings,
       validationErrors,
+      validationError,
+      isValidating,
       validate,
+      validateRemoteApiKey,
       lastSavedAt,
     ]
   );
@@ -230,7 +295,9 @@ function validateSettings(candidate) {
     provider: providerConfig ? providerConfig.id : candidate.provider,
     apiKey,
     apiBaseUrl: baseUrlResult.value,
-    model: normalizeModel(candidate.model, providerConfig),
+    model: normalizeModel(candidate.model),
+    availableModels: candidate.availableModels || [],
+    isKeyValidated: candidate.isKeyValidated || false,
   };
 
   return { sanitized, errors };
@@ -288,12 +355,9 @@ function validateApiBaseUrl(value) {
   }
 }
 
-function normalizeModel(model, providerConfig) {
+function normalizeModel(model) {
   const trimmed = typeof model === "string" ? model.trim() : "";
-  if (trimmed) {
-    return trimmed;
-  }
-  return providerConfig ? providerConfig.defaultModel : trimmed;
+  return trimmed;
 }
 
 function safeParseSettings(raw) {
