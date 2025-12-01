@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Modal,
   ScrollView,
+  Platform,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import theme from "../theme";
@@ -128,12 +129,16 @@ const styles = StyleSheet.create({
     borderRadius: theme.radii.md,
     minWidth: 200,
     maxHeight: 300,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
     elevation: 8,
     overflow: "hidden",
+    ...(Platform.OS === "web"
+      ? { boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }
+      : {
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
+        }),
   },
   dropdownItem: {
     flexDirection: "row",

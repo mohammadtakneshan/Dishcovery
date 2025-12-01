@@ -8,6 +8,7 @@ import {
   Pressable,
   Platform,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { useTranslation } from "react-i18next";
 import Input from "./Input";
 import theme from "../theme";
@@ -26,6 +27,9 @@ export default function SettingsPanel({ onClose }) {
     providerMap,
     saveSettings,
     validate,
+    validateRemoteApiKey,
+    validationError,
+    isValidating,
     loading,
     lastSavedAt,
   } = useSettings();
@@ -53,12 +57,18 @@ export default function SettingsPanel({ onClose }) {
   );
 
   const handleProviderSelect = (providerId) => {
-    const providerConfig = providerMap[providerId];
     setForm((prev) => ({
       ...prev,
       provider: providerId,
-      model: providerConfig?.defaultModel || prev.model,
+      model: "",
+      isKeyValidated: false,
+      availableModels: [],
     }));
+  };
+
+  const handleValidateApiKey = async () => {
+    // Use form values instead of saved settings
+    await validateRemoteApiKey(form.apiBaseUrl, form.provider, form.apiKey);
   };
 
   const handleSave = async () => {
@@ -204,30 +214,66 @@ export default function SettingsPanel({ onClose }) {
         </Text>
       ) : null}
 
-      <Input
-        label={t("settingsPanel.apiKey")}
-        value={form.apiKey}
-        onChangeText={(value) =>
-          setForm((prev) => ({ ...prev, apiKey: value }))
-        }
-        placeholder={t("settingsPanel.apiKeyPlaceholder")}
-        autoCapitalize="none"
-        autoCorrect={false}
-        secureTextEntry
-        textContentType="password"
-      />
+      <Text style={styles.label}>{t("settingsPanel.apiKey")}</Text>
+      <View style={styles.apiKeyRow}>
+        <View style={styles.apiKeyInputWrapper}>
+          <Input
+            value={form.apiKey}
+            onChangeText={(value) =>
+              setForm((prev) => ({ ...prev, apiKey: value }))
+            }
+            placeholder={t("settingsPanel.apiKeyPlaceholder")}
+            autoCapitalize="none"
+            autoCorrect={false}
+            secureTextEntry
+            textContentType="password"
+            style={styles.apiKeyInput}
+          />
+        </View>
+        <TouchableOpacity
+          style={[
+            styles.validateButton,
+            (!form.apiKey || isValidating) && styles.validateButtonDisabled,
+          ]}
+          onPress={handleValidateApiKey}
+          disabled={!form.apiKey || isValidating}
+        >
+          {isValidating ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : settings.isKeyValidated ? (
+            <Text style={styles.validateButtonText}>✓</Text>
+          ) : (
+            <Text style={styles.validateButtonText}>
+              {t("settings.validate")}
+            </Text>
+          )}
+        </TouchableOpacity>
+      </View>
       {validationState.errors.apiKey ? (
         <Text style={styles.errorText}>{validationState.errors.apiKey}</Text>
       ) : null}
+      {validationError ? (
+        <Text style={styles.errorText}>{validationError}</Text>
+      ) : null}
 
-      <Input
-        label={t("settingsPanel.model")}
-        value={form.model || ""}
-        onChangeText={(value) => setForm((prev) => ({ ...prev, model: value }))}
-        placeholder={currentProvider.defaultModel}
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
+      {settings.isKeyValidated && settings.availableModels?.length > 0 && (
+        <>
+          <Text style={styles.label}>{t("settings.model")}</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={form.model}
+              onValueChange={(value) =>
+                setForm((prev) => ({ ...prev, model: value }))
+              }
+              style={styles.picker}
+            >
+              {settings.availableModels.map((m) => (
+                <Picker.Item key={m.id} label={m.name} value={m.id} />
+              ))}
+            </Picker>
+          </View>
+        </>
+      )}
 
       {(() => {
         // compute disabled and bgColor in-scope
@@ -425,5 +471,46 @@ const styles = StyleSheet.create({
   },
   disabledButtonInline: {
     opacity: 0.65,
+  },
+  apiKeyRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 8,
+    marginBottom: theme.spacing.sm,
+  },
+  apiKeyInputWrapper: {
+    flex: 1,
+  },
+  apiKeyInput: {
+    flex: 1,
+  },
+  validateButton: {
+    backgroundColor: theme.colors.brand,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: theme.radii.sm,
+    minWidth: 80,
+    alignItems: "center",
+    justifyContent: "center",
+    height: 48,
+  },
+  validateButtonDisabled: {
+    backgroundColor: "#ccc",
+    opacity: 0.6,
+  },
+  validateButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: theme.colors.subtleBorder || "#ddd",
+    borderRadius: theme.radii.sm,
+    backgroundColor: theme.colors.surface || "#fff",
+    marginBottom: theme.spacing.md,
+  },
+  picker: {
+    height: Platform.OS === "ios" ? 180 : 50,
   },
 });

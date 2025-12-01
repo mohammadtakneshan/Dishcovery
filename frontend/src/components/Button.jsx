@@ -36,13 +36,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 20,
     paddingVertical: 12,
-    shadowColor: theme.shadows?.soft?.shadowColor || "#000",
-    shadowOffset: theme.shadows?.soft?.shadowOffset || { width: 0, height: 6 },
-    shadowOpacity: theme.shadows?.soft?.shadowOpacity ?? 0.06,
-    shadowRadius: theme.shadows?.soft?.shadowRadius ?? 12,
     ...(Platform.OS === "web"
       ? { boxShadow: "0 6px 18px rgba(0,0,0,0.06)" }
-      : {}),
+      : {
+          shadowColor: theme.shadows?.soft?.shadowColor || "#000",
+          shadowOffset: theme.shadows?.soft?.shadowOffset || { width: 0, height: 6 },
+          shadowOpacity: theme.shadows?.soft?.shadowOpacity ?? 0.06,
+          shadowRadius: theme.shadows?.soft?.shadowRadius ?? 12,
+        }),
   },
   text: {
     color: theme.colors.buttonText || "#fff",

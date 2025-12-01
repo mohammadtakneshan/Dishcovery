@@ -65,7 +65,15 @@
     "show": "Megjelenítés",
     "hide": "Elrejtés",
     "connectionSettings": "kapcsolati beállítások",
-    "configureApiKey": "Állítsd be az API kulcsodat a recept generálás engedélyezéséhez."
+    "configureApiKey": "Állítsd be az API kulcsodat a recept generálás engedélyezéséhez.",
+    "validate": "Ellenőrzés",
+    "validating": "Ellenőrzés folyamatban...",
+    "validated": "Ellenőrizve",
+    "validationFailed": "Érvénytelen API kulcs",
+    "model": "Modell",
+    "selectModel": "Válassz modellt",
+    "apiKeyRequired": "API kulcs szükséges",
+    "validationError": "Az ellenőrzés sikertelen: {{error}}"
   },
   "upload": {
     "hint": "Tipp: Használj tiszta képeket egyetlen ételről a legjobb eredményekhez.",

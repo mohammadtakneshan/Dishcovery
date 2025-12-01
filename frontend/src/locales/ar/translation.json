@@ -65,7 +65,15 @@
     "show": "إظهار",
     "hide": "إخفاء",
     "connectionSettings": "إعدادات الاتصال",
-    "configureApiKey": "قم بتكوين مفتاح API الخاص بك لتمكين إنشاء الوصفات."
+    "configureApiKey": "قم بتكوين مفتاح API الخاص بك لتمكين إنشاء الوصفات.",
+    "validate": "تحقق",
+    "validating": "جارٍ التحقق...",
+    "validated": "تم التحقق",
+    "validationFailed": "مفتاح API غير صالح",
+    "model": "النموذج",
+    "selectModel": "اختر نموذجًا",
+    "apiKeyRequired": "مفتاح API مطلوب",
+    "validationError": "فشل التحقق: {{error}}"
   },
   "upload": {
     "hint": "نصيحة: استخدم صورًا واضحة لطبق واحد للحصول على أفضل النتائج.",

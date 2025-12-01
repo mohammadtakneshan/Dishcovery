@@ -225,6 +225,61 @@ def health_check():
     })
 
 
+@api_bp.route('/validate-key', methods=['POST'])
+def validate_api_key():
+    """Validate API key and return available models for the specified provider."""
+    from .providers import (
+        validate_openai_key,
+        validate_anthropic_key,
+        validate_gemini_key
+    )
+
+    data = request.get_json()
+
+    provider = data.get('provider')
+    api_key = data.get('apiKey')
+
+    if not provider or not api_key:
+        return problem_response(
+            code="missing_parameters",
+            message="Provider and API key are required",
+            status=400
+        )
+
+    validators = {
+        'openai': validate_openai_key,
+        'anthropic': validate_anthropic_key,
+        'gemini': validate_gemini_key
+    }
+
+    validator = validators.get(provider)
+    if not validator:
+        return problem_response(
+            code="invalid_provider",
+            message=f"Unknown provider: {provider}",
+            hint="Supported providers: openai, anthropic, gemini",
+            status=400
+        )
+
+    try:
+        result = validator(api_key)
+
+        if result["valid"]:
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 401
+
+    except Exception as e:
+        logger.error(f"Error validating {provider} API key: {e}")
+        return problem_response(
+            code="validation_error",
+            message="Failed to validate API key",
+            hint="Check your internet connection and try again",
+            status=500,
+            debug=str(e)
+        )
+
+
 def get_provider_config(provider: str | None) -> Dict[str, Any] | None:
     """Retrieve configuration dictionary for the specified AI provider.
 

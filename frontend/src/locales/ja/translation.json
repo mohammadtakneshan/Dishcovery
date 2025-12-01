@@ -65,7 +65,15 @@
     "show": "表示",
     "hide": "非表示",
     "connectionSettings": "接続設定",
-    "configureApiKey": "レシピ生成を有効にするには、APIキーを設定してください。"
+    "configureApiKey": "レシピ生成を有効にするには、APIキーを設定してください。",
+    "validate": "確認",
+    "validating": "確認中...",
+    "validated": "確認済み",
+    "validationFailed": "無効なAPIキー",
+    "model": "モデル",
+    "selectModel": "モデルを選択",
+    "apiKeyRequired": "APIキーが必要です",
+    "validationError": "確認に失敗しました: {{error}}"
   },
   "upload": {
     "hint": "ヒント: 最良の結果を得るには、1つの料理の鮮明な写真を使用してください。",

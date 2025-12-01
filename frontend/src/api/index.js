@@ -101,6 +101,77 @@ export async function generateRecipeFromImage(
   return payload;
 }
 
+/**
+ * Validates API key and fetches available models from the provider.
+ *
+ * @param {string} baseUrl - Backend API base URL
+ * @param {string} provider - Provider ID (openai, anthropic, gemini)
+ * @param {string} apiKey - API key to validate
+ * @returns {Promise<{valid: boolean, models: Array, error?: string}>}
+ */
+export async function validateApiKey(baseUrl, provider, apiKey) {
+  const sanitizedBaseUrl = sanitizeBaseUrl(baseUrl) || DEFAULT_API_BASE;
+
+  if (!sanitizedBaseUrl) {
+    throw new ApiError("API base URL is not configured.", {
+      code: "api_base_missing",
+    });
+  }
+
+  if (!provider || !apiKey) {
+    throw new ApiError("Provider and API key are required for validation.", {
+      code: "missing_parameters",
+      status: 400,
+    });
+  }
+
+  let response;
+  try {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    // Add Vercel Protection Bypass if available
+    const bypassToken = process.env.EXPO_PUBLIC_VERCEL_BYPASS;
+    if (bypassToken) {
+      headers["x-vercel-protection-bypass"] = bypassToken;
+    }
+
+    response = await fetch(`${sanitizedBaseUrl}/api/validate-key`, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ provider, apiKey }),
+    });
+  } catch (networkError) {
+    throw new ApiError(
+      "Network error. Please check your connection and try again.",
+      {
+        code: "network_error",
+        cause: networkError,
+      }
+    );
+  }
+
+  const payload = await parseResponse(response);
+
+  if (!response.ok) {
+    // Return the validation result even for 401 (invalid key)
+    if (response.status === 401 && payload?.valid === false) {
+      return payload;
+    }
+
+    // Handle other errors
+    const errorInfo = payload?.error || {};
+    throw new ApiError(errorInfo.message || "Validation request failed.", {
+      code: errorInfo.code || `http_${response.status}`,
+      hint: errorInfo.hint,
+      status: response.status,
+    });
+  }
+
+  return payload;
+}
+
 function appendIfValue(formData, key, value) {
   if (value !== undefined && value !== null && String(value).trim() !== "") {
     formData.append(key, value);

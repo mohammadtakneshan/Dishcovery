@@ -4,6 +4,7 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import theme from "../theme";
@@ -188,9 +189,18 @@ const styles = StyleSheet.create({
   card: {
     maxWidth: 760,
     width: "100%",
-    ...theme.card,
+    borderRadius: theme.card?.borderRadius ?? 12,
+    padding: theme.card?.padding ?? 16,
+    elevation: theme.card?.elevation ?? 3,
     backgroundColor: theme.colors.background,
-    boxShadow: "none",
+    ...(Platform.OS === "web"
+      ? { boxShadow: "none" }
+      : {
+          shadowColor: theme.card?.shadowColor ?? "#000",
+          shadowOffset: theme.card?.shadowOffset ?? { width: 0, height: 6 },
+          shadowOpacity: theme.card?.shadowOpacity ?? 0.06,
+          shadowRadius: theme.card?.shadowRadius ?? 12,
+        }),
   },
   center: {
     alignItems: "center",

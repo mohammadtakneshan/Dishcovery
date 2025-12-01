@@ -65,7 +65,15 @@
     "show": "Show",
     "hide": "Hide",
     "connectionSettings": "connection settings",
-    "configureApiKey": "Configure your API key to enable recipe generation."
+    "configureApiKey": "Configure your API key to enable recipe generation.",
+    "validate": "Verify",
+    "validating": "Verifying...",
+    "validated": "Verified",
+    "validationFailed": "Invalid API key",
+    "model": "Model",
+    "selectModel": "Select a model",
+    "apiKeyRequired": "API key required",
+    "validationError": "Validation failed: {{error}}"
   },
   "upload": {
     "hint": "Tip: Use clear photos of a single dish for best results.",
