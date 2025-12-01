@@ -217,7 +217,12 @@ export default function SettingsPanel({ onClose }) {
         label={t("settingsPanel.backendUrl")}
         value={form.apiBaseUrl}
         onChangeText={(value) =>
-          setForm((prev) => ({ ...prev, apiBaseUrl: value }))
+          setForm((prev) => ({
+            ...prev,
+            apiBaseUrl: value,
+            isKeyValidated: false,
+            availableModels: [],
+          }))
         }
         placeholder="http://localhost:5001"
         autoCapitalize="none"

@@ -147,7 +147,7 @@ def validate_gemini_key(api_key: str) -> Dict:
             timeout=10
         )
 
-        if response.status_code == 400:
+        if response.status_code in (400, 401, 403):
             return {"valid": False, "error": "Invalid API key"}
 
         response.raise_for_status()

@@ -236,7 +236,7 @@ def validate_api_key():
 
     data = request.get_json(silent=True)
 
-    if not data:
+    if data is None:
         return problem_response(
             code="invalid_json",
             message="Invalid or missing JSON body",
