@@ -234,7 +234,14 @@ def validate_api_key():
         validate_gemini_key
     )
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
+
+    if not data:
+        return problem_response(
+            code="invalid_json",
+            message="Invalid or missing JSON body",
+            status=400
+        )
 
     provider = data.get('provider')
     api_key = data.get('apiKey')

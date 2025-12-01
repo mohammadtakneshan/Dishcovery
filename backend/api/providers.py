@@ -131,9 +131,17 @@ def validate_gemini_key(api_key: str) -> Dict:
     """
     try:
         # SECURITY NOTE:
-        # The Gemini API key is passed directly in the URL query parameter as required by Google's API design.
+        # The Gemini API key is passed directly in the URL query parameter as required by Google AI Studio API.
         # This can expose the API key in server logs, browser history, proxy logs, and referrer headers.
-        # If Google supports header-based authentication in the future, update this code to use it.
+        #
+        # For production with Google Cloud Vertex AI, consider using OAuth2 Bearer tokens:
+        # - Obtain access token via google-auth (ADC or service account)
+        # - Send as: Authorization: Bearer <ACCESS_TOKEN>
+        # - Add x-goog-user-project header for Cloud resources
+        # - Use endpoint: https://generativelanguage.googleapis.com/v1beta/models
+        # - Handle token refresh failures appropriately
+        #
+        # Current implementation uses AI Studio API which only supports API keys.
         response = requests.get(
             f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}",
             timeout=10
