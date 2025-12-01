@@ -172,7 +172,7 @@ export function SettingsProvider({ children }) {
 
     if (!keyToUse || !providerToUse) {
       setValidationError('API key and provider required');
-      return { valid: false, error: 'API key and provider required', models: [] };
+      return { valid: false, error: 'API key and provider required' };
     }
 
     setIsValidating(true);
@@ -186,21 +186,32 @@ export function SettingsProvider({ children }) {
       );
 
       if (result.valid) {
+        const updatedSettings = {
+          ...settings,
+          apiBaseUrl: urlToUse,
+          provider: providerToUse,
+          apiKey: keyToUse,
+          availableModels: result.models || [],
+          isKeyValidated: true,
+          model: result.models && result.models.length > 0 ? result.models[0].id : settings.model
+        };
+
+        // Do not persist to AsyncStorage here; only update local state
+        setSettings(updatedSettings);
         setValidationError(null);
         return {
           valid: true,
           models: result.models || [],
-          defaultModel: result.models && result.models.length > 0 ? result.models[0].id : ''
+          defaultModel: result.models?.[0]?.id || ''
         };
       } else {
-        const errorMessage = result.error || 'Validation failed';
-        setValidationError(errorMessage);
-        return { valid: false, error: errorMessage, models: [] };
+        setValidationError(result.error || 'Validation failed');
+        return { valid: false, error: result.error || 'Validation failed' };
       }
     } catch (error) {
       const errorMessage = error.message || 'Failed to validate API key';
       setValidationError(errorMessage);
-      return { valid: false, error: errorMessage, models: [] };
+      return { valid: false, error: errorMessage };
     } finally {
       setIsValidating(false);
     }

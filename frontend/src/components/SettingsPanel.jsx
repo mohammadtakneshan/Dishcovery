@@ -68,13 +68,14 @@ export default function SettingsPanel({ onClose }) {
 
   const handleValidateApiKey = async () => {
     // Use form values instead of saved settings
+    // Validation results are stored locally in the form, not in global settings
     const result = await validateRemoteApiKey(form.apiBaseUrl, form.provider, form.apiKey);
-    if (result.valid) {
+    if (result && result.valid) {
       setForm((prev) => ({
         ...prev,
         isKeyValidated: true,
-        availableModels: result.models,
-        model: result.defaultModel || prev.model,
+        availableModels: result.models || [],
+        model: result.defaultModel ? result.defaultModel : prev.model,
       }));
     } else {
       setForm((prev) => ({
@@ -234,7 +235,13 @@ export default function SettingsPanel({ onClose }) {
           <Input
             value={form.apiKey}
             onChangeText={(value) =>
-              setForm((prev) => ({ ...prev, apiKey: value }))
+              setForm((prev) => ({ 
+                ...prev, 
+                apiKey: value,
+                // Reset validation when API key changes
+                isKeyValidated: false,
+                availableModels: [],
+              }))
             }
             placeholder={t("settingsPanel.apiKeyPlaceholder")}
             autoCapitalize="none"
