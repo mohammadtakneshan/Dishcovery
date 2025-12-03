@@ -27,6 +27,7 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "react-native/no-color-literals": "off",
     "react-native/sort-styles": "off",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
     "no-console": ["warn", { allow: ["warn", "error", "info"] }],
     "import/no-unresolved": "off",
   },

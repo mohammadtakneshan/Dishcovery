@@ -16,20 +16,18 @@ import {
   ImageUpload,
   SettingsPanel,
   LanguageDropdown,
-  Card,
 } from "../components";
 import { ApiError, generateRecipeFromImage } from "../api/index";
 import theme from "../theme";
 import { useSettings } from "../context/SettingsContext";
 import { SettingsValidationError } from "../context/SettingsContext";
 import { useTranslation } from "react-i18next";
-import RecipeScreen from "./RecipeScreen";
 
-export default function UploadScreen() {
+export default function UploadScreen({ onRecipeGenerated }) {
   const { t, i18n } = useTranslation();
 
   const [imagePayload, setImagePayload] = useState(null);
-  const [previewRecipe, setPreviewRecipe] = useState(null);
+  const [_previewRecipe, setPreviewRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -106,6 +104,7 @@ export default function UploadScreen() {
         }
       );
       setPreviewRecipe(resp);
+      onRecipeGenerated?.(resp);
     } catch (err) {
       if (err instanceof SettingsValidationError) {
         setError({
@@ -339,28 +338,6 @@ export default function UploadScreen() {
             )}
           </View>
         </View>
-
-        <View
-          style={[
-            styles.previewColumn,
-            isWide ? styles.rightColumn : styles.previewStack,
-          ]}
-        >
-          {previewRecipe ? (
-            <RecipeScreen
-              data={previewRecipe}
-              recipe={previewRecipe.recipe || previewRecipe}
-              onBack={() => setPreviewRecipe(null)}
-            />
-          ) : (
-            <Card style={styles.placeholderCard}>
-              <Text style={styles.placeholderTitle}>{t("upload.noRecipeYet")}</Text>
-              <Text style={styles.placeholderText}>
-                {t("upload.noRecipeYetDescription")}
-              </Text>
-            </Card>
-          )}
-        </View>
       </View>
 
       <View style={styles.spacerBottom} />
@@ -398,26 +375,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderColor: theme.colors.subtleBorder,
     ...(Platform.OS === "web" ? { boxShadow: "none" } : {}),
-  },
-  placeholderCard: {
-    padding: theme.spacing.lg,
-    justifyContent: "center",
-    alignItems: "center",
-    flexShrink: 1,
-    maxWidth: "90%",
-  },
-  placeholderTitle: {
-    ...theme.typography.subheading,
-    fontSize: 18,
-    color: theme.colors.muted,
-    marginBottom: 6,
-  },
-  placeholderText: {
-    color: theme.colors.muted,
-    fontSize: 13,
-    textAlign: "center",
-    flexWrap: "wrap",
-    maxWidth: 400,
   },
   cardHeader: {
     flexDirection: "row",
@@ -485,18 +442,6 @@ const styles = StyleSheet.create({
     width: "50%",
     paddingRight: 12,
     marginLeft: 60,
-  },
-  rightColumn: {
-    width: "50%",
-    paddingLeft: 12,
-    marginRight: 60,
-  },
-  previewColumn: {
-    width: "100%",
-    marginTop: theme.spacing.md,
-  },
-  previewStack: {
-    width: "100%",
   },
   scrollView: {
     flex: 1,
