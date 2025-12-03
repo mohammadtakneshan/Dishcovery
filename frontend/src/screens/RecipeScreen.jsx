@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import theme from "../theme";
+import SaveRecipeButton from "../components/SaveRecipeButton";
 
 export default function RecipeScreen({ data, recipe, onBack }) {
   const { t } = useTranslation();
@@ -67,6 +68,9 @@ export default function RecipeScreen({ data, recipe, onBack }) {
             <Text style={styles.warningText}>{warning}</Text>
           </View>
         ) : null}
+
+        {/* Save Recipe Button */}
+        <SaveRecipeButton recipe={recipeData} meta={meta} />
 
         {/* Recipe metadata */}
         <View style={styles.metaRow}>

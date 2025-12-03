@@ -50,9 +50,44 @@
     "tipsServing": "Tips & Serving",
     "backToUpload": "Back to Upload"
   },
+  "tabs": {
+    "upload": "Upload",
+    "saved": "Saved",
+    "profile": "Profile"
+  },
+  "saved": {
+    "comingSoon": "Saved recipes coming soon!",
+    "title": "Your Saved Recipes",
+    "empty": "No saved recipes yet",
+    "signInRequired": "Sign in to view your saved recipes",
+    "confirmDelete": "Are you sure you want to delete this recipe?"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "verifyEmail": "Verify Email",
+    "verificationCode": "Verification Code",
+    "verify": "Verify",
+    "noAccount": "Don't have an account? Sign up",
+    "haveAccount": "Already have an account? Sign in",
+    "continueAsGuest": "Continue as guest",
+    "signOut": "Sign Out",
+    "signInRequired": "Sign in required",
+    "signInToSaveRecipes": "Sign in to save recipes to your collection"
+  },
+  "profile": {
+    "title": "Profile",
+    "notSignedIn": "You are not signed in",
+    "email": "Email",
+    "aiProvider": "AI Provider",
+    "model": "Model"
+  },
   "actions": {
     "generate": "Generate Recipe",
     "save": "Save Recipe",
+    "saved": "Saved!",
     "share": "Share",
     "back": "Back"
   },

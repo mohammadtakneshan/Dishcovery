@@ -2,7 +2,7 @@
   "name": "dishcovery-frontend",
   "version": "1.0.0",
   "description": "Dishcovery - AI-Powered Recipe Discovery PWA",
-  "main": "expo/AppEntry.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -17,33 +17,46 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\""
   },
   "dependencies": {
+    "@clerk/clerk-expo": "^2.19.6",
     "@expo/metro-runtime": "~6.1.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-picker/picker": "^2.11.4",
-    "@react-navigation/native": "^6.1.9",
-    "@react-navigation/stack": "^6.3.20",
     "axios": "^1.6.2",
     "babel-preset-expo": "^54.0.6",
+    "convex": "^1.29.3",
     "expo": "~54.0.25",
+    "expo-auth-session": "^7.0.9",
+    "expo-constants": "^18.0.10",
+    "expo-crypto": "^15.0.7",
     "expo-image-picker": "~17.0.8",
+    "expo-linking": "^8.0.9",
     "expo-localization": "^17.0.7",
+    "expo-random": "^14.0.1",
+    "expo-router": "^6.0.15",
+    "expo-secure-store": "^15.0.7",
     "expo-status-bar": "~3.0.8",
+    "expo-web-browser": "^15.0.9",
     "i18next": "^23.7.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-i18next": "^13.5.0",
     "react-native": "0.81.5",
+    "react-native-gesture-handler": "^2.29.1",
+    "react-native-reanimated": "~3.15.0",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
-    "react-native-web": "^0.21.0"
+    "react-native-web": "^0.21.0",
+    "react-native-worklets-core": "^1.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@babel/eslint-parser": "^7.28.5",
+    "@types/react": "~19.1.10",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-native": "^5.0.0"
+    "eslint-plugin-react-native": "^5.0.0",
+    "typescript": "~5.9.2"
   },
   "private": true
 }

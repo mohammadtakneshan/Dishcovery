@@ -25,7 +25,7 @@ import { SettingsValidationError } from "../context/SettingsContext";
 import { useTranslation } from "react-i18next";
 import RecipeScreen from "./RecipeScreen";
 
-export default function UploadScreen() {
+export default function UploadScreen({ onRecipeGenerated }) {
   const { t, i18n } = useTranslation();
 
   const [imagePayload, setImagePayload] = useState(null);
@@ -106,6 +106,7 @@ export default function UploadScreen() {
         }
       );
       setPreviewRecipe(resp);
+      onRecipeGenerated?.(resp);
     } catch (err) {
       if (err instanceof SettingsValidationError) {
         setError({
@@ -338,28 +339,6 @@ export default function UploadScreen() {
               </Pressable>
             )}
           </View>
-        </View>
-
-        <View
-          style={[
-            styles.previewColumn,
-            isWide ? styles.rightColumn : styles.previewStack,
-          ]}
-        >
-          {previewRecipe ? (
-            <RecipeScreen
-              data={previewRecipe}
-              recipe={previewRecipe.recipe || previewRecipe}
-              onBack={() => setPreviewRecipe(null)}
-            />
-          ) : (
-            <Card style={styles.placeholderCard}>
-              <Text style={styles.placeholderTitle}>{t("upload.noRecipeYet")}</Text>
-              <Text style={styles.placeholderText}>
-                {t("upload.noRecipeYetDescription")}
-              </Text>
-            </Card>
-          )}
         </View>
       </View>
 
