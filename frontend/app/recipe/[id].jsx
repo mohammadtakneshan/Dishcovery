@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import RecipeScreen from '../../src/screens/RecipeScreen';
 
 export default function RecipeDetailScreen() {
-  const { id } = useLocalSearchParams();
+  const { id: _id } = useLocalSearchParams();
   const router = useRouter();
   const recipe = router.params?.recipe;
 

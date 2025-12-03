@@ -6,7 +6,7 @@ export default function UploadTab() {
 
   return (
     <UploadScreen
-      onRecipeGenerated={(recipe) => {
+      onRecipeGenerated={(_recipe) => {
         router.push(`/recipe/temp-${Date.now()}`);
       }}
     />
